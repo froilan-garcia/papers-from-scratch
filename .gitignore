@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Data y salidas pesadas
+implementations/**/data/
+implementations/**/outputs/
+*.ckpt
+*.pt
