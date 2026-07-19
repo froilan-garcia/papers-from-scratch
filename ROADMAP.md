@@ -82,6 +82,42 @@ Cada asignatura lleva asociados papers candidatos para el flujo `/paper` (review
 ### Seguridad de la información
 - [ ] (pendiente de elegir optativa)
 
+## Preparación quant (julio–octubre 2026) — prácticas verano 2027
+
+Objetivo: solicitar prácticas de quant research / quant trading para el verano de 2027. Los procesos son **rolling**: aplicar en cuanto abran, no esperar a "estar listo". La mayoría de ofertas se firman antes de mediados de octubre de 2026.
+
+### Calendario de solicitudes
+
+| Firma | Oficinas (Europa) | Estado (jul 2026) | Enlace |
+|---|---|---|---|
+| Citadel / Citadel Securities | Londres | **Ya abiertas** — aplicar ya | [citadel.com/careers](https://www.citadel.com/careers/open-opportunities/internships/) |
+| Jane Street | Londres | Abren agosto 2026 (algunas ya live) | [janestreet.com](https://www.janestreet.com/join-jane-street/internships/) |
+| Optiver | Ámsterdam, Londres | Abren agosto 2026 | [optiver.com](https://www.optiver.com/join-us/) |
+| IMC Trading | Ámsterdam | Verificar en su web (~agosto) | [imc.com](https://careers.imc.com/) |
+| G-Research | Londres | Verificar (~sept) | [gresearch.com](https://www.gresearch.com/vacancies/) |
+| Qube Research & Technologies | Londres | Verificar (~sept) | [qube-rt.com](https://www.qube-rt.com/careers/) |
+| Squarepoint Capital | Londres | Verificar (~sept) | [squarepoint-capital.com](https://www.squarepoint-capital.com/open-positions) |
+| Flow Traders | Ámsterdam | Verificar (~sept) | [flowtraders.com](https://www.flowtraders.com/careers) |
+
+### Preparación de entrevistas (en paralelo, ritmo diario corto)
+
+- [ ] Probabilidad y brainteasers: Xinfeng Zhou, *A Practical Guide to Quantitative Finance Interviews* (el "libro verde") — 1 sesión corta al día.
+- [ ] Cálculo mental rápido: entrenar con juegos tipo Optiver 80-in-8 / arithmetic-game.
+- [ ] Algoritmia en Python: LeetCode nivel medium, 3-4 problemas/semana.
+- [ ] CV en inglés de una página, orientado a quant (perfil matemático + este repo como portfolio).
+
+### Papers quant para el flujo `/paper` (orden sugerido)
+
+- [ ] Markowitz (1952) — *Portfolio Selection* — el punto de partida: optimización media-varianza, álgebra lineal pura.
+- [ ] Black & Scholes (1973) — *The Pricing of Options and Corporate Liabilities* — conexión directa con física (ecuación del calor).
+- [ ] Kalman (1960) — *A New Approach to Linear Filtering and Prediction Problems* — filtrado secuencial, base de muchas señales quant.
+- [ ] Gatev, Goetzmann & Rouwenhorst (2006) — *Pairs Trading: Performance of a Relative-Value Arbitrage Rule* — primera estrategia completa con backtest.
+- [ ] Moskowitz, Ooi & Pedersen (2012) — *Time Series Momentum* — factor investing, series temporales financieras.
+- [ ] Avellaneda & Stoikov (2008) — *High-frequency Trading in a Limit Order Book* — market making, control estocástico.
+- [ ] López de Prado (2016) — *Building Diversified Portfolios that Outperform Out-of-Sample* (Hierarchical Risk Parity) — ML aplicado a carteras, enlaza con el máster.
+
+Sinergias con el resto del roadmap: el Lasso ya revisado, Friedman (boosting) y Bottou (optimización estocástica) son directamente relevantes para quant research — citarlos en entrevistas.
+
 ## Preparación previa (julio–agosto 2026, antes de empezar)
 
 Orden sugerido para llegar a septiembre con base sólida — de menos a más exigente:
