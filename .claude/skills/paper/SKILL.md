@@ -27,9 +27,11 @@ Lee el PDF completo (usa la skill de PDF si hace falta OCR o extracción). Escri
 
 Antes de escribir código, resume al usuario qué propones implementar (qué resultado del paper se reproduce, qué se simplifica, tiempo estimado de cómputo) y espera su confirmación. Los papers a menudo requieren datos o cómputo inasequibles; acordar el alcance evita implementaciones inútiles.
 
-## Paso 4 — Implementar
+## Paso 4 — Implementar (poco a poco)
 
-Crea `implementations/<slug>/` siguiendo las convenciones del `CLAUDE.md` (scripts claros, referencias a ecuaciones del paper, `README.md` con instrucciones y comparación de resultados). Ejecuta el código y verifica que reproduce —al menos cualitativamente— el resultado del paper; deja constancia de la comparación en el README. Si los resultados no cuadran, dilo honestamente en el README en lugar de maquillarlo: una discrepancia documentada también es un resultado.
+El usuario prefiere implementar de forma incremental: primero lee el paper, y luego se programa por partes a lo largo de varias sesiones — nunca todo el código de golpe. El objetivo es que él entienda cada pieza, así que implementa solo la parte que pida en cada momento, explica el código y conéctalo con las ecuaciones del paper.
+
+Crea `implementations/<slug>/` siguiendo las convenciones del `CLAUDE.md` (scripts claros, referencias a ecuaciones del paper, `README.md` con instrucciones y comparación de resultados). Ejecuta cada parte y verifica que reproduce —al menos cualitativamente— el resultado del paper; deja constancia de la comparación en el README. Si los resultados no cuadran, dilo honestamente en el README en lugar de maquillarlo: una discrepancia documentada también es un resultado.
 
 ## Paso 5 — Cierre
 
