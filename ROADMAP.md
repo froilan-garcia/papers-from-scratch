@@ -12,7 +12,7 @@ Cada asignatura lleva asociados papers candidatos para el flujo `/paper` (review
 - [ ] Candès & Wakin (2008) — *An Introduction to Compressive Sampling*
 
 ### Estadística para el análisis de datos
-- [ ] Tibshirani (1996) — *Regression Shrinkage and Selection via the Lasso* — [review](reviews/1996-tibshirani-lasso.md) ✔ · implementación pendiente
+- [ ] Tibshirani (1996) — *Regression Shrinkage and Selection via the Lasso* — [review](reviews/1996-tibshirani-lasso.md) ✔ · [implementación](implementations/1996-tibshirani-lasso/) en curso (pieza 1/5: solver ✔)
 - [ ] Efron (1979) — *Bootstrap Methods: Another Look at the Jackknife*
 
 ### Fundamentos tecnológicos en el mundo Big Data
