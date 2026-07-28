@@ -8,9 +8,10 @@ Built incrementally. Current status:
 
 | # | Piece | Status |
 |---|-------|--------|
+| 0 | Convexity of the RSS + Fig. 2 constraint geometry | ✅ `convex_rss.py` |
 | 1 | Coordinate-descent solver + soft thresholding | ✅ `lasso.py` |
 | 2 | Fig. 1 — the four shrinkage functions (subset / ridge / lasso / garotte) | ✅ `shrinkage_functions.py` |
-| 3 | Fig. 5 + Table 1 — coefficient paths on the prostate-cancer data | ⬜ pending |
+| 3 | Fig. 5 + Table 1 — coefficient paths on the prostate-cancer data | ✅ `prostate_paths.py` |
 | 4 | Table 3 — MSE comparison OLS / lasso-CV / ridge over 50 replicates | ⬜ pending |
 | 5 | Cross-check the solver against `sklearn.linear_model.Lasso` | ⬜ pending |
 
@@ -163,3 +164,66 @@ Reuses `soft_threshold` from `lasso.py`. Run `python shrinkage_functions.py`
 Interactive Window to see it inline. Requires `numpy` + `matplotlib`.
 
 ![Fig. 1 reproduction](fig1_shrinkage_functions.png)
+
+## Piece 3 — coefficient paths on real data (`prostate_paths.py`)
+
+Reproduces **Fig. 5** and **Table 1**: the lasso applied to the prostate-cancer
+data of Stamey et al. (1989) — *N* = 97 men, 8 predictors, response `lpsa` — the
+same dataset the paper analyses in Sec. 4. This is where variable selection can
+be watched happening on real data rather than on a simulation.
+
+The path is parametrised the way the paper does it, by the **normalised budget**
+rather than by the penalty:
+
+    s = t / sum_j |beta_j^OLS|      in [0, 1]
+
+`s = 1` is OLS (constraint inactive), `s = 0` kills everything. The script solves
+the Lagrangian form over a grid of `lam` and converts each fit to its own `s`.
+
+### Data
+
+`data/prostate.data`, from the [Elements of Statistical Learning
+site](https://hastie.su.domains/ElemStatLearn/datasets/prostate.data). Not
+versioned (see `.gitignore`); the script expects it at that path. All 97
+observations are used, as in the paper — not the train/test split used in ESL.
+
+### Run
+
+```bash
+python prostate_paths.py
+```
+
+Requires `numpy`, `pandas`, `matplotlib`.
+
+### Validation — Table 1 reproduced exactly
+
+The paper selects `s_hat = 0.44` by generalised cross-validation and reports
+that only **`lcavol`, `lweight` and `svi`** survive. Our path at that budget:
+
+```
+Model at s = 0.440 (lam = 0.1945)
+predictor        OLS     lasso
+lcavol         0.662     0.532
+lweight        0.265     0.131
+age           -0.157     0.000   <- dropped
+lbph           0.140     0.000   <- dropped
+svi            0.314     0.149
+lcp           -0.148     0.000   <- dropped
+gleason        0.035     0.000   <- dropped
+pgg45          0.125     0.000   <- dropped
+
+Retained (3): lcavol, lweight, svi
+```
+
+**Same three predictors as the paper**, with the surviving coefficients shrunk
+well below their OLS values (`lcavol` 0.66 → 0.53, `svi` 0.31 → 0.15) — the
+bias the lasso trades for variance.
+
+![Fig. 5 reproduction](fig5_prostate_paths.png)
+
+Reading the plot right to left (from OLS towards zero) shows the order in which
+the lasso discards predictors: `age` and `lcp` (the two negative coefficients)
+go first around `s = 0.6`, then `gleason`, `pgg45` and `lbph`, leaving the same
+three the paper reports. Each coefficient hits zero and *stays* zero — the
+piecewise-linear, continuous path that soft thresholding produces, in contrast
+with subset selection's jumps.
