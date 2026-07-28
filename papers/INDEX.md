@@ -18,9 +18,15 @@ Rutas de lectura y orden sugerido en el [ROADMAP](../ROADMAP.md).
 | Paper | Autores | Año | Nota | Tamaño |
 |---|---|---|---|---|
 | [Long Short-Term Memory](1997-hochreiter-lstm.pdf) | Hochreiter & Schmidhuber | 1997 | El gradiente que se desvanece | 237 KB |
+| [On the Difficulty of Training Recurrent Neural Networks](2012-pascanu-difficulty-training-rnn.pdf) | Pascanu, Mikolov & Bengio | 2012 | La teoría del gradiente que explota/desvanece | 610 KB |
 | [Neural Machine Translation by Jointly Learning to Align and Translate](2014-bahdanau-attention-nmt.pdf) | Bahdanau, Cho & Bengio | 2014 | **El origen de la atención** | 434 KB |
 | [Learning Phrase Representations using RNN Encoder-Decoder](2014-cho-gru-encoder-decoder.pdf) | Cho et al. | 2014 | GRU + encoder-decoder | 1115 KB |
+| [Empirical Evaluation of Gated Recurrent Neural Networks](2014-chung-gated-rnn-evaluation.pdf) | Chung et al. | 2014 | LSTM vs GRU, cara a cara | 667 KB |
+| [Neural Turing Machines](2014-graves-neural-turing-machines.pdf) | Graves, Wayne & Danihelka | 2014 | Memoria externa direccionable | 1325 KB |
 | [Sequence to Sequence Learning with Neural Networks](2014-sutskever-seq2seq.pdf) | Sutskever, Vinyals & Le | 2014 |  | 109 KB |
+| [Effective Approaches to Attention-based NMT](2015-luong-attention.pdf) | Luong, Pham & Manning | 2015 | Atención multiplicativa | 243 KB |
+| [Show, Attend and Tell](2015-xu-show-attend-tell.pdf) | Xu et al. | 2015 | Atención visual | 9358 KB |
+| [WaveNet: A Generative Model for Raw Audio](2016-oord-wavenet.pdf) | van den Oord et al. | 2016 | Convoluciones dilatadas causales | 2786 KB |
 | [Attention Is All You Need](2017-vaswani-attention.pdf) | Vaswani et al. | 2017 | ⭐🔧 El paper clave de la pista | 2163 KB |
 
 ## B · Tokenización
@@ -31,8 +37,11 @@ Rutas de lectura y orden sugerido en el [ROADMAP](../ROADMAP.md).
 | [Efficient Estimation of Word Representations in Vector Space](2013-mikolov-word2vec.pdf) | Mikolov et al. | 2013 | word2vec | 223 KB |
 | [GloVe: Global Vectors for Word Representation](2014-pennington-glove.pdf) | Pennington, Socher & Manning | 2014 |  | 2557 KB |
 | [Neural Machine Translation of Rare Words with Subword Units](2015-sennrich-bpe-subword.pdf) | Sennrich, Haddow & Birch | 2015 | ⭐🔧 **BPE** — implementable en ~50 líneas | 188 KB |
+| [Google's Neural Machine Translation System](2016-wu-gnmt-wordpiece.pdf) | Wu et al. | 2016 | **WordPiece** (el de BERT) | 1648 KB |
 | [SentencePiece: A Simple and Language Independent Subword Tokenizer](2018-kudo-sentencepiece.pdf) | Kudo & Richardson | 2018 |  | 206 KB |
 | [Subword Regularization](2018-kudo-subword-regularization.pdf) | Kudo | 2018 | Tokenizador unigram | 321 KB |
+| [MEGABYTE: Predicting Million-byte Sequences](2023-yu-megabyte.pdf) | Yu et al. | 2023 | Modelado a nivel de byte | 895 KB |
+| [Byte Latent Transformer: Patches Scale Better Than Tokens](2024-pagnoni-byte-latent-transformer.pdf) | Pagnoni et al. | 2024 | Sin tokenizador — lo más actual | 2332 KB |
 
 ## C · LLMs
 
@@ -40,21 +49,36 @@ Rutas de lectura y orden sugerido en el [ROADMAP](../ROADMAP.md).
 |---|---|---|---|---|
 | [BERT: Pre-training of Deep Bidirectional Transformers](2018-devlin-bert.pdf) | Devlin et al. | 2018 | ⭐ | 756 KB |
 | [Deep Contextualized Word Representations](2018-peters-elmo.pdf) | Peters et al. | 2018 | ELMo | 415 KB |
+| [Transformer-XL: Attentive LMs Beyond a Fixed-Length Context](2019-dai-transformer-xl.pdf) | Dai et al. | 2019 |  | 4463 KB |
 | [RoBERTa: A Robustly Optimized BERT Pretraining Approach](2019-liu-roberta.pdf) | Liu et al. | 2019 |  | 204 KB |
+| [Language Models are Unsupervised Multitask Learners](2019-radford-gpt2.pdf) | Radford et al. | 2019 | GPT-2 | 569 KB |
 | [Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer](2019-raffel-t5.pdf) | Raffel et al. | 2019 | T5 | 1162 KB |
+| [DistilBERT, a Distilled Version of BERT](2019-sanh-distilbert.pdf) | Sanh et al. | 2019 | Destilación | 425 KB |
+| [Longformer: The Long-Document Transformer](2020-beltagy-longformer.pdf) | Beltagy, Peters & Cohan | 2020 | Atención dispersa | 526 KB |
 | [Language Models are Few-Shot Learners](2020-brown-gpt3.pdf) | Brown et al. | 2020 | ⭐ GPT-3 | 6609 KB |
+| [ELECTRA: Pre-training Text Encoders as Discriminators](2020-clark-electra.pdf) | Clark et al. | 2020 |  | 486 KB |
 | [Scaling Laws for Neural Language Models](2020-kaplan-scaling-laws.pdf) | Kaplan et al. | 2020 |  | 2434 KB |
 | [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](2020-lewis-rag.pdf) | Lewis et al. | 2020 | RAG | 864 KB |
+| [Constitutional AI: Harmlessness from AI Feedback](2022-bai-constitutional-ai.pdf) | Bai et al. | 2022 | Alineamiento (Anthropic) | 2039 KB |
 | [Training Compute-Optimal Large Language Models](2022-hoffmann-chinchilla.pdf) | Hoffmann et al. | 2022 | ⭐ Chinchilla | 5863 KB |
 | [Training Language Models to Follow Instructions with Human Feedback](2022-ouyang-instructgpt-rlhf.pdf) | Ouyang et al. | 2022 | InstructGPT / RLHF | 1755 KB |
+| [Robust Speech Recognition via Large-Scale Weak Supervision](2022-radford-whisper.pdf) | Radford et al. | 2022 | Whisper | 985 KB |
 | [Chain-of-Thought Prompting Elicits Reasoning in LLMs](2022-wei-chain-of-thought.pdf) | Wei et al. | 2022 |  | 870 KB |
+| [Emergent Abilities of Large Language Models](2022-wei-emergent-abilities.pdf) | Wei et al. | 2022 |  | 823 KB |
+| [Direct Preference Optimization](2023-rafailov-dpo.pdf) | Rafailov et al. | 2023 | DPO — RLHF sin RL | 1268 KB |
+| [LLaMA: Open and Efficient Foundation Language Models](2023-touvron-llama.pdf) | Touvron et al. | 2023 |  | 709 KB |
 
 ## D · Ingeniería
 
 | Paper | Autores | Año | Nota | Tamaño |
 |---|---|---|---|---|
+| [Layer Normalization](2016-ba-layer-normalization.pdf) | Ba, Kiros & Hinton | 2016 | La norma del Transformer | 598 KB |
+| [Gaussian Error Linear Units (GELUs)](2016-hendrycks-gelu.pdf) | Hendrycks & Gimpel | 2016 | La activación de BERT/GPT | 2702 KB |
+| [Decoupled Weight Decay Regularization](2017-loshchilov-adamw.pdf) | Loshchilov & Hutter | 2017 | AdamW — weight decay bien hecho | 5921 KB |
 | [Outrageously Large Neural Networks: The Sparsely-Gated MoE Layer](2017-shazeer-moe-sparse.pdf) | Shazeer et al. | 2017 | Mixture of experts | 531 KB |
 | [Fast Transformer Decoding: One Write-Head is All You Need](2019-shazeer-multi-query-attention.pdf) | Shazeer | 2019 | Multi-query attention | 139 KB |
+| [Switch Transformers: Scaling to Trillion Parameter Models](2021-fedus-switch-transformer.pdf) | Fedus, Zoph & Shazeer | 2021 | MoE a escala | 1273 KB |
+| [Efficiently Modeling Long Sequences with Structured State Spaces](2021-gu-s4-state-spaces.pdf) | Gu, Goel & Ré | 2021 | S4 — el precursor de Mamba | 3306 KB |
 | [LoRA: Low-Rank Adaptation of Large Language Models](2021-hu-lora.pdf) | Hu et al. | 2021 | Álgebra lineal pura | 1571 KB |
 | [RoFormer: Enhanced Transformer with Rotary Position Embedding](2021-su-rope-roformer.pdf) | Su et al. | 2021 | RoPE | 585 KB |
 | [FlashAttention: Fast and Memory-Efficient Exact Attention](2022-dao-flashattention.pdf) | Dao et al. | 2022 | 🔧 Enlaza con HPC | 2569 KB |
@@ -65,12 +89,27 @@ Rutas de lectura y orden sugerido en el [ROADMAP](../ROADMAP.md).
 | Paper | Autores | Año | Nota | Tamaño |
 |---|---|---|---|---|
 | [Auto-Encoding Variational Bayes](2013-kingma-vae.pdf) | Kingma & Welling | 2013 | ⭐🔧 VAE — enlaza con Bayesiano | 3834 KB |
+| [Intriguing Properties of Neural Networks](2013-szegedy-intriguing-properties.pdf) | Szegedy et al. | 2013 | Descubre los ejemplos adversarios | 6411 KB |
+| [Explaining and Harnessing Adversarial Examples](2014-goodfellow-adversarial-examples.pdf) | Goodfellow, Shlens & Szegedy | 2014 | FGSM | 1012 KB |
 | [Generative Adversarial Nets](2014-goodfellow-gan.pdf) | Goodfellow et al. | 2014 | ⭐🔧 Minimax derivable a mano | 518 KB |
+| [Conditional Generative Adversarial Nets](2014-mirza-conditional-gan.pdf) | Mirza & Osindero | 2014 |  | 785 KB |
 | [Unsupervised Representation Learning with DCGANs](2015-radford-dcgan.pdf) | Radford, Metz & Chintala | 2015 |  | 7282 KB |
+| [Variational Inference with Normalizing Flows](2015-rezende-normalizing-flows.pdf) | Rezende & Mohamed | 2015 | Enlaza con Bayesiano | 2833 KB |
+| [Image-to-Image Translation with Conditional Adversarial Networks](2016-isola-pix2pix.pdf) | Isola et al. | 2016 | pix2pix | 9105 KB |
+| [Improved Techniques for Training GANs](2016-salimans-improved-gan-training.pdf) | Salimans et al. | 2016 | Por qué las GAN no entrenan | 2291 KB |
 | [Wasserstein GAN](2017-arjovsky-wasserstein-gan.pdf) | Arjovsky, Chintala & Bottou | 2017 | 🔧 Transporte óptimo | 8627 KB |
+| [Progressive Growing of GANs](2017-karras-progressive-gan.pdf) | Karras et al. | 2017 |  | 27856 KB |
+| [Neural Discrete Representation Learning (VQ-VAE)](2017-oord-vq-vae.pdf) | van den Oord, Vinyals & Kavukcuoglu | 2017 | Latentes discretos | 3100 KB |
+| [Unpaired Image-to-Image Translation (CycleGAN)](2017-zhu-cyclegan.pdf) | Zhu et al. | 2017 |  | 36671 KB |
+| [Large Scale GAN Training (BigGAN)](2018-brock-biggan.pdf) | Brock, Donahue & Simonyan | 2018 |  | 10657 KB |
+| [A Style-Based Generator Architecture for GANs](2018-karras-stylegan.pdf) | Karras, Laine & Aila | 2018 | StyleGAN | 22385 KB |
+| [Glow: Generative Flow with Invertible 1x1 Convolutions](2018-kingma-glow.pdf) | Kingma & Dhariwal | 2018 |  | 12939 KB |
 | [Denoising Diffusion Probabilistic Models](2020-ho-diffusion-ddpm.pdf) | Ho, Jain & Abbeel | 2020 | ⭐ Física estadística aplicada | 10026 KB |
+| [Denoising Diffusion Implicit Models](2020-song-ddim.pdf) | Song, Meng & Ermon | 2020 | DDIM — muestreo rápido | 10602 KB |
+| [Score-Based Generative Modeling through SDEs](2020-song-score-based-sde.pdf) | Song et al. | 2020 | 🔧 EDEs — puro perfil de físico | 26287 KB |
 | [Learning Transferable Visual Models From Natural Language Supervision](2021-radford-clip.pdf) | Radford et al. | 2021 | CLIP | 6653 KB |
 | [High-Resolution Image Synthesis with Latent Diffusion Models](2021-rombach-latent-diffusion.pdf) | Rombach et al. | 2021 | Stable Diffusion | 39885 KB |
+| [Classifier-Free Diffusion Guidance](2022-ho-classifier-free-guidance.pdf) | Ho & Salimans | 2022 |  | 3685 KB |
 
 ## F · Visión
 
@@ -154,6 +193,18 @@ Rutas de lectura y orden sugerido en el [ROADMAP](../ROADMAP.md).
 |---|---|---|---|---|
 | [DeepAR: Probabilistic Forecasting with Autoregressive RNNs](2020-salinas-deepar.pdf) | Salinas et al. | 2020 |  | 555 KB |
 
+## Máster · Redes
+
+| Paper | Autores | Año | Nota | Tamaño |
+|---|---|---|---|---|
+| [The Anatomy of a Large-Scale Hypertextual Web Search Engine](1998-brin-pagerank.pdf) | Brin & Page | 1998 | PageRank — autovectores puros | 120 KB |
+| [Fast Unfolding of Communities in Large Networks](2008-blondel-louvain.pdf) | Blondel et al. | 2008 | Louvain | 1557 KB |
+| [Matrix Factorization Techniques for Recommender Systems](2009-koren-matrix-factorization.pdf) | Koren, Bell & Volinsky | 2009 | Premio Netflix | 1511 KB |
+| [node2vec: Scalable Feature Learning for Networks](2016-grover-node2vec.pdf) | Grover & Leskovec | 2016 |  | 781 KB |
+| [Semi-Supervised Classification with Graph Convolutional Networks](2016-kipf-gcn.pdf) | Kipf & Welling | 2016 | GCN | 853 KB |
+| [Graph Attention Networks](2017-velickovic-graph-attention.pdf) | Veličković et al. | 2017 | GAT | 1599 KB |
+| [Neural Ordinary Differential Equations](2018-chen-neural-ode.pdf) | Chen et al. | 2018 | EDOs — tu terreno | 3897 KB |
+
 ## Quant
 
 | Paper | Autores | Año | Nota | Tamaño |
@@ -163,12 +214,10 @@ Rutas de lectura y orden sugerido en el [ROADMAP](../ROADMAP.md).
 
 ## Pendientes de descargar (no accesibles automáticamente)
 
-Tres se resistieron a la descarga automática (paywall o bloqueo del servidor). Guardar en `papers/` con el slug indicado:
-
-- `1952-markowitz-portfolio-selection` — *Portfolio Selection* (Markowitz, 1952). **Es el siguiente paper quant**, así que conviene tenerlo. Vía [Wiley (DOI)](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1540-6261.1952.tb01525.x) o [JSTOR 2975974](https://www.jstor.org/stable/2975974) — con el acceso institucional de la UC3M/Oviedo debería abrirse.
-- `2008-candes-compressive-sampling` — *An Introduction to Compressive Sampling* (Candès & Wakin, 2008), IEEE Signal Processing Magazine. Acceso vía IEEE Xplore con credenciales de la universidad. *(Nota: sí está descargado `2005-candes-stable-signal-recovery`, del mismo grupo y muy relacionado.)*
-- `2017-taylor-prophet` — *Forecasting at Scale* (Taylor & Letham, 2017). Preprint en [PeerJ](https://peerj.com/preprints/3190/) — el servidor rechaza la descarga automática, pero desde el navegador se baja sin problema.
+- `1952-markowitz-portfolio-selection` — *Portfolio Selection* (Markowitz, 1952)
+- `2008-candes-compressive-sampling` — *An Introduction to Compressive Sampling* (Candès & Wakin, 2008)
+- `2017-taylor-prophet` — *Forecasting at Scale* (Taylor & Letham, 2017)
 
 ---
 
-**Total en `papers/`: 65 PDFs.**
+**Total en `papers/`: 111 PDFs.**

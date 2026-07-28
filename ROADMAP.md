@@ -76,6 +76,9 @@ Cada asignatura lleva asociados papers candidatos para el flujo `/paper` (review
 ### Análisis de redes y visualización de datos
 - [ ] Blondel et al. (2008) — *Fast Unfolding of Communities in Large Networks* (Louvain) — arXiv:0803.0476
 - [ ] Grover & Leskovec (2016) — *node2vec* — arXiv:1607.00653
+- [ ] Kipf & Welling (2016) — *Semi-Supervised Classification with Graph Convolutional Networks* (GCN) — arXiv:1609.02907
+- [ ] Veličković et al. (2017) — *Graph Attention Networks* — arXiv:1710.10903 — atención aplicada a grafos
+- [ ] Chen et al. (2018) — *Neural Ordinary Differential Equations* — arXiv:1806.07366 — EDOs y redes profundas; terreno directo de tu grado
 
 ### Análisis de datos para la sociedad inteligente
 - [ ] (pendiente de elegir optativa)
@@ -94,9 +97,15 @@ Marcados con ⭐ los que son lectura obligada; con 🔧 los que merecen implemen
 El orden importa: cada paper responde a una limitación del anterior. Es la mejor forma de entender *por qué* existe el Transformer.
 
 - [ ] Hochreiter & Schmidhuber (1997) — *Long Short-Term Memory* — el problema del gradiente que se desvanece
+- [ ] Pascanu, Mikolov & Bengio (2012) — *On the Difficulty of Training RNNs* — arXiv:1211.5063 — la teoría del gradiente que explota/desvanece
 - [ ] Cho et al. (2014) — *Learning Phrase Representations* (GRU + encoder-decoder) — arXiv:1406.1078
+- [ ] Chung et al. (2014) — *Empirical Evaluation of Gated RNNs* — arXiv:1412.3555 — LSTM vs GRU cara a cara
 - [ ] Sutskever, Vinyals & Le (2014) — *Sequence to Sequence Learning with Neural Networks* — arXiv:1409.3215
-- [ ] Bahdanau, Cho & Bengio (2014) — *Neural Machine Translation by Jointly Learning to Align and Translate* — arXiv:1409.0473 — **el origen real de la atención**
+- [ ] ⭐ Bahdanau, Cho & Bengio (2014) — *Neural Machine Translation by Jointly Learning to Align and Translate* — arXiv:1409.0473 — **el origen real de la atención**
+- [ ] Luong, Pham & Manning (2015) — *Effective Approaches to Attention-based NMT* — arXiv:1508.04025 — atención multiplicativa
+- [ ] Xu et al. (2015) — *Show, Attend and Tell* — arXiv:1502.03044 — atención visual
+- [ ] Graves, Wayne & Danihelka (2014) — *Neural Turing Machines* — arXiv:1410.5401 — memoria externa direccionable
+- [ ] van den Oord et al. (2016) — *WaveNet* — arXiv:1609.03499 — convoluciones dilatadas causales
 - [ ] ⭐🔧 Vaswani et al. (2017) — *Attention Is All You Need* — arXiv:1706.03762 — implementar self-attention y multi-head desde cero es el ejercicio más rentable de toda la pista
 
 ### Ruta B — Tokenización y embeddings
@@ -105,8 +114,11 @@ El orden importa: cada paper responde a una limitación del anterior. Es la mejo
 - [ ] Mikolov et al. (2013) — *Distributed Representations of Words and Phrases* (negative sampling) — arXiv:1310.4546
 - [ ] Pennington, Socher & Manning (2014) — *GloVe: Global Vectors for Word Representation*
 - [ ] ⭐🔧 Sennrich, Haddow & Birch (2015) — *Neural Machine Translation of Rare Words with Subword Units* (**BPE**) — arXiv:1508.07909 — el algoritmo de tokenización que usan GPT y casi todos; implementable en ~50 líneas
+- [ ] Wu et al. (2016) — *Google's Neural Machine Translation System* — arXiv:1609.08144 — **WordPiece**, el tokenizador de BERT
 - [ ] Kudo (2018) — *Subword Regularization* (tokenizador unigram) — arXiv:1804.10959
 - [ ] Kudo & Richardson (2018) — *SentencePiece* — arXiv:1808.06226
+- [ ] Yu et al. (2023) — *MEGABYTE: Predicting Million-byte Sequences* — arXiv:2305.07185 — modelado a nivel de byte
+- [ ] Pagnoni et al. (2024) — *Byte Latent Transformer* — arXiv:2412.09871 — **sin tokenizador**; lo más actual del área
 
 ### Ruta C — LLMs modernos
 
@@ -120,7 +132,16 @@ El orden importa: cada paper responde a una limitación del anterior. Es la mejo
 - [ ] Ouyang et al. (2022) — *Training LMs to Follow Instructions with Human Feedback* (InstructGPT/RLHF) — arXiv:2203.02155
 - [ ] Wei et al. (2022) — *Chain-of-Thought Prompting* — arXiv:2201.11903
 - [ ] Lewis et al. (2020) — *Retrieval-Augmented Generation* (RAG) — arXiv:2005.11401
-- [ ] Radford et al. (2019) — *Language Models are Unsupervised Multitask Learners* (GPT-2) — **no está en arXiv**, descargar de [cdn.openai.com](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)
+- [ ] Radford et al. (2019) — *Language Models are Unsupervised Multitask Learners* (GPT-2) — no está en arXiv; PDF en [cdn.openai.com](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)
+- [ ] Dai et al. (2019) — *Transformer-XL* — arXiv:1901.02860
+- [ ] Sanh et al. (2019) — *DistilBERT* — arXiv:1910.01108 — destilación de modelos
+- [ ] Clark et al. (2020) — *ELECTRA* — arXiv:2003.10555
+- [ ] Beltagy et al. (2020) — *Longformer* — arXiv:2004.05150 — atención dispersa para documentos largos
+- [ ] Wei et al. (2022) — *Emergent Abilities of Large Language Models* — arXiv:2206.07682
+- [ ] Bai et al. (2022) — *Constitutional AI* — arXiv:2212.08073 — alineamiento sin etiquetado humano masivo
+- [ ] Touvron et al. (2023) — *LLaMA* — arXiv:2302.13971
+- [ ] Rafailov et al. (2023) — *Direct Preference Optimization* — arXiv:2305.18290 — RLHF sin RL
+- [ ] Radford et al. (2022) — *Whisper* — arXiv:2212.04356 — reconocimiento de voz a escala
 
 ### Ruta D — Ingeniería del Transformer (por qué los LLMs actuales son viables)
 
@@ -128,18 +149,43 @@ El orden importa: cada paper responde a una limitación del anterior. Es la mejo
 - [ ] Shazeer (2019) — *Fast Transformer Decoding* (multi-query attention) — arXiv:1911.02150
 - [ ] 🔧 Dao et al. (2022) — *FlashAttention* — arXiv:2205.14135 — conecta con la asignatura de computación de altas prestaciones
 - [ ] Shazeer et al. (2017) — *Outrageously Large Neural Networks* (mixture of experts) — arXiv:1701.06538
+- [ ] Fedus, Zoph & Shazeer (2021) — *Switch Transformers* — arXiv:2101.03961 — MoE llevado al billón de parámetros
 - [ ] Hu et al. (2021) — *LoRA: Low-Rank Adaptation* — arXiv:2106.09685 — álgebra lineal pura, muy tu perfil
+- [ ] Gu, Goel & Ré (2021) — *Structured State Spaces* (S4) — arXiv:2111.00396 — el precursor de Mamba
 - [ ] Gu & Dao (2023) — *Mamba: Linear-Time Sequence Modeling* — arXiv:2312.00752 — la alternativa post-Transformer
+- [ ] Ba, Kiros & Hinton (2016) — *Layer Normalization* — arXiv:1607.06450
+- [ ] Loshchilov & Hutter (2017) — *Decoupled Weight Decay* (AdamW) — arXiv:1711.05101 — el *weight decay* bien hecho (ridge, no lasso)
+- [ ] Hendrycks & Gimpel (2016) — *Gaussian Error Linear Units* (GELU) — arXiv:1606.08415
 
 ### Ruta E — Modelos generativos (GAN, VAE, difusión)
 
+**GAN (redes adversarias):**
 - [ ] ⭐🔧 Goodfellow et al. (2014) — *Generative Adversarial Nets* — arXiv:1406.2661 — teoría de juegos + estadística; el equilibrio minimax se deriva a mano
+- [ ] Mirza & Osindero (2014) — *Conditional GAN* — arXiv:1411.1784
 - [ ] Radford, Metz & Chintala (2015) — *DCGAN* — arXiv:1511.06434
-- [ ] 🔧 Arjovsky, Chintala & Bottou (2017) — *Wasserstein GAN* — arXiv:1701.07875 — transporte óptimo; matemáticamente el más bonito de los tres
+- [ ] Salimans et al. (2016) — *Improved Techniques for Training GANs* — arXiv:1606.03498 — por qué las GAN no entrenan
+- [ ] 🔧 Arjovsky, Chintala & Bottou (2017) — *Wasserstein GAN* — arXiv:1701.07875 — transporte óptimo; matemáticamente el más bonito
+- [ ] Isola et al. (2016) — *pix2pix* — arXiv:1611.07004 · Zhu et al. (2017) — *CycleGAN* — arXiv:1703.10593
+- [ ] Karras et al. (2017) — *Progressive GAN* — arXiv:1710.10196 · Karras et al. (2018) — *StyleGAN* — arXiv:1812.04948
+- [ ] Brock et al. (2018) — *BigGAN* — arXiv:1809.11096
+
+**Variacionales y flujos:**
 - [ ] ⭐🔧 Kingma & Welling (2013) — *Auto-Encoding Variational Bayes* (VAE) — arXiv:1312.6114 — enlaza directamente con Aprendizaje Bayesiano (ELBO, reparametrización)
+- [ ] Rezende & Mohamed (2015) — *Variational Inference with Normalizing Flows* — arXiv:1505.05770
+- [ ] van den Oord et al. (2017) — *VQ-VAE* — arXiv:1711.00937 — latentes discretos
+- [ ] Kingma & Dhariwal (2018) — *Glow* — arXiv:1807.03039
+
+**Difusión:**
 - [ ] ⭐ Ho, Jain & Abbeel (2020) — *Denoising Diffusion Probabilistic Models* — arXiv:2006.11239 — procesos de difusión: física estadística aplicada
-- [ ] Rombach et al. (2021) — *High-Resolution Image Synthesis with Latent Diffusion Models* (Stable Diffusion) — arXiv:2112.10752
-- [ ] Radford et al. (2021) — *Learning Transferable Visual Models* (CLIP) — arXiv:2103.00020
+- [ ] 🔧 Song et al. (2020) — *Score-Based Generative Modeling through SDEs* — arXiv:2011.13456 — ecuaciones diferenciales estocásticas, puro perfil de físico
+- [ ] Song, Meng & Ermon (2020) — *DDIM* — arXiv:2010.02502 — muestreo rápido
+- [ ] Ho & Salimans (2022) — *Classifier-Free Guidance* — arXiv:2207.12598
+- [ ] Rombach et al. (2021) — *Latent Diffusion Models* (Stable Diffusion) — arXiv:2112.10752
+- [ ] Radford et al. (2021) — *CLIP* — arXiv:2103.00020
+
+**Ejemplos adversarios (robustez, el otro sentido de "adversario"):**
+- [ ] Szegedy et al. (2013) — *Intriguing Properties of Neural Networks* — arXiv:1312.6199 — el descubrimiento
+- [ ] Goodfellow, Shlens & Szegedy (2014) — *Explaining and Harnessing Adversarial Examples* — arXiv:1412.6572 — FGSM
 
 ### Ruta F — Fundamentos de visión y entrenamiento
 
