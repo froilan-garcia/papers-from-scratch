@@ -21,3 +21,12 @@ implementations/**/data/
 implementations/**/outputs/
 *.ckpt
 *.pt
+
+# PDFs de papers: no se versionan.
+# 1) Peso: el historial de git crecería cientos de MB de forma permanente.
+# 2) Copyright: este repo es público (portfolio); redistribuir los PDFs
+#    publicados (Annals of Statistics, JMLR, NeurIPS, IEEE...) no procede.
+# El inventario con los enlaces de descarga vive en papers/INDEX.md, que sí
+# se versiona — es lo que aporta valor y es compartible.
+papers/*.pdf
+!papers/INDEX.md

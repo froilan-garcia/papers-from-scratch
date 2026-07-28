@@ -12,6 +12,8 @@ Espacio de trabajo de Froilán (graduado en Física y Matemáticas, Univ. de Ovi
 
 ```
 papers/            PDFs originales. Nombre: <año>-<primer-autor>-<titulo-corto>.pdf
+                   Los .pdf NO se versionan (peso + copyright: el repo es público).
+                   El inventario con enlaces de descarga es papers/INDEX.md, que sí se versiona.
 reviews/           Una review markdown por paper, mismo slug que el PDF.
 implementations/   Una carpeta por paper, mismo slug. Cada una con su README.md.
 ROADMAP.md         Papers candidatos organizados por asignatura del máster; marcar los completados.
