@@ -3,8 +3,11 @@
 Inventario de `papers/`. Convención de nombre: `<año>-<primer-autor>-<titulo-corto>.pdf`;
 ese mismo slug se reutiliza en `reviews/` e `implementations/`.
 
+> ⚠️ **Esto es una estantería, no una lista de tareas.** Son papers descargados para
+> tenerlos a mano; no hay que leerlos.
+
 Rutas de lectura y orden sugerido en el [ROADMAP](../ROADMAP.md).
-⭐ = lectura obligada · 🔧 = merece implementación desde cero.
+⭐ = el imprescindible del bloque · 🔧 = merece implementación desde cero.
 
 ## Estadística
 

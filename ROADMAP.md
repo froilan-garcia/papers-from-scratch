@@ -5,6 +5,8 @@ Máster en Métodos Analíticos para Datos Masivos: Big Data (UC3M, inicio septi
 
 Cada asignatura lleva asociados papers candidatos para el flujo `/paper` (review + implementación en Python). Marcar con `[x]` los ya revisados y enlazar su review.
 
+> 📖 **Este documento es un catálogo, no una cola.** Los papers de cada asignatura se leen *cuando llega esa asignatura*, no antes.
+
 ## Cuatrimestre 1 · Semicuatrimestre I (sept–oct)
 
 ### Matemáticas para el análisis de datos
@@ -86,11 +88,13 @@ Cada asignatura lleva asociados papers candidatos para el flujo `/paper` (review
 ### Seguridad de la información
 - [ ] (pendiente de elegir optativa)
 
-## Pista extra: deep learning, LLMs y modelos generativos
+## Biblioteca: deep learning, LLMs y modelos generativos
 
-Cola de lectura **exploratoria** (sin compromiso de implementar todo) para después del Lasso y el bootstrap. Los PDFs están descargados en `papers/` salvo donde se indique — ver [papers/INDEX.md](papers/INDEX.md) para el inventario completo.
+> ⚠️ **Esto NO es una cola de lectura ni una lista de tareas.** Es una **estantería de consulta**: papers ya descargados para que estén a mano el día que hagan falta. No hay que leerlos, ni por orden ni en absoluto.
 
-Marcados con ⭐ los que son lectura obligada; con 🔧 los que merecen implementación desde cero.
+Las rutas de abajo indican **en qué orden tendrían sentido** *si* algún día tiras de un tema, porque cada paper responde a la limitación del anterior. Sirven para orientarte dentro de la estantería, no para recorrerlas enteras.
+
+Inventario completo en [papers/INDEX.md](papers/INDEX.md). ⭐ = el imprescindible del bloque · 🔧 = el que merece implementación.
 
 ### Ruta A — De las RNN al Transformer (la línea histórica)
 

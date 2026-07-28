@@ -30,3 +30,6 @@ implementations/**/outputs/
 # se versiona — es lo que aporta valor y es compartible.
 papers/*.pdf
 !papers/INDEX.md
+
+# Notas personales: no se publican
+GUIA-LECTURA.md
