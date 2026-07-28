@@ -13,7 +13,8 @@ Cada asignatura lleva asociados papers candidatos para el flujo `/paper` (review
 
 ### Estadística para el análisis de datos
 - [ ] Tibshirani (1996) — *Regression Shrinkage and Selection via the Lasso* — [review](reviews/1996-tibshirani-lasso.md) ✔ · [implementación](implementations/1996-tibshirani-lasso/) en curso (pieza 1/5: solver ✔)
-- [ ] Efron (1979) — *Bootstrap Methods: Another Look at the Jackknife*
+- [x] Efron (1979) — *Bootstrap Methods: Another Look at the Jackknife* — [review](reviews/1979-efron-bootstrap.md) ✔ · implementación pendiente
+- [ ] Hoerl & Kennard (1970) — *Ridge Regression: Biased Estimation for Nonorthogonal Problems* (solo review, sin código — cierra el díptico de regularización con el Lasso; ridge = *weight decay* en NNs)
 
 ### Fundamentos tecnológicos en el mundo Big Data
 - [ ] Dean & Ghemawat (2004) — *MapReduce: Simplified Data Processing on Large Clusters*
@@ -84,20 +85,31 @@ Cada asignatura lleva asociados papers candidatos para el flujo `/paper` (review
 
 ## Preparación quant (julio–octubre 2026) — prácticas verano 2027
 
-Objetivo: solicitar prácticas de quant research / quant trading para el verano de 2027. Los procesos son **rolling**: aplicar en cuanto abran, no esperar a "estar listo". La mayoría de ofertas se firman antes de mediados de octubre de 2026.
+Objetivo: solicitar prácticas de quant research / quant trading para el verano de 2027. Los procesos son **rolling** (~70% de plazas firmadas para mediados de octubre).
 
-### Calendario de solicitudes
+**Estrategia (revisada 23 jul 2026):** no correr con Citadel en agosto sin estar afilado. Suspender el OA (online assessment) tiene *cooldown* de 6–12 meses — ese es el coste real, no ninguna "blacklist" (aplicar y ser rechazado no quema para el futuro). Por eso: **agosto = 100% preparación + GitHub; 1ª semana de septiembre = aplicar en bloque** ya preparado (el OA llega ~5–7 días después). Rolling sigue abierto en septiembre; aplicar pronto, no en octubre. Plan detallado en [quant/plan-agosto-septiembre.md](quant/plan-agosto-septiembre.md).
 
-| Firma | Oficinas (Europa) | Estado (jul 2026) | Enlace |
+### Calendario de solicitudes — aplicar en bloque la 1ª semana de septiembre
+
+| Firma | Oficinas (Europa) | Nota | Enlace |
 |---|---|---|---|
-| Citadel / Citadel Securities | Londres | **Ya abiertas** — aplicar ya | [citadel.com/careers](https://www.citadel.com/careers/open-opportunities/internships/) |
-| Jane Street | Londres | Abren agosto 2026 (algunas ya live) | [janestreet.com](https://www.janestreet.com/join-jane-street/internships/) |
-| Optiver | Ámsterdam, Londres | Abren agosto 2026 | [optiver.com](https://www.optiver.com/join-us/) |
-| IMC Trading | Ámsterdam | Verificar en su web (~agosto) | [imc.com](https://careers.imc.com/) |
-| G-Research | Londres | Verificar (~sept) | [gresearch.com](https://www.gresearch.com/vacancies/) |
-| Qube Research & Technologies | Londres | Verificar (~sept) | [qube-rt.com](https://www.qube-rt.com/careers/) |
-| Squarepoint Capital | Londres | Verificar (~sept) | [squarepoint-capital.com](https://www.squarepoint-capital.com/open-positions) |
-| Flow Traders | Ámsterdam | Verificar (~sept) | [flowtraders.com](https://www.flowtraders.com/careers) |
+| Citadel / Citadel Securities | Londres | Abierta desde julio — se aplica algo tarde, pero se aplica | [citadel.com/careers](https://www.citadel.com/careers/open-opportunities/internships/) |
+| Jane Street | Londres | Abre agosto 2026 | [janestreet.com](https://www.janestreet.com/join-jane-street/internships/) |
+| Optiver | Ámsterdam, Londres | Abre agosto 2026 | [optiver.com](https://www.optiver.com/join-us/) |
+| IMC Trading | Ámsterdam | ~agosto | [imc.com](https://careers.imc.com/) |
+| G-Research | Londres | ~sept | [gresearch.com](https://www.gresearch.com/vacancies/) |
+| Qube Research & Technologies | Londres | ~sept | [qube-rt.com](https://www.qube-rt.com/careers/) |
+| Squarepoint Capital | Londres | ~sept | [squarepoint-capital.com](https://www.squarepoint-capital.com/open-positions) |
+| Flow Traders | Ámsterdam | ~sept | [flowtraders.com](https://www.flowtraders.com/careers) |
+
+### Plan B — máster especializado (ETH/UvA), decisión en noviembre
+
+**No es necesario** para ser competitivo: el perfil (doble grado Mates+Física + máster Big Data + portfolio de papers) ya encaja en quant research/trading. Es una **palanca opcional** con tres usos: (a) plan B si el ciclo de septiembre no cuaja, (b) arreglar el timing de prácticas (el máster de Big Data es de 1 año → verano de prácticas justo al graduarse; el MFE da verano intermedio), (c) enchufarse a la pipeline de Ámsterdam.
+
+- **ETH/UZH — MSc Quantitative Finance:** 3 semestres, ~€2.700 todo el máster. Fall 2026 cerrado; **solicitudes para otoño 2027 abren en noviembre 2026** (cae en tu 1er semestre de la UC3M → opción de bajo riesgo). [math.ethz.ch](https://math.ethz.ch/studies/master-programmes/master-quantitative-finance.html)
+- **UvA (Ámsterdam):** MSc Quantitative Finance o MSc Actuarial Science & Mathematical Finance (track QRM). ~1 año, tasa UE ~€2.600. Optiver/IMC/Flow reclutan en el campus. [abs.uva.nl](https://abs.uva.nl/content/masters/finance-quantitative-finance/study-programme/study-programme.html)
+
+Criterio: aplicar a quant este ciclo con el perfil actual; dejar la solicitud de ETH (nov 2026) como opción viva; **decidir en firme a principios de 2027**, ya con resultados en la mano. No matricularse en un 2º máster "por si acaso" antes de intentarlo.
 
 ### Preparación de entrevistas (en paralelo, ritmo diario corto)
 

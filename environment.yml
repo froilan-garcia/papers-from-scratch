@@ -1,0 +1,15 @@
+# Entorno conda del repo. Crear con:  conda env create -f environment.yml
+# Activar con:                        conda activate papers
+name: papers
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - numpy
+  - scipy
+  - matplotlib
+  - pandas
+  - scikit-learn
+  - jupyter
+  - ipykernel
+  - pip

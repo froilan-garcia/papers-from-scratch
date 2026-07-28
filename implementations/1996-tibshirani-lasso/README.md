@@ -9,10 +9,98 @@ Built incrementally. Current status:
 | # | Piece | Status |
 |---|-------|--------|
 | 1 | Coordinate-descent solver + soft thresholding | ✅ `lasso.py` |
-| 2 | Fig. 1 — the four shrinkage functions (subset / ridge / lasso / garotte) | ⬜ pending |
+| 2 | Fig. 1 — the four shrinkage functions (subset / ridge / lasso / garotte) | ✅ `shrinkage_functions.py` |
 | 3 | Fig. 5 + Table 1 — coefficient paths on the prostate-cancer data | ⬜ pending |
 | 4 | Table 3 — MSE comparison OLS / lasso-CV / ridge over 50 replicates | ⬜ pending |
 | 5 | Cross-check the solver against `sklearn.linear_model.Lasso` | ⬜ pending |
+
+## Fundamentos — from OLS to the Lagrangian form
+
+Notas de repaso antes de la Pieza 1: por qué la "forma lagrangiana" del lasso no
+usa `lambda` como el multiplicador de Lagrange de cálculo.
+
+**1. OLS.** Con `y = X b + noise`, se minimiza el error cuadrático
+`RSS(b) = ||y - X b||^2`. Es convexo; derivando e igualando a cero salen las
+*normal equations* y la solución cerrada:
+
+    X^T X b = X^T y   =>   b_hat = (X^T X)^{-1} X^T y
+
+Si las columnas de `X` están correladas, `X^T X` está mal condicionada y `b_hat`
+tiene varianza enorme. De ahí la idea de **acotar** `b`.
+
+**2. Forma restringida (Eq. 1 del paper).** Se le pone presupuesto a `b`:
+
+    min_b ||y - X b||^2   s.a.   sum_j |b_j| <= t     (lasso, L1)
+    min_b ||y - X b||^2   s.a.   sum_j b_j^2  <= t^2   (ridge, L2)
+
+Geométrico y claro: minimizar dentro de una bola — rombo para L1, círculo para
+L2 (Fig. 2).
+
+**3. Forma lagrangiana (lo que despista).** El Lagrange de cálculo, con
+restricción de *igualdad* `g(b) = t`, es `L = f(b) + lam*(g(b) - t)` y se
+resuelve `grad_b L = 0` **y** `dL/dlam = 0` — esta última devuelve la restricción
+y `lam` es una incógnita que se despeja. **El lasso no hace eso.** Como la
+restricción es *desigualdad*, se escribe
+
+    min_b  ||y - X b||^2  +  lam * sum_j |b_j|
+
+con **`lam` fijo, elegido por el usuario**, minimizando **solo sobre `b`**. El
+término `-lam*t` es constante en `b` y desaparece; por eso se ve `+lam*sum|b_j|`
+y no `lam*(sum|b_j| - t)`. En vez de fijar `t` y despejar su `lam`, se hace al
+revés: se fija `lam` y él determina implícitamente un `t`.
+
+Lo justifica la **dualidad de Lagrange** (problema convexo): para cada `t` existe
+un `lam(t) >= 0` que da el mismo `b_hat`, y viceversa. El mapa `t <-> lam` es
+monótono decreciente y **depende de los datos** (sin fórmula cerrada), así que en
+la práctica se **barre `lam`** en una rejilla y se elige por cross-validation, o
+se normaliza `s = t / sum_j |b_j^OLS|` en `[0, 1]` como en el paper.
+
+    t >= ||b_OLS||_1   <->   lam = 0        -> OLS puro (restricción inactiva)
+    t intermedio       <->   lam > 0        -> encoge / selecciona
+    t = 0              <->   lam -> inf      -> todo b = 0
+
+**4. Por qué ridge tiene cerrada y lasso no.** En forma lagrangiana ridge es
+diferenciable: se suma `lam*I` a las normal equations,
+
+    b_hat_ridge = (X^T X + lam*I)^{-1} X^T y
+
+Ese `lam*I` es, tangible, lo que estabiliza la inversa. El lasso tiene `|b_j|`,
+no derivable en 0 -> sin fórmula cerrada -> descenso por coordenadas + soft
+thresholding (Pieza 1).
+
+### Comparación OLS / Ridge / Lasso
+
+| | OLS | Ridge (L2) | Lasso (L1) |
+|---|---|---|---|
+| Objetivo (lagrangiano) | `||y-Xb||^2` | `||y-Xb||^2 + lam*sum b_j^2` | `||y-Xb||^2 + lam*sum|b_j|` |
+| Restricción equivalente | ninguna | `sum b_j^2 <= t^2` (círculo) | `sum |b_j| <= t` (rombo) |
+| Solución | `(X^TX)^{-1}X^Ty` | `(X^TX+lam*I)^{-1}X^Ty` | sin cerrada (CD + soft-thr.) |
+| Diferenciable en 0 | sí | sí | **no** (esquinas del rombo) |
+| Efecto sobre `b` | — | encoge proporcional `b/(1+lam)`* | soft threshold `sign(b)(|b|-g)+`* |
+| ¿Anula coeficientes? | no | **no** (nunca exacto 0) | **sí** (selección de variables) |
+
+\* Las formas cerradas `b/(1+lam)` y el soft threshold son exactas solo en diseño
+ortonormal (`X^T X = I`); es el caso de la Eq. 3 y de la Pieza 2.
+
+### El cuenco convexo, dibujado (`convex_rss.py`)
+
+`RSS(b) = y^T y - 2 y^T X b + b^T (X^T X) b` es cuadrática en `b`, con Hessiana
+constante `2 X^T X`, semidefinida positiva porque `v^T X^T X v = ||X v||^2 >= 0`.
+Eso la hace **convexa**: un cuenco con un único mínimo, sin trampas locales — por
+eso el descenso por coordenadas (Pieza 1) converge siempre al óptimo global.
+`convex_rss.py` lo muestra con un ejemplo de 2 predictores:
+
+- **(a)** un corte 1D → parábola que abre hacia arriba (`a = sum x_i^2 > 0`).
+- **(b)** la superficie 3D → el cuenco (paraboloide).
+- **(c)** vista cenital → curvas de nivel elípticas centradas en `b_hat`, con el
+  rombo `L1` y el círculo `L2` (Fig. 2). El óptimo lasso cae en el **vértice**
+  del rombo (`b1 = 0`, selección) mientras que el de ridge queda en el interior
+  del círculo (`b1 != 0`, sin selección).
+
+Run `python convex_rss.py` (guarda `convex_rss.png`). Requiere `numpy` +
+`matplotlib`.
+
+![Paraboloide convexo y contornos elípticos](convex_rss.png)
 
 ## Piece 1 — the solver (`lasso.py`)
 
@@ -56,3 +144,22 @@ With a sparse ground truth `beta = [3, 0, 1.5, 0, 0, 2, 0, 0]`, raising `lam`
 first zeroes the five null coefficients (variable selection) and then shrinks
 the survivors linearly toward zero — the signature of soft thresholding, versus
 ridge's proportional shrinkage.
+
+## Piece 2 — the four shrinkage functions (`shrinkage_functions.py`)
+
+Reproduces **Fig. 1** of the paper. In an orthonormal design each method acts
+coordinate-wise on the OLS coefficient `beta_hat`, so it is a scalar function
+`d(beta_hat)` (Sec. 2.2). The script plots all four against the 45° OLS line:
+
+- **Subset (hard):** follows OLS, then **jumps discontinuously to 0** at `|b|=γ`
+  — the instability the paper criticises.
+- **Ridge:** `b/(1+λ)`, proportional shrinkage, **never exactly 0**.
+- **Lasso (soft):** flat 0 on `[-γ, γ]`, then parallel to OLS shifted down by γ
+  — Eq. (3), continuous *and* selects.
+- **Garotte:** flat 0 on `[-γ, γ]`, then bends back toward OLS for large `|b|`.
+
+Reuses `soft_threshold` from `lasso.py`. Run `python shrinkage_functions.py`
+(saves `fig1_shrinkage_functions.png`) or execute the `# %%` cells in VS Code's
+Interactive Window to see it inline. Requires `numpy` + `matplotlib`.
+
+![Fig. 1 reproduction](fig1_shrinkage_functions.png)
