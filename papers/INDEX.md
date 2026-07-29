@@ -30,7 +30,7 @@ Rutas de lectura y orden sugerido en el [ROADMAP](../ROADMAP.md).
 | [Effective Approaches to Attention-based NMT](2015-luong-attention.pdf) | Luong, Pham & Manning | 2015 | Atención multiplicativa | 243 KB |
 | [Show, Attend and Tell](2015-xu-show-attend-tell.pdf) | Xu et al. | 2015 | Atención visual | 9358 KB |
 | [WaveNet: A Generative Model for Raw Audio](2016-oord-wavenet.pdf) | van den Oord et al. | 2016 | Convoluciones dilatadas causales | 2786 KB |
-| [Attention Is All You Need](2017-vaswani-attention.pdf) | Vaswani et al. | 2017 | ⭐🔧 El paper clave de la pista | 2163 KB |
+| [Attention Is All You Need](2017-vaswani-attention.pdf) | Vaswani et al. | 2017 | ⭐🔧 ✅ review · implementación en curso | 2163 KB |
 
 ## B · Tokenización
 
@@ -212,15 +212,29 @@ Rutas de lectura y orden sugerido en el [ROADMAP](../ROADMAP.md).
 
 | Paper | Autores | Año | Nota | Tamaño |
 |---|---|---|---|---|
+| [Portfolio Selection](1952-markowitz-portfolio-selection.pdf) | Markowitz | 1952 | ⭐🔧 ✅ review · implementación en curso | 1132 KB |
 | [A New Approach to Linear Filtering and Prediction Problems](1960-kalman-filtering.pdf) | Kalman | 1960 |  | 173 KB |
 | [High-frequency Trading in a Limit Order Book](2008-avellaneda-market-making.pdf) | Avellaneda & Stoikov | 2008 | Market making | 423 KB |
 
-## Pendientes de descargar (no accesibles automáticamente)
+## Pendientes de descargar
 
-- `1952-markowitz-portfolio-selection` — *Portfolio Selection* (Markowitz, 1952)
 - `2008-candes-compressive-sampling` — *An Introduction to Compressive Sampling* (Candès & Wakin, 2008)
 - `2017-taylor-prophet` — *Forecasting at Scale* (Taylor & Letham, 2017)
 
+### Quant — por descargar (ver bloques temáticos en el [ROADMAP](../ROADMAP.md))
+
+Los clásicos son casi todos de revistas de pago (JSTOR / Wiley / Elsevier); suele haber copia
+legítima en webs de curso universitarias. Enlaces útiles confirmados:
+
+- `1964-sharpe-capm` — *Capital Asset Prices* (Sharpe, 1964) — [PDF hospedado](http://psc.ky.gov/pscecf/2012-00221/rateintervention@ag.ky.gov/10252012f/sharpe_-_CAPM.pdf) · [Wiley](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1540-6261.1964.tb02865.x)
+- `1958-tobin-liquidity-preference` — *Liquidity Preference as Behavior Towards Risk* (Tobin, 1958, *RES* 25)
+- `1970-fama-efficient-markets` — *Efficient Capital Markets* (Fama, 1970, *JF* 25)
+- `1973-black-scholes-options` — *The Pricing of Options and Corporate Liabilities* (Black & Scholes, 1973, *JPE* 81)
+- `1993-fama-french-three-factor` — *Common Risk Factors in the Returns on Stocks and Bonds* (*JFE* 33)
+- `2004-ledoit-wolf-shrinkage` — *A Well-Conditioned Estimator for Large-Dimensional Covariance Matrices* (*JMVA* 88) — el antídoto directo al problema de estimación de Markowitz
+- `2000-almgren-chriss-execution` — *Optimal Execution of Portfolio Transactions* — [PDF (NYU)](https://www.smallake.kr/wp-content/uploads/2016/03/optliq.pdf)
+- `2001-cont-stylized-facts` — *Empirical Properties of Asset Returns: Stylized Facts and Statistical Issues* (*Quantitative Finance* 1)
+
 ---
 
-**Total en `papers/`: 111 PDFs.**
+**Total en `papers/`: 112 PDFs.**

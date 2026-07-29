@@ -85,5 +85,5 @@ Datos: la correlación de Fig. 1 viene en el propio paper (9 pares, Remark B). P
 ## Conexiones
 
 - **[Tibshirani (1996), Lasso](1996-tibshirani-lasso.md):** el paper del Lasso usa el bootstrap para los errores estándar de los coeficientes (su Eq. 7), y señala su fallo — da varianza 0 justo para los coeficientes anulados. Conexión directa: el bootstrap es la herramienta de incertidumbre que al Lasso se le resiste.
-- **Markowitz (1952), próximo paper:** el bootstrap es la vía estándar para meter incertidumbre en la frontera eficiente (remuestrear retornos → distribución de las carteras óptimas), que es notoriamente inestable. Buen puente entre ambos.
+- **[Markowitz (1952), Portfolio Selection](1952-markowitz-portfolio-selection.md):** el bootstrap es la vía estándar para meter incertidumbre en la frontera eficiente (remuestrear retornos → distribución de las carteras óptimas), que es notoriamente inestable. Buen puente entre ambos.
 - **Futuras del [ROADMAP](../ROADMAP.md):** Breiman (2001, Random Forests — el *bagging* es bootstrap + agregación), Bottou et al. (2018, la conexión remuestreo/optimización), y la asignatura de series temporales (block bootstrap).

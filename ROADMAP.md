@@ -62,7 +62,7 @@ Cada asignatura lleva asociados papers candidatos para el flujo `/paper` (review
 - [ ] Salinas et al. (2020) — *DeepAR: Probabilistic Forecasting with Autoregressive Recurrent Networks* — arXiv:1704.04110
 
 ### Aprendizaje automático
-- [ ] Vaswani et al. (2017) — *Attention Is All You Need* — arXiv:1706.03762
+- [x] Vaswani et al. (2017) — *Attention Is All You Need* — [review](reviews/2017-vaswani-attention.md) ✔ · [implementación](implementations/2017-vaswani-attention/) en curso
 - [ ] Srivastava et al. (2014) — *Dropout: A Simple Way to Prevent Neural Networks from Overfitting*
 - [ ] He et al. (2015) — *Deep Residual Learning for Image Recognition* — arXiv:1512.03385
 
@@ -110,7 +110,7 @@ El orden importa: cada paper responde a una limitación del anterior. Es la mejo
 - [ ] Xu et al. (2015) — *Show, Attend and Tell* — arXiv:1502.03044 — atención visual
 - [ ] Graves, Wayne & Danihelka (2014) — *Neural Turing Machines* — arXiv:1410.5401 — memoria externa direccionable
 - [ ] van den Oord et al. (2016) — *WaveNet* — arXiv:1609.03499 — convoluciones dilatadas causales
-- [ ] ⭐🔧 Vaswani et al. (2017) — *Attention Is All You Need* — arXiv:1706.03762 — implementar self-attention y multi-head desde cero es el ejercicio más rentable de toda la pista
+- [x] ⭐🔧 Vaswani et al. (2017) — *Attention Is All You Need* — [review](reviews/2017-vaswani-attention.md) ✔ · [implementación](implementations/2017-vaswani-attention/) en curso. Implementar self-attention y multi-head desde cero es el ejercicio más rentable de toda la pista
 
 ### Ruta B — Tokenización y embeddings
 
@@ -241,17 +241,65 @@ Criterio: aplicar a quant este ciclo con el perfil actual; dejar la solicitud de
 - [ ] Algoritmia en Python: LeetCode nivel medium, 3-4 problemas/semana.
 - [ ] CV en inglés de una página, orientado a quant (perfil matemático + este repo como portfolio).
 
-### Papers quant para el flujo `/paper` (orden sugerido)
+### Papers quant para el flujo `/paper`
 
-- [ ] Markowitz (1952) — *Portfolio Selection* — el punto de partida: optimización media-varianza, álgebra lineal pura.
-- [ ] Black & Scholes (1973) — *The Pricing of Options and Corporate Liabilities* — conexión directa con física (ecuación del calor).
-- [ ] Kalman (1960) — *A New Approach to Linear Filtering and Prediction Problems* — filtrado secuencial, base de muchas señales quant.
-- [ ] Gatev, Goetzmann & Rouwenhorst (2006) — *Pairs Trading: Performance of a Relative-Value Arbitrage Rule* — primera estrategia completa con backtest.
-- [ ] Moskowitz, Ooi & Pedersen (2012) — *Time Series Momentum* — factor investing, series temporales financieras.
-- [ ] Avellaneda & Stoikov (2008) — *High-frequency Trading in a Limit Order Book* — market making, control estocástico.
-- [ ] López de Prado (2016) — *Building Diversified Portfolios that Outperform Out-of-Sample* (Hierarchical Risk Parity) — ML aplicado a carteras, enlaza con el máster.
+Organizados por bloque temático, no como cola: cada bloque responde a una pregunta distinta.
+⭐ = el imprescindible del bloque · 🔧 = merece implementación desde cero.
 
-Sinergias con el resto del roadmap: el Lasso ya revisado, Friedman (boosting) y Bottou (optimización estocástica) son directamente relevantes para quant research — citarlos en entrevistas.
+#### Q1 · Teoría de carteras y equilibrio de mercado (el canon)
+
+La línea histórica: cada paper responde a una limitación del anterior. Es el bloque con mejor
+relación *entender/esfuerzo* y el que más se cita en entrevistas.
+
+- [x] ⭐🔧 **Markowitz (1952)** — *Portfolio Selection* — [review](reviews/1952-markowitz-portfolio-selection.md) ✔ · [implementación](implementations/1952-markowitz-portfolio-selection/) en curso. Optimización media-varianza; álgebra lineal pura. PDF en `papers/`.
+- [ ] Tobin (1958) — *Liquidity Preference as Behavior Towards Risk* — añade el **activo libre de riesgo** → **teorema de separación en dos fondos** y capital market line.
+- [ ] ⭐ Sharpe (1964) — *Capital Asset Prices: A Theory of Market Equilibrium under Conditions of Risk* — **CAPM**: el $\beta$ y el riesgo sistemático. Es Markowitz llevado al equilibrio de mercado. [PDF](http://psc.ky.gov/pscecf/2012-00221/rateintervention@ag.ky.gov/10252012f/sharpe_-_CAPM.pdf)
+- [ ] Fama (1970) — *Efficient Capital Markets: A Review of Theory and Empirical Work* — **EMH**, las tres formas de eficiencia. El marco conceptual del "no hay almuerzo gratis".
+- [ ] 🔧 Fama & French (1993) — *Common Risk Factors in the Returns on Stocks and Bonds* — el **modelo de tres factores**; el CAPM no basta. Implementable como regresión sobre factores reales (datos gratis en la web de French).
+
+#### Q2 · El talón de Aquiles: estimar $\boldsymbol\mu$ y $\Sigma$
+
+El propio Markowitz deja abierto el problema de la etapa 1. Este bloque es **el más
+directamente conectado con el máster** (regularización, matrices de covarianza, ML).
+
+- [ ] Michaud (1989) — *The Markowitz Optimization Enigma: Is Optimized Optimal?* — por qué la optimización **amplifica** el error de estimación (*error maximization*).
+- [ ] ⭐🔧 Ledoit & Wolf (2004) — *A Well-Conditioned Estimator for Large-Dimensional Covariance Matrices* — **shrinkage de la covarianza**; es *ridge* aplicado a $\Sigma$, conexión directa con el Lasso ya revisado.
+- [ ] Black & Litterman (1992) — *Global Portfolio Optimization* — meter *views* bayesianas sobre $\boldsymbol\mu$; enlaza con Aprendizaje Bayesiano.
+- [ ] 🔧 López de Prado (2016) — *Building Diversified Portfolios that Outperform Out-of-Sample* (**Hierarchical Risk Parity**) — clustering en vez de invertir $\Sigma$; ML aplicado a carteras.
+- [ ] Brodie et al. (2009) — *Sparse and Stable Markowitz Portfolios* — penalización $L_1$ sobre los pesos. **El cruce exacto Lasso × Markowitz.**
+
+#### Q3 · Valoración de derivados
+
+- [ ] ⭐ Black & Scholes (1973) — *The Pricing of Options and Corporate Liabilities* — conexión directa con física: la EDP se reduce a la **ecuación del calor**. Terreno natural para tu perfil.
+- [ ] Merton (1973) — *Theory of Rational Option Pricing* — la formulación general y rigurosa.
+- [ ] 🔧 Cox, Ross & Rubinstein (1979) — *Option Pricing: A Simplified Approach* — el **modelo binomial**; la vía pedagógica de implementar B-S y ver la convergencia al continuo.
+
+#### Q4 · Series temporales financieras y estilizados
+
+- [ ] ⭐ Cont (2001) — *Empirical Properties of Asset Returns: Stylized Facts and Statistical Issues* — colas pesadas, clustering de volatilidad, ausencia de autocorrelación. **Leer pronto**: es el reality-check de todos los supuestos gaussianos de Q1.
+- [ ] 🔧 Engle (1982) — *Autoregressive Conditional Heteroscedasticity* (**ARCH**) — Nobel 2003; la volatilidad no es constante.
+- [ ] Bollerslev (1986) — *Generalized ARCH* (**GARCH**) — el caballo de batalla real.
+- [ ] 🔧 Kalman (1960) — *A New Approach to Linear Filtering and Prediction Problems* — filtrado secuencial; base de muchas señales quant y de la estimación dinámica de $\boldsymbol\mu$/$\Sigma$. PDF en `papers/`.
+
+#### Q5 · Estrategias y microestructura
+
+- [ ] 🔧 Gatev, Goetzmann & Rouwenhorst (2006) — *Pairs Trading: Performance of a Relative-Value Arbitrage Rule* — primera **estrategia completa con backtest**; cointegración.
+- [ ] Jegadeesh & Titman (1993) — *Returns to Buying Winners and Selling Losers* — el paper original del **momentum**.
+- [ ] Moskowitz, Ooi & Pedersen (2012) — *Time Series Momentum* — factor investing sobre series temporales.
+- [ ] Kyle (1985) — *Continuous Auctions and Insider Trading* — el modelo canónico de **microestructura** e impacto informativo.
+- [ ] 🔧 Almgren & Chriss (2000) — *Optimal Execution of Portfolio Transactions* — **ejecución óptima**: control estocástico, muy preguntado en entrevistas. [PDF](https://www.smallake.kr/wp-content/uploads/2016/03/optliq.pdf)
+- [ ] Avellaneda & Stoikov (2008) — *High-frequency Trading in a Limit Order Book* — **market making**, HJB. PDF en `papers/`.
+
+#### Orden sugerido si tiras del hilo
+
+**Q1 (Markowitz → Sharpe) → Q2 (Ledoit-Wolf) → Q4 (Cont) → Q5 (pairs trading)**. Ese recorrido
+va de la teoría al backtest pasando por la crítica estadística, y deja un portfolio de GitHub
+muy presentable: frontera eficiente, shrinkage de covarianza, hechos estilizados y una
+estrategia con backtest.
+
+Sinergias con el resto del roadmap: el Lasso ya revisado (regularización → Q2), Efron/bootstrap
+(incertidumbre de la frontera → Q1–Q2), Friedman (boosting) y Bottou (optimización estocástica)
+son directamente relevantes para quant research — citarlos en entrevistas.
 
 ## Preparación previa (julio–agosto 2026, antes de empezar)
 
