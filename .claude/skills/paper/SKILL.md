@@ -27,12 +27,22 @@ Lee el PDF completo (usa la skill de PDF si hace falta OCR o extracción). Escri
 
 Antes de escribir código, resume al usuario qué propones implementar (qué resultado del paper se reproduce, qué se simplifica, tiempo estimado de cómputo) y espera su confirmación. Los papers a menudo requieren datos o cómputo inasequibles; acordar el alcance evita implementaciones inútiles.
 
-## Paso 4 — Implementar (poco a poco)
+## Paso 4 — El desarrollo matemático
+
+Antes o en paralelo al código, escribe `implementations/<slug>/DERIVATIONS.md`: la matemática del tema desarrollada de principio a fin, en **orden lógico propio**, para leerse seguido. **Se escribe en inglés**, a diferencia de la review y del README. El formato está en el `CLAUDE.md`.
+
+Lo primero es diseñar ese orden, y no sale del índice del paper. Pregúntate qué es lo mínimo para plantear el problema, qué lo simplifica, qué caso particular se resuelve entero a mano, y qué hace falta añadir para levantar cada restricción. Ese árbol de dependencias es el guion. Los papers exponen para convencer, no para construir: su orden casi nunca sirve.
+
+Deduce **todo** lo que uses, incluido lo que el paper da por sabido — que suele ser mucho: los *"are easily shown to be"*, los *"one can show"*, las fórmulas enunciadas sin más. No des por bueno un paso porque "se ve": si al deducirlo aparece una errata, un límite de validez que falta o una ambigüedad, va documentado en su sitio con la comprobación numérica que lo respalde.
+
+Las figuras se generan con un script propio y se calculan con el solver ya implementado, de modo que cada una valide lo que acompaña.
+
+## Paso 5 — Implementar (poco a poco)
 
 El usuario prefiere implementar de forma incremental: primero lee el paper, y luego se programa por partes a lo largo de varias sesiones — nunca todo el código de golpe. El objetivo es que él entienda cada pieza, así que implementa solo la parte que pida en cada momento, explica el código y conéctalo con las ecuaciones del paper.
 
 Crea `implementations/<slug>/` siguiendo las convenciones del `CLAUDE.md` (scripts claros, referencias a ecuaciones del paper, `README.md` con instrucciones y comparación de resultados). Ejecuta cada parte y verifica que reproduce —al menos cualitativamente— el resultado del paper; deja constancia de la comparación en el README. Si los resultados no cuadran, dilo honestamente en el README en lugar de maquillarlo: una discrepancia documentada también es un resultado.
 
-## Paso 5 — Cierre
+## Paso 6 — Cierre
 
 Termina con un resumen: dónde quedó cada archivo, qué se reprodujo y qué quedó pendiente. Si el repo usa git, ofrece hacer commit.
