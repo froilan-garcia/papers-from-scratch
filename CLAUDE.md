@@ -1,4 +1,4 @@
-# ClaudeLarp — Reviews de literatura + implementación de papers
+# papers-from-scratch — Reviews de literatura + implementación de papers
 
 Espacio de trabajo de Froilán (graduado en Física y Matemáticas, Univ. de Oviedo; máster en Big Data Analytics en la UC3M desde septiembre de 2026) para leer papers científicos, escribir reviews estructuradas e implementar su contenido en Python.
 
