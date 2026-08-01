@@ -206,42 +206,11 @@ El orden importa: cada paper responde a una limitación del anterior. Es la mejo
 - [ ] Mnih et al. (2013) — *Playing Atari with Deep Reinforcement Learning* (DQN) — arXiv:1312.5602
 - [ ] Schulman et al. (2017) — *Proximal Policy Optimization* — arXiv:1707.06347 — la base del RLHF de los LLMs
 
-## Preparación quant (julio–octubre 2026) — prácticas verano 2027
+## Papers quant para el flujo `/paper`
 
-Objetivo: solicitar prácticas de quant research / quant trading para el verano de 2027. Los procesos son **rolling** (~70% de plazas firmadas para mediados de octubre).
-
-**Estrategia (revisada 23 jul 2026):** no correr con Citadel en agosto sin estar afilado. Suspender el OA (online assessment) tiene *cooldown* de 6–12 meses — ese es el coste real, no ninguna "blacklist" (aplicar y ser rechazado no quema para el futuro). Por eso: **agosto = 100% preparación + GitHub; 1ª semana de septiembre = aplicar en bloque** ya preparado (el OA llega ~5–7 días después). Rolling sigue abierto en septiembre; aplicar pronto, no en octubre. Plan detallado en [quant/plan-agosto-septiembre.md](quant/plan-agosto-septiembre.md).
-
-### Calendario de solicitudes — aplicar en bloque la 1ª semana de septiembre
-
-| Firma | Oficinas (Europa) | Nota | Enlace |
-|---|---|---|---|
-| Citadel / Citadel Securities | Londres | Abierta desde julio — se aplica algo tarde, pero se aplica | [citadel.com/careers](https://www.citadel.com/careers/open-opportunities/internships/) |
-| Jane Street | Londres | Abre agosto 2026 | [janestreet.com](https://www.janestreet.com/join-jane-street/internships/) |
-| Optiver | Ámsterdam, Londres | Abre agosto 2026 | [optiver.com](https://www.optiver.com/join-us/) |
-| IMC Trading | Ámsterdam | ~agosto | [imc.com](https://careers.imc.com/) |
-| G-Research | Londres | ~sept | [gresearch.com](https://www.gresearch.com/vacancies/) |
-| Qube Research & Technologies | Londres | ~sept | [qube-rt.com](https://www.qube-rt.com/careers/) |
-| Squarepoint Capital | Londres | ~sept | [squarepoint-capital.com](https://www.squarepoint-capital.com/open-positions) |
-| Flow Traders | Ámsterdam | ~sept | [flowtraders.com](https://www.flowtraders.com/careers) |
-
-### Plan B — máster especializado (ETH/UvA), decisión en noviembre
-
-**No es necesario** para ser competitivo: el perfil (doble grado Mates+Física + máster Big Data + portfolio de papers) ya encaja en quant research/trading. Es una **palanca opcional** con tres usos: (a) plan B si el ciclo de septiembre no cuaja, (b) arreglar el timing de prácticas (el máster de Big Data es de 1 año → verano de prácticas justo al graduarse; el MFE da verano intermedio), (c) enchufarse a la pipeline de Ámsterdam.
-
-- **ETH/UZH — MSc Quantitative Finance:** 3 semestres, ~€2.700 todo el máster. Fall 2026 cerrado; **solicitudes para otoño 2027 abren en noviembre 2026** (cae en tu 1er semestre de la UC3M → opción de bajo riesgo). [math.ethz.ch](https://math.ethz.ch/studies/master-programmes/master-quantitative-finance.html)
-- **UvA (Ámsterdam):** MSc Quantitative Finance o MSc Actuarial Science & Mathematical Finance (track QRM). ~1 año, tasa UE ~€2.600. Optiver/IMC/Flow reclutan en el campus. [abs.uva.nl](https://abs.uva.nl/content/masters/finance-quantitative-finance/study-programme/study-programme.html)
-
-Criterio: aplicar a quant este ciclo con el perfil actual; dejar la solicitud de ETH (nov 2026) como opción viva; **decidir en firme a principios de 2027**, ya con resultados en la mano. No matricularse en un 2º máster "por si acaso" antes de intentarlo.
-
-### Preparación de entrevistas (en paralelo, ritmo diario corto)
-
-- [ ] Probabilidad y brainteasers: Xinfeng Zhou, *A Practical Guide to Quantitative Finance Interviews* (el "libro verde") — 1 sesión corta al día.
-- [ ] Cálculo mental rápido: entrenar con juegos tipo Optiver 80-in-8 / arithmetic-game.
-- [ ] Algoritmia en Python: LeetCode nivel medium, 3-4 problemas/semana.
-- [ ] CV en inglés de una página, orientado a quant (perfil matemático + este repo como portfolio).
-
-### Papers quant para el flujo `/paper`
+Bloque orientado a *quantitative research*: teoría de carteras, estimación de covarianzas,
+series financieras y microestructura. Complementa las asignaturas del máster por el lado
+aplicado, y varios de sus papers son implementables desde cero con el stack base.
 
 Organizados por bloque temático, no como cola: cada bloque responde a una pregunta distinta.
 ⭐ = el imprescindible del bloque · 🔧 = merece implementación desde cero.

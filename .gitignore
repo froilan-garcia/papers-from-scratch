@@ -34,6 +34,13 @@ papers/*.pdf
 # Notas personales: no se publican
 GUIA-LECTURA.md
 
+# Búsqueda de prácticas: CV, cartas de motivación, calendario de solicitudes y
+# plan de preparación. Es material personal y además estratégico — publicar a
+# qué firmas se aplica y cuándo juega en contra. Vive fuera del repo, en
+# Desktop/quant-practicas/. La pista de LECTURA quant sí se queda: está en
+# ROADMAP.md, sección "Papers quant para el flujo /paper".
+quant/
+
 # Trabajo en curso que no se publica hasta estar entendido a fondo.
 # Lasso: la reproducción de la Tabla 3 (Sec. 7) corre y el ordenamiento de
 # métodos sale, pero los niveles de error no cuadran con ninguna sigma y el
