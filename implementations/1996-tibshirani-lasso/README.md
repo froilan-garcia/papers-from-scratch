@@ -1,229 +1,283 @@
-# Lasso via coordinate descent — Tibshirani (1996)
+# Lasso — Tibshirani (1996)
 
-Implementation of the lasso from *Regression Shrinkage and Selection via the
-Lasso* (Tibshirani, 1996). See the [review](../../reviews/1996-tibshirani-lasso.md)
-for the paper's context and results.
+Implementación de *Regression Shrinkage and Selection via the Lasso*. Contexto y
+resultados del paper en la [review](../../reviews/1996-tibshirani-lasso.md).
 
-Built incrementally. Current status:
+> 📐 **La matemática está en [DEDUCCIONES.md](DEDUCCIONES.md)**, desarrollada de
+> principio a fin: el problema, su geometría, los casos que se resuelven a mano, el
+> algoritmo general, la forma cerrada que sobrevive sobre el conjunto activo y la
+> elección del presupuesto. Este README solo recoge lo que se ejecuta y lo que sale.
 
-| # | Piece | Status |
-|---|-------|--------|
-| 0 | Convexity of the RSS + Fig. 2 constraint geometry | ✅ `convex_rss.py` |
-| 1 | Coordinate-descent solver + soft thresholding | ✅ `lasso.py` |
-| 2 | Fig. 1 — the four shrinkage functions (subset / ridge / lasso / garotte) | ✅ `shrinkage_functions.py` |
-| 3 | Fig. 5 + Table 1 — coefficient paths on the prostate-cancer data | ✅ `prostate_paths.py` |
-| 4 | Table 3 — MSE comparison OLS / lasso-CV / ridge over 50 replicates | ⬜ pending |
-| 5 | Cross-check the solver against `sklearn.linear_model.Lasso` | ⬜ pending |
+> **Estado: cerrada.** El solver, el caso ortonormal, el caso $p=2$, los datos de
+> próstata, las figuras del paper y el cotejo contra `scikit-learn`. Hubo una
+> versión anterior que se descartó por usar convenciones y algoritmos que no son
+> los del paper; queda archivada en la rama `lasso-v1-archive` y no es la
+> referencia.
+>
+> **Lo que no está aquí:** la reproducción de la Tabla 3 (simulaciones de la
+> Sec. 7). Corre y el ordenamiento de métodos sale, pero los niveles de error no
+> cuadran con ninguna $\sigma$, y el diagnóstico depende de detalles del montaje
+> de simulación que todavía no domino. Se queda en local hasta poder decir de
+> quién es el desajuste; afirmarlo ahora sería afirmar de más.
 
-## Fundamentos — from OLS to the Lagrangian form
+## Qué cuadra y qué no
 
-Notas de repaso antes de la Pieza 1: por qué la "forma lagrangiana" del lasso no
-usa `lambda` como el multiplicador de Lagrange de cálculo.
+| Objetivo del paper | Resultado |
+|---|---|
+| Eq. 3 (caso ortonormal) | ✅ coincide con el solver a $1.8\times10^{-15}$ |
+| Sec. 6, iteraciones entre $0.5p$ y $0.75p$ | ✅ media $\approx 0.5p$, nunca por encima de $0.75p$ |
+| Trayectoria: $s=1\Rightarrow$ OLS, $s=0\Rightarrow 0$ | ✅ a $3\times10^{-15}$ |
+| Tabla 1, columna mínimos cuadrados | ✅ a 0.01 — **pero solo con el fichero de datos sin corregir** |
+| Tabla 1, columna lasso (en $s=0.44$) | ✅ a 0.01, y selecciona exactamente `lcavol`, `lweight`, `svi` |
+| Fig. 5 (trayectorias de próstata) | ✅ |
+| Fig. 1 y Fig. 2 | ✅ el lasso cae en la esquina ($\beta_1 = 2.8\times10^{-17}$), ridge no |
+| Eq. 5 y 6 "valid even if the predictors are correlated" | ✅ el mismo $\gamma$ en las dos coordenadas y en los cinco $\rho$, a 9 decimales |
+| Fig. 4 (dos predictores) | ✅ incluido el repunte de ridge para $\rho>1/2$, que sale deducido |
+| Contra `sklearn.linear_model.Lasso` y LARS | ✅ a $8\times10^{-13}$ en toda la trayectoria |
+| $\hat s = 0.44$ por GCV (Eq. 10) | ❌ **nuestro GCV minimiza en 0.69** |
 
-**1. OLS.** Con `y = X b + noise`, se minimiza el error cuadrático
-`RSS(b) = ||y - X b||^2`. Es convexo; derivando e igualando a cero salen las
-*normal equations* y la solución cerrada:
+La discrepancia del GCV está diagnosticada abajo, y no es un fallo del solver:
+en $s=0.44$ reproducimos la Tabla 1 clavada, lo que aísla el problema en el
+selector y no en el lasso.
 
-    X^T X b = X^T y   =>   b_hat = (X^T X)^{-1} X^T y
+## Reglas de esta implementación
 
-Si las columnas de `X` están correladas, `X^T X` está mal condicionada y `b_hat`
-tiene varianza enorme. De ahí la idea de **acotar** `b`.
+Decisiones tomadas por adelantado, para que no aparezcan escondidas en un
+comentario a mitad del código.
 
-**2. Forma restringida (Eq. 1 del paper).** Se le pone presupuesto a `b`:
+**1. El objetivo es el del paper, sin reescalados modernos.** Eq. 1:
 
-    min_b ||y - X b||^2   s.a.   sum_j |b_j| <= t     (lasso, L1)
-    min_b ||y - X b||^2   s.a.   sum_j b_j^2  <= t^2   (ridge, L2)
+$$\min_\beta \ \sum_{i=1}^N\Big(y_i - \alpha - \sum_j \beta_j x_{ij}\Big)^2
+\qquad \text{sujeto a} \quad \sum_j |\beta_j| \le t$$
 
-Geométrico y claro: minimizar dentro de una bola — rombo para L1, círculo para
-L2 (Fig. 2).
+Sin el $\frac{1}{2N}$ de `glmnet`/`sklearn`, que no está en el paper: el $\frac12$ es
+para que la derivada salga limpia y el $\frac1N$ para que $\lambda$ no dependa del
+tamaño de muestra. La v1 lo usaba sin avisar, de modo que su $\lambda$ era
+$\lambda_{\text{paper}}/2N$.
 
-**3. Forma lagrangiana (lo que despista).** El Lagrange de cálculo, con
-restricción de *igualdad* `g(b) = t`, es `L = f(b) + lam*(g(b) - t)` y se
-resuelve `grad_b L = 0` **y** `dL/dlam = 0` — esta última devuelve la restricción
-y `lam` es una incógnita que se despeja. **El lasso no hace eso.** Como la
-restricción es *desigualdad*, se escribe
+**2. El parámetro se indexa como lo indexa el paper**, $s = t/\sum_j|\hat\beta_j^{OLS}| \in [0,1]$,
+porque la Sección 4 dice literalmente que la CV se hace *"over a grid of values of
+$s$ from 0 to 1 inclusive"*. La v1 barría $\lambda$ en escala logarítmica.
 
-    min_b  ||y - X b||^2  +  lam * sum_j |b_j|
+**3. El algoritmo es el de la Sección 6**, programación cuadrática con las
+restricciones de signo introducidas secuencialmente. **No** descenso por
+coordenadas: eso es de Friedman, Hastie, Höfling & Tibshirani (2007).
 
-con **`lam` fijo, elegido por el usuario**, minimizando **solo sobre `b`**. El
-término `-lam*t` es constante en `b` y desaparece; por eso se ve `+lam*sum|b_j|`
-y no `lam*(sum|b_j| - t)`. En vez de fijar `t` y despejar su `lam`, se hace al
-revés: se fija `lam` y él determina implícitamente un `t`.
+### Desviaciones respecto al paper
 
-Lo justifica la **dualidad de Lagrange** (problema convexo): para cada `t` existe
-un `lam(t) >= 0` que da el mismo `b_hat`, y viceversa. El mapa `t <-> lam` es
-monótono decreciente y **depende de los datos** (sin fórmula cerrada), así que en
-la práctica se **barre `lam`** en una rejilla y se elige por cross-validation, o
-se normaliza `s = t / sum_j |b_j^OLS|` en `[0, 1]` como en el paper.
+- **El QP interior.** La Sec. 6 delega cada subproblema en Lawson & Hansen (1974).
+  Aquí está escrito el método de conjunto activo primal estándar que eso significa
+  (`constrained_ls` en [lasso.py](lasso.py)). Mismo QP, misma solución, álgebra
+  exacta; lo que cambia es de quién es el código.
+- **La interpretación de $W^-$ en la Eq. 9.** El paper solo dice "generalized
+  inverse". Leída como pseudoinversa de Moore–Penrose, los coeficientes nulos
+  quedarían *sin* penalizar, que es al revés de lo que hace falta. Se usa la
+  lectura $1/|\beta_j|\to\infty$ (los nulos salen del ajuste), que es la única
+  compatible con que la Eq. 7 dé varianza 0 para ellos, como reporta la Tabla 2.
+  Están implementadas y comparadas las dos.
+- **CV por pliegue.** Dentro de cada pliegue, $t = s\sum_j|\hat\beta_j^{OLS}(\text{train})|$,
+  con el OLS *de ese pliegue*. El paper no lo especifica.
+- **No implementado:** el estimador insesgado del riesgo de Stein (Eq. 11), que
+  solo está derivado para el diseño ortogonal. La fórmula sí se comprueba —y se le
+  encuentra una errata— en [orthonormal.py](orthonormal.py), pero no se usa como
+  selector.
+- **No publicado:** las simulaciones de la Sec. 7. Ver el recuadro de estado.
 
-    t >= ||b_OLS||_1   <->   lam = 0        -> OLS puro (restricción inactiva)
-    t intermedio       <->   lam > 0        -> encoge / selecciona
-    t = 0              <->   lam -> inf      -> todo b = 0
+## Por qué este orden y no el del paper
 
-**4. Por qué ridge tiene cerrada y lasso no.** En forma lagrangiana ridge es
-diferenciable: se suma `lam*I` a las normal equations,
+El paper va: definición → caso ortonormal → geometría → datos de próstata →
+elección de $t$ → Bayes → algoritmo → simulaciones. Ese orden es **expositivo**:
+sirve para convencer a un lector.
 
-    b_hat_ridge = (X^T X + lam*I)^{-1} X^T y
+Un orden de **implementación** responde en cada paso a *¿qué necesita existir para
+que el siguiente funcione?* Sale distinto:
 
-Ese `lam*I` es, tangible, lo que estabiliza la inversa. El lasso tiene `|b_j|`,
-no derivable en 0 -> sin fórmula cerrada -> descenso por coordenadas + soft
-thresholding (Pieza 1).
-
-### Comparación OLS / Ridge / Lasso
-
-| | OLS | Ridge (L2) | Lasso (L1) |
+| Cambia | El paper lo pone | Aquí | Por qué |
 |---|---|---|---|
-| Objetivo (lagrangiano) | `||y-Xb||^2` | `||y-Xb||^2 + lam*sum b_j^2` | `||y-Xb||^2 + lam*sum|b_j|` |
-| Restricción equivalente | ninguna | `sum b_j^2 <= t^2` (círculo) | `sum |b_j| <= t` (rombo) |
-| Solución | `(X^TX)^{-1}X^Ty` | `(X^TX+lam*I)^{-1}X^Ty` | sin cerrada (CD + soft-thr.) |
-| Diferenciable en 0 | sí | sí | **no** (esquinas del rombo) |
-| Efecto sobre `b` | — | encoge proporcional `b/(1+lam)`* | soft threshold `sign(b)(|b|-g)+`* |
-| ¿Anula coeficientes? | no | **no** (nunca exacto 0) | **sí** (selección de variables) |
+| El algoritmo (Sec. 6) | casi al final | paso 4 | Sin solver no hay nada que validar. |
+| Los datos de próstata (Sec. 3) | al principio | paso 8 | Necesita un selector de $s$, que es el paso 7. |
+| Las figuras 1 y 2 (Sec. 2) | al principio | paso 9 | Ilustran, no habilitan. |
+| El caso $p=1$ | no aparece | paso 2 | Es el átomo del que sale todo lo demás. |
 
-\* Las formas cerradas `b/(1+lam)` y el soft threshold son exactas solo en diseño
-ortonormal (`X^T X = I`); es el caso de la Eq. 3 y de la Pieza 2.
+## Los pasos
 
-### El cuenco convexo, dibujado (`convex_rss.py`)
+**1. Evaluar antes de resolver** ✅ — `rss`, `l1_norm`, `is_feasible`.
+$\text{RSS} = \beta^\top(X^\top X)\beta - 2y^\top X\beta + y^\top y$ tiene Hessiana
+$2X^\top X \succeq 0$, luego es convexo y el mínimo sobre un convexo es único si
+$X^\top X\succ0$ — que es por qué cualquier solver correcto da la misma respuesta.
 
-`RSS(b) = y^T y - 2 y^T X b + b^T (X^T X) b` es cuadrática en `b`, con Hessiana
-constante `2 X^T X`, semidefinida positiva porque `v^T X^T X v = ||X v||^2 >= 0`.
-Eso la hace **convexa**: un cuenco con un único mínimo, sin trampas locales — por
-eso el descenso por coordenadas (Pieza 1) converge siempre al óptimo global.
-`convex_rss.py` lo muestra con un ejemplo de 2 predictores:
+**2. El caso de un solo predictor** ✅ — El óptimo sin restringir es
+$\hat b = x^\top y/x^\top x$, y como la parábola es simétrica en torno a él, la
+solución restringida es el punto de $[-t,t]$ más cercano:
+$b^\star = \mathrm{sign}(\hat b)\min(|\hat b|,t)$. Ojo al matiz: con $p=1$ eso es
+**recorte**, no *soft thresholding*. El soft thresholding necesita $p\ge2$
+compartiendo un mismo presupuesto — es el multiplicador común el que traslada
+todos los coeficientes por la misma constante.
 
-- **(a)** un corte 1D → parábola que abre hacia arriba (`a = sum x_i^2 > 0`).
-- **(b)** la superficie 3D → el cuenco (paraboloide).
-- **(c)** vista cenital → curvas de nivel elípticas centradas en `b_hat`, con el
-  rombo `L1` y el círculo `L2` (Fig. 2). El óptimo lasso cae en el **vértice**
-  del rombo (`b1 = 0`, selección) mientras que el de ridge queda en el interior
-  del círculo (`b1 != 0`, sin selección).
+**3. El caso ortonormal, y de ahí la Eq. 3** ✅ — Si $X^\top X = I$ entonces
+$\hat\beta^{o}=X^\top y$ y
 
-Run `python convex_rss.py` (guarda `convex_rss.png`). Requiere `numpy` +
-`matplotlib`.
+$$\|y-X\beta\|^2 = \|y\|^2 - 2\beta^\top\hat\beta^o + \|\beta\|^2 = \|\beta-\hat\beta^o\|^2 + \text{cte}$$
 
-![Paraboloide convexo y contornos elípticos](convex_rss.png)
+que **separa** el problema en $p$ problemas de una dimensión atados por un único
+$\gamma\ge0$. La estacionariedad da $\beta_j = \hat\beta^o_j - \gamma\,\mathrm{sign}(\beta_j)$,
+o sea la Eq. 3. *Validado:* coincide con el solver a $1.8\times10^{-15}$
+([orthonormal.py](orthonormal.py)).
 
-## Piece 1 — the solver (`lasso.py`)
+**4. El algoritmo del paper (Sec. 6)** ✅ — $\sum_j|\beta_j|\le t$ equivale a las
+$2^p$ restricciones $\delta_i^\top\beta\le t$ porque $\max_\delta \delta^\top\beta$
+se alcanza en $\delta=\mathrm{sign}(\beta)$ y vale $\sum_j|\beta_j|$: la bola $L_1$
+es un politopo de $2^p$ caras. El algoritmo nunca las construye todas; añade las
+violadas de una en una hasta que se cumple Kuhn–Tucker. *Validado:* reproduce el
+paso 3 en diseño ortonormal, y la media de iteraciones sale $\approx0.5p$, en el
+extremo bajo del rango $[0.5p, 0.75p]$ que afirma el paper.
 
-Solves the Lagrangian form of the lasso (Eq. 1) by cyclic coordinate descent
-with soft thresholding — the modern standard (Sec. 6 note; Friedman et al. 2007),
-not the quadratic-programming algorithm of the original paper.
+*De dónde salen los ceros exactos:* si dos vectores de signos activos difieren
+solo en la coordenada $j$, restar sus igualdades $\delta^\top\beta=t$ y
+$\delta'^\top\beta=t$ da $2\delta_j\beta_j=0$, luego $\beta_j=0$. Es estructural,
+no un umbral numérico.
 
-    f(b) = (1 / 2N) * ||y - X b||^2  +  lam * sum_j |b_j|
+**5. La trayectoria completa** ✅ — *Validado:* en $s=1$ da OLS a $3\times10^{-15}$,
+en $s=0$ da ceros exactos, $\sum|\beta_j|$ es monótona y nunca excede el
+presupuesto.
 
-Inputs follow the paper's convention (Eq. 1): columns of `X` standardized to
-`(1/N) sum_i x_ij^2 = 1`, and `y` centered so the intercept drops out. A
-`standardize()` helper is included.
+**6. Elegir $s$ (I): validación cruzada** ✅ — La Eq. 8, $PE = ME + \sigma^2$, dice
+que error de predicción y error de modelo difieren en una constante y se minimizan
+en el mismo sitio. Lo que **no** sirve es el RSS de entrenamiento: $\beta$ se
+eligió para hacerlo pequeño en esos mismos puntos, así que decrece con $s$ y
+siempre elegiría $s=1$.
 
-### Run
+**7. Elegir $s$ (II): GCV** ⚠️ — El lasso no es un *linear smoother*; el puente de
+la Sec. 2.5 es escribir $\sum_j|\beta_j| = \sum_j\beta_j^2/|\beta_j|$, lo que
+convierte el ajuste en el ridge de la Eq. 9 y permite la traza
+$p(t) = \mathrm{tr}\{X(X^\top X+\lambda W^-)^{-1}X^\top\}$. El $\lambda$ se saca de
+Kuhn–Tucker: $|x_j^\top(y-X\hat\beta)| = \lambda$ para toda coordenada activa —
+comprobado, la dispersión entre coordenadas es $10^{-13}$. **No reproduce el
+0.44 del paper**; ver abajo.
+
+**8. Datos reales: próstata** ✅ — Tabla 1 y Fig. 5 reproducidas a 0.01, con
+$\hat s$ derivado y no metido a mano.
+
+![Fig. 5 — trayectorias de próstata](fig5_prostate_paths.png)
+
+El orden de entrada de los predictores es el del paper: `lcavol` desde el
+principio, `svi` sobre 0.23, `lweight` sobre 0.32, y `lcp` y `age` entrando en
+negativo al final. La línea gris marca el $\hat s = 0.44$ del paper y la roja el
+0.69 de nuestro GCV.
+
+**9. Las figuras 1 y 2** ✅ — Las cuatro funciones de shrinkage y la geometría del
+rombo contra el círculo. El contorno de la Fig. 2 se dibuja pasando por la
+solución que devuelve el solver, así que la figura es consecuencia del código y no
+un dibujo de lo que debería salir.
+
+**10. Contra `scikit-learn`** ✅ — Lo primero no es comparar sino **alinear las
+convenciones**, porque los dos objetivos no son el mismo: el del paper es
+$\|y-X\beta\|^2$ con restricción, el de la librería es
+$\frac{1}{2N}\|y-X\beta\|^2 + \alpha\|\beta\|_1$. Igualando las dos formas
+lagrangianas sale $\alpha = \lambda/N$, con el $\lambda$ de KKT de la
+[sección 14](DEDUCCIONES.md) — que es la única conversión que se usa.
+
+Tres comprobaciones de fuerza creciente ([sklearn_check.py](sklearn_check.py)):
+
+| | Resultado |
+|---|---|
+| Un punto: $s=0.44$, el modelo de la Tabla 1 | máx. dif. $1.4\times10^{-13}$, mismo soporte, mismo RSS a 10 decimales |
+| Toda la trayectoria, 41 valores de $s$ | máx. dif. $8.1\times10^{-13}$ |
+| Contra LARS, **sin convertir nada**, cotejando a igual $\|\beta\|_1$ | máx. dif. $4.9\times10^{-14}$ en los 8 codos |
+
+La tercera es la que vale, porque no usa $\alpha$ ni $\lambda$: un error en la
+conversión no puede tapar un error en el solver.
+
+Y un detalle que sale al revés de lo que uno esperaría: **los ceros de `sklearn`
+imprimen `0.0` exacto y los nuestros $10^{-14}$**. Los nuestros son exactos por
+álgebra (paso 4) pero llegan a la salida por un sistema lineal, que redondea; el
+descenso por coordenadas asigna el 0 literalmente —el umbral blando *es* su
+actualización— aunque el soporte que elige dependa de su tolerancia. Cada uno es
+exacto en un sitio distinto.
+
+## Las discrepancias con el paper
+
+Una es numérica y salió al ejecutar; las otras dos salieron al deducir y están en
+su sitio dentro de [DEDUCCIONES.md](DEDUCCIONES.md):
+
+- **La Eq. 6 necesita un límite inferior que el paper no da.** Vale para
+  $\hat\beta_1^o-\hat\beta_2^o\le t\le\hat\beta_1^o+\hat\beta_2^o$; el paper solo
+  enuncia el superior. Por debajo, una coordenada ya se anuló y la solución es
+  $(t,0)$. Verificado en [two_predictors.py](two_predictors.py).
+- **La fórmula del riesgo de Stein (Sec. 4) tiene una errata:** imprime
+  $\max(|\hat\beta_j^o/\hat\tau|,\gamma^2)$ donde toca
+  $\min(|\hat\beta_j^o/\hat\tau|,\gamma)^2$. La versión correcta sigue al riesgo
+  verdadero en todos los $\gamma$ (15.25 contra 15.33 en $\gamma$ grande); la
+  impresa se dispara a 1144. Comprobado en [orthonormal.py](orthonormal.py).
+
+### 1. El fichero de datos de próstata cambió después de 1996
+
+La fila 32 tiene hoy `lweight` = 3.8044 (44.9 g). El fichero que usó Tibshirani
+tenía 6.1076 (449 g), un error de coma decimal corregido más tarde en la web de
+*Elements of Statistical Learning*.
+
+| | máx. desviación vs Tabla 1 (columna LS) |
+|---|---|
+| con `lweight[32] = 6.1076` (1996) | **0.01** |
+| con `lweight[32] = 3.8044` (actual) | 0.04 |
+
+[prostate.py](prostate.py) usa por defecto el valor de 1996 e imprime las dos
+columnas, porque el objetivo es reproducir el paper.
+
+### 2. El GCV no elige $\hat s = 0.44$
+
+Sobre los datos del paper, la Eq. 10 minimiza en $s = 0.69$; la CV quíntuple, en
+0.63. En $s=0.44$ el GCV vale 0.578 frente a 0.516 en su mínimo, así que no es
+cuestión de resolución de rejilla ni de una curva plana.
+
+No es el solver: **en $s=0.44$ la columna lasso de la Tabla 1 sale clavada**
+(0.56 / 0.10 / 0.16 y exactamente `lcavol`, `lweight`, `svi`, el resto en cero).
+El problema está en el selector. Comprobado además:
+
+- lectura de conjunto activo de $W^-$ (la nuestra) → 0.69;
+- lectura Moore–Penrose → 0.75, aún más lejos;
+- $p(t)$ tendría que inflarse unas **6 veces** para llevar el mínimo a 0.48;
+- $p(t) := $ número de coeficientes no nulos → 0.70.
+
+Ninguna lectura razonable de la Eq. 10 da 0.44. Es coherente con que la literatura
+posterior abandonara este GCV: los grados de libertad por aproximación ridge son
+poco fiables para el lasso.
+
+## Cómo ejecutar
+
+Desde este directorio, con el entorno `papers`:
 
 ```bash
-python lasso.py
+python orthonormal.py && python lasso.py && python two_predictors.py && python prostate.py && python figures.py && python derivation_figures.py && python sklearn_check.py
 ```
 
-Requires only `numpy`.
+| Fichero | Pasos | Qué hace |
+|---|---|---|
+| [DEDUCCIONES.md](DEDUCCIONES.md) | — | El desarrollo matemático completo, con las figuras |
+| [derivation_figures.py](derivation_figures.py) | — | Las figuras de ese documento (prefijo `ded_`) |
+| [lasso.py](lasso.py) | 1, 4, 5 | Objetivo, QP de conjunto activo, algoritmo de la Sec. 6, trayectoria |
+| [orthonormal.py](orthonormal.py) | 2, 3 | Eq. 3 en forma cerrada, las cuatro funciones de shrinkage y la comprobación de la fórmula de Stein |
+| [two_predictors.py](two_predictors.py) | 3 | Eq. 5, Eq. 6 y Fig. 4 — valida la deducción del caso $p=2$ |
+| [selection.py](selection.py) | 6, 7 | CV quíntuple y GCV (Eq. 10) |
+| [prostate.py](prostate.py) | 8 | Tabla 1 y Fig. 5 |
+| [figures.py](figures.py) | 9 | Fig. 1 y Fig. 2 |
+| [sklearn_check.py](sklearn_check.py) | 10 | Conversión de convenciones y cotejo contra `sklearn` y LARS |
 
-### Validation — against the paper, not a library
+`data/prostate.data` no se versiona; se descarga de la web de *Elements of
+Statistical Learning*.
 
-In an orthonormal design (`X^T X / N = I`) the paper gives the closed-form
-solution as soft thresholding of the OLS coefficients (**Eq. 3**). The script
-builds such a design and checks that coordinate descent reproduces that closed
-form. It does, to machine precision:
+### Después, si apetece, y etiquetado como posterior a 1996
 
-```
-lam   max|CD - closed form|   #nonzero  coefficients
-0.0   1.11e-15                8         [ 2.95  0.05  1.58 -0.08  0.06  1.93  0.03  0.  ]
-0.25  1.78e-15                3         [ 2.7   0.    1.33 -0.    0.    1.68  0.    0.  ]
-0.5   1.78e-15                3         [ 2.45  0.    1.08 -0.    0.    1.43  0.    0.  ]
-1.0   1.55e-15                3         [ 1.95  0.    0.58 -0.    0.    0.93  0.    0.  ]
-2.0   0.00e+00                1         [ 0.95  0.    0.   -0.    0.    0.    0.    0.  ]
+- Descenso por coordenadas (Friedman et al. 2007), escrito y comparado contra el
+  de la Sec. 6 — no solo llamado a través de `sklearn`.
+- LARS (Efron et al. 2004) implementado, aprovechando que la linealidad a trozos
+  ya está demostrada en la sección 14 de [DEDUCCIONES.md](DEDUCCIONES.md).
+- Cerrar la Tabla 3 y publicarla, cuando el montaje de la simulación esté
+  entendido a fondo.
 
-Validation vs Eq. (3) closed form: PASS
-```
+## Stack
 
-With a sparse ground truth `beta = [3, 0, 1.5, 0, 0, 2, 0, 0]`, raising `lam`
-first zeroes the five null coefficients (variable selection) and then shrinks
-the survivors linearly toward zero — the signature of soft thresholding, versus
-ridge's proportional shrinkage.
-
-## Piece 2 — the four shrinkage functions (`shrinkage_functions.py`)
-
-Reproduces **Fig. 1** of the paper. In an orthonormal design each method acts
-coordinate-wise on the OLS coefficient `beta_hat`, so it is a scalar function
-`d(beta_hat)` (Sec. 2.2). The script plots all four against the 45° OLS line:
-
-- **Subset (hard):** follows OLS, then **jumps discontinuously to 0** at `|b|=γ`
-  — the instability the paper criticises.
-- **Ridge:** `b/(1+λ)`, proportional shrinkage, **never exactly 0**.
-- **Lasso (soft):** flat 0 on `[-γ, γ]`, then parallel to OLS shifted down by γ
-  — Eq. (3), continuous *and* selects.
-- **Garotte:** flat 0 on `[-γ, γ]`, then bends back toward OLS for large `|b|`.
-
-Reuses `soft_threshold` from `lasso.py`. Run `python shrinkage_functions.py`
-(saves `fig1_shrinkage_functions.png`) or execute the `# %%` cells in VS Code's
-Interactive Window to see it inline. Requires `numpy` + `matplotlib`.
-
-![Fig. 1 reproduction](fig1_shrinkage_functions.png)
-
-## Piece 3 — coefficient paths on real data (`prostate_paths.py`)
-
-Reproduces **Fig. 5** and **Table 1**: the lasso applied to the prostate-cancer
-data of Stamey et al. (1989) — *N* = 97 men, 8 predictors, response `lpsa` — the
-same dataset the paper analyses in Sec. 4. This is where variable selection can
-be watched happening on real data rather than on a simulation.
-
-The path is parametrised the way the paper does it, by the **normalised budget**
-rather than by the penalty:
-
-    s = t / sum_j |beta_j^OLS|      in [0, 1]
-
-`s = 1` is OLS (constraint inactive), `s = 0` kills everything. The script solves
-the Lagrangian form over a grid of `lam` and converts each fit to its own `s`.
-
-### Data
-
-`data/prostate.data`, from the [Elements of Statistical Learning
-site](https://hastie.su.domains/ElemStatLearn/datasets/prostate.data). Not
-versioned (see `.gitignore`); the script expects it at that path. All 97
-observations are used, as in the paper — not the train/test split used in ESL.
-
-### Run
-
-```bash
-python prostate_paths.py
-```
-
-Requires `numpy`, `pandas`, `matplotlib`.
-
-### Validation — Table 1 reproduced exactly
-
-The paper selects `s_hat = 0.44` by generalised cross-validation and reports
-that only **`lcavol`, `lweight` and `svi`** survive. Our path at that budget:
-
-```
-Model at s = 0.440 (lam = 0.1945)
-predictor        OLS     lasso
-lcavol         0.662     0.532
-lweight        0.265     0.131
-age           -0.157     0.000   <- dropped
-lbph           0.140     0.000   <- dropped
-svi            0.314     0.149
-lcp           -0.148     0.000   <- dropped
-gleason        0.035     0.000   <- dropped
-pgg45          0.125     0.000   <- dropped
-
-Retained (3): lcavol, lweight, svi
-```
-
-**Same three predictors as the paper**, with the surviving coefficients shrunk
-well below their OLS values (`lcavol` 0.66 → 0.53, `svi` 0.31 → 0.15) — the
-bias the lasso trades for variance.
-
-![Fig. 5 reproduction](fig5_prostate_paths.png)
-
-Reading the plot right to left (from OLS towards zero) shows the order in which
-the lasso discards predictors: `age` and `lcp` (the two negative coefficients)
-go first around `s = 0.6`, then `gleason`, `pgg45` and `lbph`, leaving the same
-three the paper reports. Each coefficient hits zero and *stays* zero — the
-piecewise-linear, continuous path that soft thresholding produces, in contrast
-with subset selection's jumps.
+`numpy` y `matplotlib`; `pandas` para leer los datos de próstata; `scikit-learn`
+**solo** en [sklearn_check.py](sklearn_check.py), como referencia externa contra la
+que cotejar — no lo usa nada del solver. La programación cuadrática está escrita a
+mano, así que no hace falta `scipy.optimize`.

@@ -14,7 +14,7 @@ Cada asignatura lleva asociados papers candidatos para el flujo `/paper` (review
 - [ ] Candès & Wakin (2008) — *An Introduction to Compressive Sampling*
 
 ### Estadística para el análisis de datos
-- [ ] Tibshirani (1996) — *Regression Shrinkage and Selection via the Lasso* — [review](reviews/1996-tibshirani-lasso.md) ✔ · [implementación](implementations/1996-tibshirani-lasso/) en curso (pieza 1/5: solver ✔)
+- [x] Tibshirani (1996) — *Regression Shrinkage and Selection via the Lasso* — [review](reviews/1996-tibshirani-lasso.md) ✔ · [implementación](implementations/1996-tibshirani-lasso/) ✔ con el algoritmo de programación cuadrática de la Sec. 6 (no descenso por coordenadas, que es de 2007; la v1 queda archivada en la rama `lasso-v1-archive`). Eq. 3, Eq. 5–6, Tabla 1 y las cuatro figuras reproducidas, y cotejado contra `sklearn` y LARS a $10^{-13}$. El desarrollo matemático completo está en [DEDUCCIONES.md](implementations/1996-tibshirani-lasso/DEDUCCIONES.md), 20 secciones con figuras calculadas por el solver. Discrepancias documentadas: el typo de `lweight`, el GCV que no da 0.44, y dos erratas del paper (el límite inferior que le falta a la Eq. 6, y `max` por `min` en la fórmula de Stein). Las simulaciones de la Sec. 7 quedan en local hasta cerrar el montaje
 - [x] Efron (1979) — *Bootstrap Methods: Another Look at the Jackknife* — [review](reviews/1979-efron-bootstrap.md) ✔ · implementación pendiente
 - [ ] Hoerl & Kennard (1970) — *Ridge Regression: Biased Estimation for Nonorthogonal Problems* (solo review, sin código — cierra el díptico de regularización con el Lasso; ridge = *weight decay* en NNs)
 
@@ -305,7 +305,7 @@ son directamente relevantes para quant research — citarlos en entrevistas.
 
 Orden sugerido para llegar a septiembre con base sólida — de menos a más exigente:
 
-1. Tibshirani (1996), Lasso — estadística + optimización, implementación asequible (coordinate descent).
+1. ~~Tibshirani (1996), Lasso~~ — hecho. Estadística + optimización; salió por programación cuadrática con conjunto activo, que es lo que usa el paper, no por descenso por coordenadas.
 2. Brin & Page (1998), PageRank — álgebra lineal pura (autovectores), conecta con tu perfil matemático.
 3. Friedman (2001), Gradient Boosting — el caballo de batalla del análisis de datos tabular.
 4. Kingma & Ba (2014), Adam — puerta de entrada a la optimización estocástica.

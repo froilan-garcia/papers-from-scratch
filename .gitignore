@@ -33,3 +33,13 @@ papers/*.pdf
 
 # Notas personales: no se publican
 GUIA-LECTURA.md
+
+# Trabajo en curso que no se publica hasta estar entendido a fondo.
+# Lasso: la reproducción de la Tabla 3 (Sec. 7) corre y el ordenamiento de
+# métodos sale, pero los niveles de error no cuadran con ninguna sigma y el
+# diagnóstico depende de un montaje de simulación que todavía no domino.
+# Se queda en local hasta entonces; lo publicado es el solver, próstata y el
+# cotejo contra sklearn, que sí están cerrados.
+implementations/1996-tibshirani-lasso/simulation.py
+implementations/1996-tibshirani-lasso/competitors.py
+implementations/1996-tibshirani-lasso/NOTAS-LOCALES.md

@@ -51,13 +51,35 @@ frente a ridge (encoge proporcionalmente, $\hat{\beta}_j^{OLS}/(1+\gamma)$) y su
 
 ## Ideas de implementación
 
+> **Nota posterior (2026-08-01).** La [implementación](../implementations/1996-tibshirani-lasso/)
+> está hecha, y se apartó de la idea 1 de esta lista: se usa el algoritmo de
+> programación cuadrática de la Sección 6 del propio paper, no el descenso por
+> coordenadas de Friedman et al. (2007), que es once años posterior. La idea 4
+> (Tabla 3) corre pero no se publica: el ordenamiento de métodos sale y los
+> niveles no, y el diagnóstico depende de detalles del montaje de simulación
+> todavía sin cerrar. Lo demás está hecho y validado.
+
 Todo lo central es reproducible con numpy puro:
 
-1. **Solver por descenso por coordenadas** con soft thresholding — el estándar moderno, ~40 líneas.
-2. **Fig. 1**: las cuatro funciones de shrinkage en diseño ortonormal (subset, ridge, lasso, garotte).
-3. **Fig. 5 + Tabla 1**: trayectorias de coeficientes y modelo en $\hat{s}=0.44$ con los datos reales de próstata (disponibles en la web de *Elements of Statistical Learning*).
-4. **Ejemplo 1 de simulación (Tabla 3)**: comparar MSE de OLS, lasso-CV y ridge sobre 50 réplicas del modelo $\beta = (3, 1.5, 0, 0, 2, 0, 0, 0)$, correlación $\rho^{|i-j|}$ con $\rho = 0.5$, $\sigma = 3$.
-5. Validar el solver propio contra `sklearn.linear_model.Lasso`.
+1. ~~**Solver por descenso por coordenadas**~~ → se hizo el de la Sec. 6, que es el del paper. ✅
+2. **Fig. 1**: las cuatro funciones de shrinkage en diseño ortonormal (subset, ridge, lasso, garotte). ✅
+3. **Fig. 5 + Tabla 1**: trayectorias de coeficientes y modelo en $\hat{s}=0.44$ con los datos reales de próstata (disponibles en la web de *Elements of Statistical Learning*). ✅
+4. **Ejemplo 1 de simulación (Tabla 3)**: comparar MSE de OLS, lasso-CV y ridge sobre 50 réplicas del modelo $\beta = (3, 1.5, 0, 0, 2, 0, 0, 0)$, correlación $\rho^{|i-j|}$ con $\rho = 0.5$, $\sigma = 3$. ⚠️ corre, no se publica.
+5. Validar el solver propio contra `sklearn.linear_model.Lasso`. ✅ a $8\times10^{-13}$ en toda la trayectoria, y contra LARS sin convertir convenciones.
+
+## Balance tras implementarlo
+
+Lo que queda claro solo después de haberlo hecho, y que la lectura no daba:
+
+**El encogimiento es el peaje, no el objetivo.** La bola $L_1$ es exactamente la envolvente convexa de los puntos 1-dispersos $\{\pm t\,e_j\}$: se toman los modelos que uno quiere y se convexifica para poder resolver. Los vértices sobreviven —de ahí los ceros— pero el óptimo puede caer en el interior de una cara, y ese es todo el sesgo. Encoger es lo que se paga por la convexidad, no lo que se busca; el acrónimo pone *Shrinkage* delante de *Selection* y engaña. La prueba es que la literatura posterior (garotte, lasso adaptativo, SCAD) se dedica a quitarle ese encogimiento sin perder la selección.
+
+**"Shrinkage" ni siquiera está bien definido fuera del diseño ortonormal.** La Eq. 3 y las cuatro curvas de la Fig. 1 son el retrato de un caso particular. Con predictores correlados no existe ninguna función $h$ con $\hat\beta_j = h(\hat\beta_j^{OLS})$: sobre 140 diseños al azar, para $\hat\beta_j^{OLS}\approx 2$ el lasso reparte valores entre 0 y 2.84. Y con $p\ge3$ un coeficiente puede **crecer** al apretar el presupuesto (comprobado: de 0.95 a 1.81), el análogo lasso del repunte de ridge en $\rho>1/2$. Lo único que encoge es el escalar $\sum_j|\beta_j|$.
+
+**Lo que sí sobrevive es una forma cerrada condicionada.** Sobre el conjunto activo $A$ con signos $s_A$, KKT da $\hat\beta_A = \hat\beta^{\mathrm{ols}(A)} - \lambda (X_A^\top X_A)^{-1}s_A$: OLS reajustado sobre $A$, desplazado. No falta álgebra, falta **combinatoria** — qué $A$ y qué signos. De ahí sale además, demostrada, la linealidad a trozos de las trayectorias, que es lo que LARS explota. Está en la sección 14 de las [deducciones](../implementations/1996-tibshirani-lasso/DEDUCCIONES.md).
+
+**Qué demuestra el paper y qué solo afirma.** Selección y convexidad son construcción pura, y se cumplen. La **estabilidad**, en cambio, la deja a las simulaciones — pudiendo demostrarla: el lasso es la proyección de $\hat\beta^{OLS}$ sobre un convexo en la métrica $X^\top X$, y las proyecciones sobre convexos son no expansivas, luego es *demostrablemente* al menos tan estable como mínimos cuadrados. Selección de subconjuntos proyecta sobre una unión de subespacios, que no es convexa, y por eso salta. La estabilidad no viene de encoger: viene de que el conjunto factible sea convexo, que es exactamente lo que comparte con ridge.
+
+**La mitad estructural aguanta; la empírica se agrieta.** Reproducimos la Tabla 1 clavada y las figuras, pero el GCV de la Eq. 10 no elige el $\hat s = 0.44$ del paper bajo ninguna lectura razonable (nos da 0.69), y en la Tabla 3 no hay una $\sigma$ que dé a la vez los niveles de error y la estructura de los modelos. Más dos erratas encontradas al deducir: la Eq. 6 necesita un límite inferior que el paper no da, y la fórmula del riesgo de Stein imprime `max` donde va `min`. Nada de eso toca la conclusión que el paper de verdad extrae, que es un **ordenamiento** de métodos, y ese sí se sostiene.
 
 ## Conexiones
 
