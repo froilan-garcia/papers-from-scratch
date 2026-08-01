@@ -20,7 +20,7 @@ paper.
 
 ### Parte I — El problema y su forma
 &nbsp;&nbsp;1. [Planteamiento, y por qué el intercepto se va](#s1)
-&nbsp;&nbsp;2. [El error cuadrático es un elipsoide centrado en el OLS](#s2)
+&nbsp;&nbsp;2. [El error cuadrático es un elipsoide, y el lasso una proyección](#s2)
 &nbsp;&nbsp;3. [La región factible es un politopo con esquinas en los ejes](#s3)
 &nbsp;&nbsp;4. [El rango útil del presupuesto](#s4)
 
@@ -83,7 +83,7 @@ Todo lo que sigue trabaja con esta forma. Dos objetos que mirar por separado: la
 ---
 
 <a name="s2"></a>
-## 2. El error cuadrático es un elipsoide centrado en el OLS
+## 2. El error cuadrático es un elipsoide, y el lasso una proyección
 
 Empecemos por el objetivo, y hagamos primero la única propiedad del ajuste por
 mínimos cuadrados que vamos a necesitar.
@@ -154,6 +154,102 @@ Tres consecuencias inmediatas que usaremos sin volver a demostrarlas:
   $X\hat\beta^o$ sí lo es y por tanto $r^o$ también: la identidad sigue en pie. El
   paper lo señala de pasada — *"the design matrix need not be of full rank"*.)
 - Toda la información de los datos entra por solo dos objetos, $\hat\beta^o$ y $S$.
+
+**Y una cuarta, que merece su propia deducción**, porque es la propiedad que el
+paper anuncia en el abstract —que el lasso tiene *"the stability of ridge
+regression"*— y deja a las simulaciones de la Sec. 7, pudiendo demostrarla aquí
+mismo. La palabra "proyección" de arriba no es una manera de hablar: es la
+proyección en el sentido literal, sobre el producto escalar
+
+$$\langle u,v\rangle_S=u^\top S v,\qquad \|u\|_S=\sqrt{u^\top S u},$$
+
+que es un producto escalar de verdad siempre que $S\succ0$. Y las proyecciones
+sobre convexos tienen una propiedad que no depende de nada más.
+
+**El ángulo obtuso.** Sea $C$ convexo cerrado y $z$ el punto de $C$ más cercano a
+$x$. Para cualquier $w\in C$ y cualquier $\theta\in(0,1]$, el punto
+$z+\theta(w-z)$ también está en $C$ por convexidad, luego no puede estar más cerca:
+
+$$\|x-z-\theta(w-z)\|^2\ \ge\ \|x-z\|^2 .$$
+
+Desarrollando, $-2\theta\langle x-z,\,w-z\rangle+\theta^2\|w-z\|^2\ge0$, y
+dividiendo por $\theta>0$,
+
+$$\langle x-z,\,w-z\rangle\ \le\ \tfrac{\theta}{2}\|w-z\|^2 .$$
+
+Como vale para todo $\theta$ arbitrariamente pequeño, haciendo $\theta\to0^+$:
+
+$$\boxed{\ \langle x-z,\ w-z\rangle\le0\qquad\text{para todo }w\in C.\ }$$
+
+Dicho en palabras: desde la proyección, el vector que apunta al punto original
+forma un ángulo obtuso con cualquier dirección que entre en $C$. Es lo que dice el
+dibujo de proyectar, escrito.
+
+**De ahí, la no expansividad.** Sean dos respuestas $y_1,y_2$, sus mínimos
+cuadrados $x_1,x_2$ y sus lassos $z_1,z_2$. Aplicando lo anterior dos veces, una a
+cada punto, tomando como $w$ la proyección del otro:
+
+$$\langle x_1-z_1,\ z_2-z_1\rangle\le0,
+\qquad
+\langle x_2-z_2,\ z_1-z_2\rangle\le0 .$$
+
+Sumando, y escribiendo $u=x_1-x_2$ y $v=z_1-z_2$, los dos términos se agrupan en
+$\langle u-v,\,-v\rangle\le0$, es decir $\|v\|^2\le\langle u,v\rangle$. Y por
+Cauchy–Schwarz $\langle u,v\rangle\le\|u\|\,\|v\|$, luego $\|v\|\le\|u\|$:
+
+$$\big\|\hat\beta(y_1)-\hat\beta(y_2)\big\|_S\ \le\ \big\|\hat\beta^o(y_1)-\hat\beta^o(y_2)\big\|_S .$$
+
+**El lasso es al menos tan estable como el propio OLS.** Y se puede llevar hasta
+los datos, porque $\hat\beta^o=S^{-1}X^\top y$ es lineal: con $\delta=y_1-y_2$,
+
+$$\|S^{-1}X^\top\delta\|_S^2=\delta^\top XS^{-1}SS^{-1}X^\top\delta
+=\delta^\top\underbrace{XS^{-1}X^\top}_{H}\delta=\|H\delta\|^2\le\|\delta\|^2,$$
+
+ya que $H$ es la matriz de proyección sobre el espacio columna, que no alarga.
+Encadenando, el lasso es **1-lipschitziano de $y$ a $\beta$**.
+
+Conviene decir la hipótesis: todo esto es a **diseño fijo**. Si cambia $X$ cambia
+$S$ y con ella la métrica, y el argumento no aplica tal cual.
+
+**Y aquí está el contraste que hace del resultado algo más que una curiosidad.**
+Mejor subconjunto también proyecta $y$, pero sobre
+$\bigcup_{|A|=k}\mathrm{span}\{x_j:j\in A\}$ — una **unión de subespacios**, que
+no es convexa. Sin convexidad no hay ángulo obtuso, no hay cota, y el mapa salta:
+exactamente en los datos donde dos subconjuntos empatan en RSS, un desplazamiento
+infinitesimal cambia el modelo entero. Ese salto es la inestabilidad que se le
+reprocha, y ahora sabemos que **no viene de seleccionar, sino de seleccionar sobre
+un conjunto no convexo**.
+
+Se puede ver en un experimento. Con dos predictores correlados de utilidad
+idéntica y $k=1$, movemos $y$ a lo largo de $x_1-x_2$ —dirección que cambia la
+preferencia de uno al otro, luego el empate se cruza seguro— y medimos el cociente
+$\|\Delta\hat\beta\|_S/\|\Delta y\|$ afinando la rejilla:
+
+| pasos | lasso | mejor subconjunto |
+|---|---|---|
+| 200 | 1.0000 | 118.1 |
+| 800 | 1.0000 | 473.9 |
+| 3200 | 1.0000 | 1897.1 |
+| 12800 | 1.0000 | 7589.8 |
+
+La columna de la derecha se multiplica por 4 cada vez que la rejilla se afina por
+4: el salto no se encoge con el paso, que es la definición de discontinuidad. La
+del lasso no crece, como exige la cota.
+
+Que dé $1.0000$ **exacto** y no algo menor tiene su motivo, y conviene sacarlo
+porque enseña cuándo la cota se alcanza. Con las dos coordenadas activas y el
+presupuesto atado, el desplazamiento es el de la sección 9. Como
+$X^\top(x_1-x_2)=S(1,-1)^\top$, perturbar en esa dirección da
+$\Delta\hat\beta^o=\varepsilon(1,-1)^\top$, que ya vive en el subespacio donde la
+restricción no ata, así que pasa entero:
+
+$$\|\Delta\hat\beta\|_S^2=\varepsilon^2(1,-1)S(1,-1)^\top=\varepsilon^2(2a-2b)
+=\varepsilon^2\|x_1-x_2\|^2=\|\Delta y\|^2 .$$
+
+La perturbación es **tangente** a la cara activa, de modo que no hay nada que
+absorber y la proyección se comporta como una isometría. La cota de la no
+expansividad es fina, y este es el caso extremo. Lo comprueba
+[lasso.py](lasso.py).
 
 ---
 

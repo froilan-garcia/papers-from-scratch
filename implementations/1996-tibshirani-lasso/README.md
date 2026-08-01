@@ -34,6 +34,7 @@ resultados del paper en la [review](../../reviews/1996-tibshirani-lasso.md).
 | Eq. 5 y 6 "valid even if the predictors are correlated" | ✅ el mismo $\gamma$ en las dos coordenadas y en los cinco $\rho$, a 9 decimales |
 | Fig. 4 (dos predictores) | ✅ incluido el repunte de ridge para $\rho>1/2$, que sale deducido |
 | Contra `sklearn.linear_model.Lasso` y LARS | ✅ a $8\times10^{-13}$ en toda la trayectoria |
+| "the stability of ridge regression" (abstract) | ✅ y **demostrada**, no solo simulada: es no expansividad de la proyección sobre un convexo |
 | $\hat s = 0.44$ por GCV (Eq. 10) | ❌ **nuestro GCV minimiza en 0.69** |
 
 La discrepancia del GCV está diagnosticada abajo, y no es un fallo del solver:
@@ -255,7 +256,7 @@ python orthonormal.py && python lasso.py && python two_predictors.py && python p
 |---|---|---|
 | [DEDUCCIONES.md](DEDUCCIONES.md) | — | El desarrollo matemático completo, con las figuras |
 | [derivation_figures.py](derivation_figures.py) | — | Las figuras de ese documento (prefijo `ded_`) |
-| [lasso.py](lasso.py) | 1, 4, 5 | Objetivo, QP de conjunto activo, algoritmo de la Sec. 6, trayectoria |
+| [lasso.py](lasso.py) | 1, 4, 5 | Objetivo, QP de conjunto activo, algoritmo de la Sec. 6, trayectoria y la comprobación de no expansividad |
 | [orthonormal.py](orthonormal.py) | 2, 3 | Eq. 3 en forma cerrada, las cuatro funciones de shrinkage y la comprobación de la fórmula de Stein |
 | [two_predictors.py](two_predictors.py) | 3 | Eq. 5, Eq. 6 y Fig. 4 — valida la deducción del caso $p=2$ |
 | [selection.py](selection.py) | 6, 7 | CV quíntuple y GCV (Eq. 10) |

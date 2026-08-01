@@ -225,3 +225,54 @@ if __name__ == "__main__":
     tiny = np.abs(mid)[np.abs(mid) < 1e-6]
     print(f"  zeros at machine precision: {tiny.size} zeros, "
           f"largest magnitude {tiny.max() if tiny.size else 0.0:.2e}")
+
+    # --- Sec. 2 claim: the lasso is a projection onto a convex set ------------
+    #
+    # Projections onto convex sets are non-expansive, so perturbing y can never
+    # move the fit further than it moved the data:  ||d beta||_S <= ||d y||.
+    # Best subset selection projects onto a UNION of subspaces, which is not
+    # convex, and jumps where two subsets tie in RSS.  The test is to walk y
+    # along a line and refine the step: a continuous map has bounded ratios, a
+    # discontinuous one does not.
+
+    from itertools import combinations
+
+    def best_subset(X, y, k):
+        """min ||y - X beta||^2 over beta with at most k non-zeros, by
+        enumeration.  Only used here, as the discontinuous counter-example."""
+        best, best_rss = np.zeros(X.shape[1]), np.inf
+        for A in combinations(range(X.shape[1]), k):
+            idx = list(A)
+            b = np.zeros(X.shape[1])
+            b[idx] = np.linalg.lstsq(X[:, idx], y, rcond=None)[0]
+            if (r := rss(X, y, b)) < best_rss:
+                best, best_rss = b, r
+        return best
+
+    # The tie has to be crossed for the discontinuity to show, so build one:
+    # two correlated predictors of equal usefulness, k = 1, and walk y along
+    # x1 - x2, which trades one for the other and must cross the tie.
+    Ns = 60
+    Zs = rng.standard_normal((Ns, 2))
+    Xs = np.column_stack([Zs[:, 0], 0.7 * Zs[:, 0] + np.sqrt(1 - 0.7 ** 2) * Zs[:, 1]])
+    Xs = (Xs - Xs.mean(0)) / Xs.std(0)
+    ys = Xs @ np.array([1.0, 1.0]) + 0.7 * rng.standard_normal(Ns)
+    ys = ys - ys.mean()
+
+    Ss = Xs.T @ Xs
+    s_norm = lambda u: float(np.sqrt(u @ Ss @ u))
+    d = Xs[:, 0] - Xs[:, 1]
+    t_fixed = 0.5 * t_max(Xs, ys)
+
+    print("\nSec. 2 check — non-expansiveness (walking y along x1 - x2):\n")
+    print(f"{'pasos':>7}  {'lasso':>10}  {'mejor subconjunto (k=1)':>24}")
+    for n_steps in [200, 800, 3200, 12800]:
+        th = np.linspace(-1.5, 1.5, n_steps)
+        bl = np.array([lasso(Xs, ys + s * d, t_fixed) for s in th])
+        bs = np.array([best_subset(Xs, ys + s * d, 1) for s in th])
+        dy = (th[1] - th[0]) * np.linalg.norm(d)
+        rl = max(s_norm(u) for u in np.diff(bl, axis=0)) / dy
+        rs = max(s_norm(u) for u in np.diff(bs, axis=0)) / dy
+        print(f"{n_steps:7d}  {rl:10.4f}  {rs:24.1f}")
+    print("  el lasso se queda bajo 1 y no crece al afinar; el otro se dispara,")
+    print("  que es lo que significa ser discontinuo en el empate")
