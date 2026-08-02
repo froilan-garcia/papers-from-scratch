@@ -96,7 +96,7 @@ if __name__ == "__main__":
 
     # ---------------------------------------------------------------------
     # Stein's unbiased risk estimate for soft thresholding (Sec. 4, Eq. 11).
-    # DEDUCCIONES.md section 13 derives  p - 2#{|z_i| < g} + sum_i min(|z_i|, g)^2
+    # DERIVATIONS.md section 13 derives  p - 2#{|z_i| < g} + sum_i min(|z_i|, g)^2
     # and argues the paper prints max(|.|, g^2) where min(|.|, g)^2 belongs.
     # An unbiased estimate must average to the true risk; only one of them does.
     # ---------------------------------------------------------------------

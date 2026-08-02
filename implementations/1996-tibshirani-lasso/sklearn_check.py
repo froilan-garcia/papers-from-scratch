@@ -5,7 +5,7 @@ can be compared until the conventions are lined up.  Ours is the paper's, Eq. (1
 
     g(beta) = ||y - X beta||^2          subject to  sum_j |beta_j| <= t
 
-whose Lagrangian form, with the lambda of DEDUCCIONES sec. 14, is
+whose Lagrangian form, with the lambda of DERIVATIONS sec. 14, is
 
     ||y - X beta||^2 + 2 lambda ||beta||_1,      x_j'(y - X beta) = lambda s_j.
 
@@ -123,7 +123,7 @@ def check_zeros(X, y, s=0.44):
     """Both agree on the fit and on the support; they print their zeros
     differently, and not in the direction one would guess.
 
-    Ours are *algebraically* exact (DEDUCCIONES sec. 13: two active sign vectors
+    Ours are *algebraically* exact (DERIVATIONS sec. 13: two active sign vectors
     differing in one coordinate force that coordinate to 0), but they reach the
     output through a linear solve, so round-off leaves them near 1e-14.
     Coordinate descent assigns 0 literally -- the soft threshold of sec. 6 is its

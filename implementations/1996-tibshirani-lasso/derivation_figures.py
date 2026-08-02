@@ -1,4 +1,4 @@
-"""Figures for DEDUCCIONES.md.
+"""Figures for DERIVATIONS.md.
 
 These are not the paper's figures (those live in figures.py, prostate.py and
 two_predictors.py).  Each one illustrates a step of a derivation that the paper

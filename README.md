@@ -39,7 +39,7 @@ ROADMAP.md        Reading queue, organised by topic
 
 [Review](reviews/1996-tibshirani-lasso.md) ·
 [Implementation](implementations/1996-tibshirani-lasso/) ·
-**[Derivations](implementations/1996-tibshirani-lasso/DEDUCCIONES.md)**
+**[Derivations](implementations/1996-tibshirani-lasso/DERIVATIONS.md)**
 
 - **The paper's own algorithm** (Sec. 6): a quadratic program over the $2^p$ sign
   constraints, introduced one at a time, with a hand-written primal active-set
@@ -56,7 +56,7 @@ ROADMAP.md        Reading queue, organised by topic
   minimising at $s=0.69$ rather than the paper's 0.44; a lower limit missing from
   Eq. 6; and `max` printed where `min` belongs in the Stein risk formula.
 
-The [derivations](implementations/1996-tibshirani-lasso/DEDUCCIONES.md) build the
+The [derivations](implementations/1996-tibshirani-lasso/DERIVATIONS.md) build the
 method from the problem statement to the choice of the penalty in 20 sections.
 Two results in there go beyond the paper: the closed form that survives outside
 the orthonormal case,

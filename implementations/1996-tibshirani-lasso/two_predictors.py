@@ -1,7 +1,7 @@
 """The two-predictor case — Sec. 2.4, Eq. (5), Eq. (6) and Fig. 4.
 
 The paper states Eq. (5) and Eq. (6) and asserts that they hold "even if the
-predictors are correlated", without saying why.  DEDUCCIONES.md, section 6,
+predictors are correlated", without saying why.  DERIVATIONS.md, section 6,
 derives it: with standardized predictors X'X has equal diagonal entries, so
 (1,1)' is an eigenvector of X'X, hence X'X^{-1}(1,1)' is again proportional to
 (1,1)'.  The lasso therefore steps away from the OLS estimate along the direction
@@ -81,7 +81,7 @@ def check():
     print(f"\n   (t = {gap} is where beta_2 reaches 0; t = {total} is where the"
           f" constraint stops binding)")
 
-    print("\n4. Ridge: DEDUCCIONES.md section 7 predicts beta_2 rises as the bound")
+    print("\n4. Ridge: DERIVATIONS.md section 7 predicts beta_2 rises as the bound")
     print("   is tightened exactly when rho > 1/2.  d(beta_2)/d(lambda) at 0:\n")
     for rho in RHOS:
         X, y = design(rho)
