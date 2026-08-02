@@ -265,7 +265,7 @@ if __name__ == "__main__":
     t_fixed = 0.5 * t_max(Xs, ys)
 
     print("\nSec. 2 check — non-expansiveness (walking y along x1 - x2):\n")
-    print(f"{'pasos':>7}  {'lasso':>10}  {'mejor subconjunto (k=1)':>24}")
+    print(f"{'steps':>7}  {'lasso':>10}  {'best subset (k=1)':>24}")
     for n_steps in [200, 800, 3200, 12800]:
         th = np.linspace(-1.5, 1.5, n_steps)
         bl = np.array([lasso(Xs, ys + s * d, t_fixed) for s in th])
@@ -274,5 +274,5 @@ if __name__ == "__main__":
         rl = max(s_norm(u) for u in np.diff(bl, axis=0)) / dy
         rs = max(s_norm(u) for u in np.diff(bs, axis=0)) / dy
         print(f"{n_steps:7d}  {rl:10.4f}  {rs:24.1f}")
-    print("  el lasso se queda bajo 1 y no crece al afinar; el otro se dispara,")
-    print("  que es lo que significa ser discontinuo en el empate")
+    print("  the lasso stays at or below 1 and does not grow as the grid refines;")
+    print("  the other blows up, which is what being discontinuous at a tie means")

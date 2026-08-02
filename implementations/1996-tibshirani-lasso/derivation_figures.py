@@ -34,7 +34,7 @@ def clip_vs_soft(path="ded_clip_vs_soft.png"):
     fig, axes = plt.subplots(1, 2, figsize=(8.4, 4.0), sharey=True)
     axes[0].plot(b, b, ls=":", c=GREY, lw=1)
     axes[0].plot(b, np.sign(b) * np.minimum(np.abs(b), t), c="k", lw=1.8)
-    axes[0].set_title(r"$p=1$: recorte, $\mathrm{sign}(\hat b)\min(|\hat b|,t)$",
+    axes[0].set_title(r"$p=1$: clipping, $\mathrm{sign}(\hat b)\min(|\hat b|,t)$",
                       fontsize=10)
     axes[1].plot(b, b, ls=":", c=GREY, lw=1)
     axes[1].plot(b, soft_threshold(b, t), c=RED, lw=1.8)
@@ -48,8 +48,7 @@ def clip_vs_soft(path="ded_clip_vs_soft.png"):
         ax.set_xlim(-5, 5)
         ax.set_ylim(-5, 5)
     axes[0].set_ylabel(r"$\hat\beta_j$")
-    fig.suptitle("La distinción del caso $p=1$: recortar no es trasladar",
-                 fontsize=11)
+    fig.suptitle("What $p=1$ hides: clipping is not translating", fontsize=11)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     print(f"wrote {path}")
@@ -76,7 +75,7 @@ def gamma_root(path="ded_gamma_root.png"):
                     c=GREY, ha="center")
     ax.set_xlabel(r"$\gamma$")
     ax.set_ylabel(r"$\sum_j|\hat\beta_j|$")
-    ax.set_title(r"El $\gamma$ de la Eq. 3: lineal a trozos, raíz única",
+    ax.set_title(r"The $\gamma$ of Eq. 3: piecewise linear, unique root",
                  fontsize=11)
     ax.legend(fontsize=9)
     ax.set_xlim(0, g.max())
@@ -96,11 +95,11 @@ def priors(path="ded_priors.png"):
     nor = np.exp(-b ** 2 / (2 * sd ** 2)) / (sd * np.sqrt(2 * np.pi))
 
     fig, ax = plt.subplots(figsize=(6.4, 4.0))
-    ax.plot(b, lap, c="k", lw=1.8, label="doble exponencial (lasso)")
+    ax.plot(b, lap, c="k", lw=1.8, label="double exponential (lasso)")
     ax.plot(b, nor, c=GREY, lw=1.6, ls="--", label="normal (ridge)")
     ax.set_xlabel(r"$\beta_j$")
-    ax.set_ylabel("densidad")
-    ax.set_title("Fig. 7 — el pico no derivable en 0 es la selección de variables",
+    ax.set_ylabel("density")
+    ax.set_title("Fig. 7 — the non-differentiable peak at 0 is variable selection",
                  fontsize=10.5)
     ax.legend(fontsize=9)
     ax.set_xlim(-5, 5)
@@ -133,8 +132,8 @@ def polytope(path="ded_polytope.png"):
     ax.set_xlabel(r"$\beta_1$")
     ax.set_ylabel(r"$\beta_2$")
     ax.set_zlabel(r"$\beta_3$")
-    ax.set_title(r"$\sum_j|\beta_j|\leq t$ con $p=3$:"
-                 "\n" r"$2^p=8$ caras, $2p=6$ vértices sobre los ejes",
+    ax.set_title(r"$\sum_j|\beta_j|\leq t$ with $p=3$:"
+                 "\n" r"$2^p=8$ faces, $2p=6$ vertices on the axes",
                  fontsize=10)
     ax.view_init(elev=20, azim=35)
     fig.tight_layout()
@@ -161,17 +160,17 @@ def stein(path="ded_stein.png", n_rep=30000, seed=7):
                                + np.maximum(np.abs(Z), g ** 2).sum(axis=1)))
 
     fig, ax = plt.subplots(figsize=(6.6, 4.2))
-    ax.plot(gs, true, c="k", lw=2.4, label="riesgo verdadero (Monte Carlo)")
+    ax.plot(gs, true, c="k", lw=2.4, label="true risk (Monte Carlo)")
     ax.plot(gs, ours, c=RED, lw=1.5, ls="--",
-            label=r"con $\min(|z_i|,\gamma)^2$  (deducido)")
+            label=r"with $\min(|z_i|,\gamma)^2$  (derived)")
     ax.plot(gs, printed, c=BLUE, lw=1.5, ls=":",
-            label=r"con $\max(|z_i|,\gamma^2)$  (como se imprime)")
+            label=r"with $\max(|z_i|,\gamma^2)$  (as printed)")
     ax.axhline(mu @ mu, c=GREY, lw=0.8)
     ax.annotate(r"$\|\mu\|^2$", (5.8, mu @ mu), xytext=(0, 5),
                 textcoords="offset points", fontsize=8, c=GREY)
     ax.set_xlabel(r"$\gamma$")
-    ax.set_ylabel("riesgo")
-    ax.set_title("La errata de la fórmula de Stein (Sec. 4)", fontsize=11)
+    ax.set_ylabel("risk")
+    ax.set_title("The erratum in the Stein risk formula (Sec. 4)", fontsize=11)
     ax.legend(fontsize=8.5, loc="upper left")
     ax.set_ylim(0, 60)
     fig.tight_layout()
@@ -210,14 +209,14 @@ def active_set(path="ded_active_set.png", n_rep=140, seed=3):
                      label=rf"$\beta_{j+1}$")
         axes[0].plot([1.0], [bo[j]], "o", c=colour, ms=4)
     axes[0].axhline(bo[2], c=RED, ls=":", lw=1.0)
-    axes[0].annotate(rf"OLS de $\beta_3$ = {bo[2]:.2f}", (0.03, bo[2]),
+    axes[0].annotate(rf"OLS of $\beta_3$ = {bo[2]:.2f}", (0.03, bo[2]),
                      xytext=(0, 5), textcoords="offset points", fontsize=8, c=RED)
     axes[0].plot(ss, np.abs(pa).sum(axis=1), c="k", lw=1.0, ls="--",
                  label=r"$\sum_j|\beta_j|$")
     axes[0].set_xlabel(r"$s = t/t_0$")
-    axes[0].set_ylabel("coeficiente")
-    axes[0].set_title(rf"$\beta_3$ crece hasta {pa[:, 2].max():.2f} "
-                      "mientras el presupuesto baja", fontsize=9.5)
+    axes[0].set_ylabel("coefficient")
+    axes[0].set_title(rf"$\beta_3$ grows to {pa[:, 2].max():.2f} "
+                      "as the budget tightens", fontsize=9.5)
     axes[0].legend(fontsize=8, loc="upper left")
 
     # --- (b) same beta^o, many lassos --------------------------------------
@@ -245,38 +244,37 @@ def active_set(path="ded_active_set.png", n_rep=140, seed=3):
     axes[1].axhline(0, c="0.85", lw=0.8)
     axes[1].plot(grid, grid, ls=":", c=GREY, lw=1)
     axes[1].scatter(obs, lst, s=6, c="k", alpha=0.4, lw=0,
-                    label="el lasso de verdad")
+                    label="the actual lasso")
     axes[1].plot(grid, soft_threshold(grid, g_med), c=RED, lw=2.0,
-                 label=rf"Eq. 3 con $\gamma={g_med:.2f}$ (la mediana)")
+                 label=rf"Eq. 3 at the median $\gamma={g_med:.2f}$")
 
     # the vertical spread at one value of beta^o: a function would have none
     x0, half = 2.0, 0.12
     band = lst[np.abs(obs - x0) < half]
     axes[1].plot([x0, x0], [band.min(), band.max()], c=BLUE, lw=2.6,
                  solid_capstyle="butt")
-    axes[1].annotate(rf"en $\hat\beta^{{\,o}}_j\approx{x0}$:"
-                     "\n" rf"{band.min():.2f} a {band.max():.2f}",
+    axes[1].annotate(rf"at $\hat\beta^{{\,o}}_j\approx{x0}$:"
+                     "\n" rf"{band.min():.2f} to {band.max():.2f}",
                      (x0, band.max()), xytext=(6, 2), textcoords="offset points",
                      fontsize=8, c=BLUE)
     axes[1].set_xlabel(r"$\hat\beta^{\,o}_j$")
     axes[1].set_ylabel(r"$\hat\beta_j$")
-    axes[1].set_title(rf"$s={s_fixed}$, {n_rep} diseños correlados al azar",
+    axes[1].set_title(rf"$s={s_fixed}$, {n_rep} random correlated designs",
                       fontsize=9.5)
     axes[1].legend(fontsize=8, loc="upper left")
     axes[1].set_xlim(-2.4, 5.4)
     axes[1].set_ylim(-2.4, 5.4)
 
-    fig.suptitle("El desplazamiento no es un encogimiento por coordenadas",
-                 fontsize=11)
+    fig.suptitle("The shift is not a coordinatewise shrinkage", fontsize=11)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     print(f"wrote {path}")
-    print(f"  (a) OLS = {np.round(bo, 4)},  max de beta_3 en la trayectoria "
+    print(f"  (a) OLS = {np.round(bo, 4)},  max of beta_3 along the path "
           f"= {pa[:, 2].max():.4f}")
     print(f"  (a) (X'X)^-1 sign(beta^o) * N = "
           f"{np.round(np.linalg.solve(Xa.T @ Xa, np.sign(bo)) * len(Xa), 4)}")
-    print(f"  (b) gamma mediana {g_med:.4f}; en beta^o ~ {x0} el lasso va de "
-          f"{band.min():.4f} a {band.max():.4f} ({band.size} puntos)")
+    print(f"  (b) median gamma {g_med:.4f}; at beta^o ~ {x0} the lasso ranges "
+          f"from {band.min():.4f} to {band.max():.4f} ({band.size} points)")
 
 
 def _prostate():
@@ -306,16 +304,16 @@ def value_function(path="ded_value_function.png"):
     axes[0].plot(ts, V, c="k", lw=1.8)
     axes[0].set_xlabel("$t$")
     axes[0].set_ylabel(r"$V(t)=\min\,\|y-X\beta\|^2$")
-    axes[0].set_title("convexa y no creciente", fontsize=10)
+    axes[0].set_title("convex and non-increasing", fontsize=10)
 
-    axes[1].plot(ts, lam_kkt, c=RED, lw=2.2, label=r"$\lambda$ por KKT (Sec. 14)")
+    axes[1].plot(ts, lam_kkt, c=RED, lw=2.2, label=r"$\lambda$ from KKT (sec. 14)")
     axes[1].plot(ts, lam_num, c="k", lw=1.0, ls="--",
-                 label=r"$-V'(t)/2$ numérico")
+                 label=r"$-V'(t)/2$, numerical")
     axes[1].set_xlabel("$t$")
     axes[1].set_ylabel(r"$\lambda$")
-    axes[1].set_title("monótona decreciente, lineal a trozos", fontsize=10)
+    axes[1].set_title("monotone decreasing, piecewise linear", fontsize=10)
     axes[1].legend(fontsize=8.5)
-    fig.suptitle(r"La correspondencia $t \leftrightarrow \lambda$ (datos de próstata)",
+    fig.suptitle(r"The $t \leftrightarrow \lambda$ correspondence (prostate data)",
                  fontsize=11)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
@@ -331,20 +329,20 @@ def gcv_cv(path="ded_gcv_cv.png"):
 
     fig, axes = plt.subplots(1, 2, figsize=(9.2, 3.9))
     for ax, curve, name, colour in [(axes[0], gcv, "GCV (Eq. 10)", RED),
-                                    (axes[1], pe, "CV quíntuple", BLUE)]:
+                                    (axes[1], pe, "fivefold CV", BLUE)]:
         ax.plot(grid, curve, c=colour, lw=1.8)
         best = grid[int(np.argmin(curve))]
         ax.axvline(best, c=colour, ls=":", lw=1.2)
         ax.axvline(0.44, c="0.35", ls="--", lw=1.2)
-        ax.annotate(f"mín. {best:.2f}", (best, ax.get_ylim()[1]), xytext=(4, -12),
+        ax.annotate(f"min. {best:.2f}", (best, ax.get_ylim()[1]), xytext=(4, -12),
                     textcoords="offset points", fontsize=8, c=colour)
         ax.annotate(r"paper 0.44", (0.44, ax.get_ylim()[1]), xytext=(-52, -12),
                     textcoords="offset points", fontsize=8, c="0.35")
         ax.set_xlabel("$s$")
         ax.set_title(name, fontsize=10)
     axes[1].fill_between(grid, pe - se, pe + se, color=BLUE, alpha=0.15)
-    axes[0].set_ylabel("criterio")
-    fig.suptitle("Ninguno de los dos selectores cae en 0.44", fontsize=11)
+    axes[0].set_ylabel("criterion")
+    fig.suptitle("Neither selector lands on 0.44", fontsize=11)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     print(f"wrote {path}")

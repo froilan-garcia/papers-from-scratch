@@ -57,14 +57,14 @@ def check_point(X, y, s=0.44):
     alpha, lam, spread = alpha_for(X, y, beta)
     skl = sklearn_at(X, y, alpha)
 
-    print(f"--- 1. Un punto: s = {s} (el modelo de la Tabla 1) ---\n")
-    print(f"lambda por KKT = {lam:.6f}  (dispersion entre activas {spread:.1e})")
+    print(f"--- 1. One point: s = {s} (the model of Table 1) ---\n")
+    print(f"lambda from KKT = {lam:.6f}  (spread across active coords {spread:.1e})")
     print(f"alpha = lambda / N = {alpha:.6f}\n")
-    print(f"{'predictor':>9} {'Sec. 6':>10} {'sklearn':>10} {'dif':>10}")
+    print(f"{'predictor':>9} {'Sec. 6':>10} {'sklearn':>10} {'diff':>10}")
     for name, a, b in zip(PREDICTORS, beta, skl):
         print(f"{name:>9} {a:10.6f} {b:10.6f} {abs(a-b):10.2e}")
-    print(f"\nmax|dif| = {np.abs(beta - skl).max():.2e}")
-    print(f"mismo soporte: {np.array_equal(np.abs(beta) > 1e-8, np.abs(skl) > 1e-8)}")
+    print(f"\nmax|diff| = {np.abs(beta - skl).max():.2e}")
+    print(f"same support: {np.array_equal(np.abs(beta) > 1e-8, np.abs(skl) > 1e-8)}")
     print(f"RSS  Sec. 6 = {rss(X, y, beta):.10f}   sklearn = {rss(X, y, skl):.10f}")
     return np.abs(beta - skl).max()
 
@@ -82,8 +82,8 @@ def check_path(X, y, n=41):
         d = np.abs(beta - sklearn_at(X, y, alpha)).max()
         if d > worst:
             worst, worst_s = d, s
-    print(f"\n--- 2. Toda la trayectoria: {n} valores de s ---\n")
-    print(f"max|dif| sobre la rejilla = {worst:.2e}  (en s = {worst_s:.3f})")
+    print(f"\n--- 2. The whole path: {n} values of s ---\n")
+    print(f"max|diff| over the grid = {worst:.2e}  (at s = {worst_s:.3f})")
     return worst
 
 
@@ -99,9 +99,9 @@ def check_lars(X, y):
     coefs = coefs.T
     norms = np.abs(coefs).sum(axis=1)
 
-    print("\n--- 3. Contra LARS, sin convertir convenciones ---\n")
-    print(f"LARS da {len(norms)} codos; comparamos en cada uno, a igual ||beta||_1\n")
-    print(f"{'||beta||_1':>11} {'#activas':>9} {'max|dif|':>10}")
+    print("\n--- 3. Against LARS, with no conversion of conventions ---\n")
+    print(f"LARS gives {len(norms)} breakpoints; compared at each, at equal ||beta||_1\n")
+    print(f"{'||beta||_1':>11} {'#active':>9} {'max|diff|':>10}")
     worst = 0.0
     for nrm in norms:
         if nrm < 1e-12:
@@ -111,7 +111,7 @@ def check_lars(X, y):
         d = np.abs(ours - coefs[i]).max()
         worst = max(worst, d)
         print(f"{nrm:11.6f} {int((np.abs(ours) > 1e-8).sum()):9d} {d:10.2e}")
-    print(f"\nmax|dif| sobre todos los codos = {worst:.2e}")
+    print(f"\nmax|diff| over all breakpoints = {worst:.2e}")
     return worst
 
 
@@ -135,16 +135,16 @@ def check_zeros(X, y, s=0.44):
     skl = sklearn_at(X, y, alpha)
     ours_z = np.abs(beta)[np.abs(beta) < 1e-6]
     skl_z = np.abs(skl)[np.abs(skl) < 1e-6]
-    print("\n--- Los ceros: exactos en sitios distintos ---\n")
-    print(f"Sec. 6 : {ours_z.size} ceros, el mayor {ours_z.max():.2e}"
-          "   (exactos por algebra, redondeados por el sistema lineal)")
-    print(f"sklearn: {skl_z.size} ceros, el mayor {skl_z.max():.2e}"
-          "   (asignados por el umbral blando, soporte sujeto a tolerancia)")
+    print("\n--- The zeros: exact in different places ---\n")
+    print(f"Sec. 6 : {ours_z.size} zeros, largest {ours_z.max():.2e}"
+          "   (exact by algebra, rounded by the linear solve)")
+    print(f"sklearn: {skl_z.size} zeros, largest {skl_z.max():.2e}"
+          "   (assigned by the soft threshold, support subject to tolerance)")
 
 
 def main():
     X, y, _ = prostate.load(paper_data=True)
-    print(f"Datos de prostata: N = {X.shape[0]}, p = {X.shape[1]}\n")
+    print(f"Prostate data: N = {X.shape[0]}, p = {X.shape[1]}\n")
     d1 = check_point(X, y)
     d2 = check_path(X, y)
     d3 = check_lars(X, y)
@@ -152,8 +152,8 @@ def main():
 
     print("\n" + "=" * 62)
     ok = max(d1, d2, d3) < 1e-6
-    print(f"Las tres comprobaciones {'pasan' if ok else 'NO pasan'} "
-          f"(peor discrepancia {max(d1, d2, d3):.2e})")
+    print(f"All three checks {'pass' if ok else 'DO NOT pass'} "
+          f"(worst discrepancy {max(d1, d2, d3):.2e})")
 
 
 if __name__ == "__main__":
