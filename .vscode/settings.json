@@ -1,11 +1,11 @@
 {
-  // Intérprete por defecto: el entorno conda "papers" de este repo.
+  // Default interpreter: this repo's "papers" conda environment.
   "python.defaultInterpreterPath": "C:/miniconda3/envs/papers/python.exe",
-  // Ruta al ejecutable de conda para que VS Code descubra los entornos.
+  // Path to the conda executable so that VS Code discovers the environments.
   "python.condaPath": "C:/miniconda3/Scripts/conda.exe",
-  // Activa el entorno automáticamente al abrir un terminal integrado.
+  // Activate the environment automatically when opening an integrated terminal.
   "python.terminal.activateEnvironment": true,
-  // Los notebooks resuelven rutas desde la raíz del repo (para leer datos/paths relativos).
+  // Notebooks resolve paths from the repo root (to read data / relative paths).
   "jupyter.notebookFileRoot": "${workspaceFolder}",
   "python-envs.defaultEnvManager": "ms-python.python:conda",
   "python-envs.defaultPackageManager": "ms-python.python:conda"

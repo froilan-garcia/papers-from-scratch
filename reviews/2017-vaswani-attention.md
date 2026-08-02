@@ -1,122 +1,122 @@
 # Attention Is All You Need
 
-**Autores:** Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser & Polosukhin (Google Brain / Google Research / U. Toronto) · **Año:** 2017 · **Venue:** NIPS 2017 (31st Conference on Neural Information Processing Systems), Long Beach, CA · **Enlace/DOI:** [arXiv:1706.03762](https://arxiv.org/abs/1706.03762)
-**Campo:** ML / deep learning · **Leído:** 2026-07-29
+**Authors:** Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser & Polosukhin (Google Brain / Google Research / U. Toronto) · **Year:** 2017 · **Venue:** NIPS 2017 (31st Conference on Neural Information Processing Systems), Long Beach, CA · **Link/DOI:** [arXiv:1706.03762](https://arxiv.org/abs/1706.03762)
+**Field:** ML / deep learning · **Read:** 2026-07-29
 
 ## TL;DR
 
-Los autores proponen el **Transformer**: una arquitectura encoder-decoder que **elimina por completo la recurrencia y las convoluciones** y se apoya únicamente en mecanismos de atención. La pieza central es la **scaled dot-product attention**, $\mathrm{softmax}(QK^\top/\sqrt{d_k})V$, replicada en $h$ cabezas paralelas. El argumento no es solo de calidad sino de **complejidad computacional**: una capa recurrente necesita $O(n)$ operaciones secuenciales y conecta posiciones distantes con caminos de longitud $O(n)$; la self-attention necesita $O(1)$ secuenciales y camino máximo $O(1)$ — todo se paraleliza y cualquier par de posiciones se "ve" directamente. Resultado: **28.4 BLEU** en WMT14 inglés→alemán (más de 2 puntos sobre el estado del arte, incluidos ensembles) entrenando 3.5 días en 8 GPUs, una fracción del coste de los competidores. Es el paper sobre el que se construye todo el ecosistema actual de LLMs.
+The authors propose the **Transformer**: an encoder-decoder architecture that **removes recurrence and convolutions entirely** and relies solely on attention mechanisms. The central piece is **scaled dot-product attention**, $\mathrm{softmax}(QK^\top/\sqrt{d_k})V$, replicated across $h$ parallel heads. The argument is not only about quality but about **computational complexity**: a recurrent layer needs $O(n)$ sequential operations and connects distant positions through paths of length $O(n)$; self-attention needs $O(1)$ sequential operations and a maximum path of $O(1)$ — everything parallelises and any pair of positions "sees" each other directly. The result: **28.4 BLEU** on WMT14 English→German (more than 2 points above the state of the art, ensembles included) training for 3.5 days on 8 GPUs, a fraction of the competitors' cost. It is the paper on which the whole current LLM ecosystem is built.
 
-## Contexto y motivación
+## Context and motivation
 
-Hacia 2017 el estado del arte en traducción automática eran arquitecturas encoder-decoder recurrentes (LSTM, GRU) **con atención añadida** — la línea Bahdanau (2014) → Luong (2015) → GNMT (2016). El problema es estructural: una RNN genera estados ocultos $h_t = f(h_{t-1}, x_t)$, y esa dependencia de $h_{t-1}$ **impide paralelizar dentro de un ejemplo**. Con secuencias largas es fatal, porque además las restricciones de memoria limitan el *batching* entre ejemplos.
+Around 2017 the state of the art in machine translation consisted of recurrent encoder-decoder architectures (LSTM, GRU) **with attention added** — the line Bahdanau (2014) → Luong (2015) → GNMT (2016). The problem is structural: an RNN produces hidden states $h_t = f(h_{t-1}, x_t)$, and that dependence on $h_{t-1}$ **prevents parallelisation within an example**. With long sequences this is fatal, all the more so because memory constraints limit *batching* across examples.
 
-Las alternativas convolucionales (ByteNet, ConvS2S, Extended Neural GPU) sí paralelizan, pero el número de operaciones para relacionar dos posiciones **crece con la distancia**: lineal en ConvS2S, logarítmico en ByteNet. Eso dificulta aprender dependencias largas.
+The convolutional alternatives (ByteNet, ConvS2S, Extended Neural GPU) do parallelise, but the number of operations needed to relate two positions **grows with the distance**: linearly in ConvS2S, logarithmically in ByteNet. That makes long dependencies hard to learn.
 
-La observación clave: en esos modelos la atención ya hacía el trabajo pesado de conectar posiciones arbitrarias, pero **siempre acompañada de una RNN**. Los autores se preguntan qué pasa si se quita la RNN y se deja solo la atención. La respuesta —y el título— es que basta.
+The key observation: in those models attention was already doing the heavy lifting of connecting arbitrary positions, but **always alongside an RNN**. The authors ask what happens if the RNN is removed and only the attention is left. The answer — and the title — is that it suffices.
 
-## Metodología
+## Methodology
 
 ### Scaled dot-product attention (Eq. 1)
 
-La atención mapea una **query** y un conjunto de pares **key-value** a una salida, que es una suma ponderada de los values; el peso de cada value lo da una función de compatibilidad entre la query y su key. Empaquetando las queries en $Q$, las keys en $K$ y los values en $V$:
+Attention maps a **query** and a set of **key-value** pairs to an output, which is a weighted sum of the values; the weight of each value is given by a compatibility function between the query and its key. Packing the queries into $Q$, the keys into $K$ and the values into $V$:
 
 $$\mathrm{Attention}(Q,K,V) = \mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V$$
 
-**¿Por qué $\sqrt{d_k}$?** Es el detalle más citado y el paper lo justifica en la nota 4: si las componentes de $q$ y $k$ son independientes con media 0 y varianza 1, entonces $q\cdot k = \sum_{i=1}^{d_k} q_ik_i$ tiene media 0 y **varianza $d_k$**. Con $d_k$ grande los productos escalares se disparan en magnitud, empujando al softmax a regiones de **gradiente minúsculo** (saturación). Dividir por $\sqrt{d_k}$ renormaliza la varianza a 1 y lo evita.
+**Why $\sqrt{d_k}$?** It is the most-cited detail and the paper justifies it in footnote 4: if the components of $q$ and $k$ are independent with mean 0 and variance 1, then $q\cdot k = \sum_{i=1}^{d_k} q_ik_i$ has mean 0 and **variance $d_k$**. With large $d_k$ the dot products blow up in magnitude, pushing the softmax into regions of **tiny gradient** (saturation). Dividing by $\sqrt{d_k}$ renormalises the variance to 1 and avoids this.
 
-Frente a la **atención aditiva** de Bahdanau (que usa una red feed-forward de una capa como función de compatibilidad), la multiplicativa tiene complejidad teórica similar pero es **mucho más rápida y eficiente en memoria** en la práctica, porque se reduce a multiplicación de matrices altamente optimizada.
+Compared with Bahdanau's **additive attention** (which uses a one-layer feed-forward network as the compatibility function), the multiplicative one has similar theoretical complexity but is **much faster and more memory-efficient** in practice, because it reduces to highly optimised matrix multiplication.
 
 ### Multi-head attention
 
-En vez de una sola atención en dimensión $d_{\text{model}}$, se proyectan linealmente $Q$, $K$, $V$ **$h$ veces** con proyecciones aprendidas distintas, se atiende en paralelo, y se concatena:
+Instead of a single attention in dimension $d_{\text{model}}$, $Q$, $K$ and $V$ are linearly projected **$h$ times** with different learned projections, attended to in parallel, and concatenated:
 
 $$\mathrm{MultiHead}(Q,K,V) = \mathrm{Concat}(\mathrm{head}_1,\dots,\mathrm{head}_h)W^O,
 \qquad \mathrm{head}_i = \mathrm{Attention}(QW_i^Q, KW_i^K, VW_i^V)$$
 
-Motivación: permite atender conjuntamente a información de **distintos subespacios de representación** en distintas posiciones; con una sola cabeza el promediado lo impide. Configuración: $h=8$, $d_k = d_v = d_{\text{model}}/h = 64$. Como cada cabeza opera en dimensión reducida, **el coste total es similar al de una atención de cabeza única a dimensión completa**.
+Motivation: it allows jointly attending to information from **different representation subspaces** at different positions; with a single head, averaging prevents this. Configuration: $h=8$, $d_k = d_v = d_{\text{model}}/h = 64$. Since each head operates in reduced dimension, **the total cost is similar to that of a single-head attention at full dimension**.
 
-### Los tres usos de la atención en el modelo
+### The three uses of attention in the model
 
-1. **Encoder-decoder attention:** las queries vienen de la capa anterior del decoder, las keys y values del *output* del encoder. Cada posición del decoder atiende a toda la entrada (es la atención clásica de seq2seq).
-2. **Self-attention del encoder:** $Q$, $K$, $V$ vienen todas del mismo sitio (la capa anterior). Cada posición atiende a todas.
-3. **Self-attention enmascarada del decoder:** igual, pero cada posición solo puede atender **hasta e incluyendo ella misma**. Se implementa poniendo a $-\infty$ las entradas ilegales *antes* del softmax. Preserva la propiedad autorregresiva.
+1. **Encoder-decoder attention:** the queries come from the previous decoder layer, the keys and values from the encoder output. Each decoder position attends to the whole input (this is the classical seq2seq attention).
+2. **Encoder self-attention:** $Q$, $K$ and $V$ all come from the same place (the previous layer). Each position attends to all of them.
+3. **Masked decoder self-attention:** the same, but each position may only attend **up to and including itself**. It is implemented by setting the illegal entries to $-\infty$ *before* the softmax. It preserves the autoregressive property.
 
-### El resto de la arquitectura
+### The rest of the architecture
 
-- **Pilas:** $N=6$ capas idénticas en encoder y decoder. El decoder añade un tercer sub-layer (la atención al encoder).
-- **Residual + norm:** cada sub-layer se envuelve como $\mathrm{LayerNorm}(x + \mathrm{Sublayer}(x))$. Todos los sub-layers y embeddings producen $d_{\text{model}} = 512$ para que los residuales encajen.
-- **FFN por posición (Eq. 2):** $\mathrm{FFN}(x) = \max(0, xW_1+b_1)W_2+b_2$, aplicada idénticamente a cada posición, con capa interna $d_{ff}=2048$. Equivale a dos convoluciones de kernel 1.
-- **Embeddings:** compartidos entre las dos capas de embedding y la transformación pre-softmax; multiplicados por $\sqrt{d_{\text{model}}}$.
-- **Positional encoding:** como no hay recurrencia ni convolución, hay que inyectar el orden. Usan sinusoides de frecuencias en progresión geométrica de $2\pi$ a $10000\cdot 2\pi$:
+- **Stacks:** $N=6$ identical layers in encoder and decoder. The decoder adds a third sub-layer (the attention to the encoder).
+- **Residual + norm:** each sub-layer is wrapped as $\mathrm{LayerNorm}(x + \mathrm{Sublayer}(x))$. All sub-layers and embeddings produce $d_{\text{model}} = 512$ so that the residuals fit.
+- **Position-wise FFN (Eq. 2):** $\mathrm{FFN}(x) = \max(0, xW_1+b_1)W_2+b_2$, applied identically at each position, with inner layer $d_{ff}=2048$. Equivalent to two convolutions of kernel 1.
+- **Embeddings:** shared between the two embedding layers and the pre-softmax transformation; multiplied by $\sqrt{d_{\text{model}}}$.
+- **Positional encoding:** since there is neither recurrence nor convolution, order has to be injected. They use sinusoids with frequencies in geometric progression from $2\pi$ to $10000\cdot 2\pi$:
 $$PE_{(pos,2i)} = \sin\!\left(pos/10000^{2i/d_{\text{model}}}\right), \qquad
 PE_{(pos,2i+1)} = \cos\!\left(pos/10000^{2i/d_{\text{model}}}\right)$$
-La hipótesis: para cualquier desplazamiento fijo $k$, $PE_{pos+k}$ es **función lineal** de $PE_{pos}$, lo que facilitaría aprender a atender por posiciones relativas. Eligieron la versión sinusoidal (frente a embeddings aprendidos, que dan resultados casi idénticos) porque **podría extrapolar** a secuencias más largas que las vistas en entrenamiento.
+The hypothesis: for any fixed offset $k$, $PE_{pos+k}$ is a **linear function** of $PE_{pos}$, which would make it easy to learn to attend by relative position. They chose the sinusoidal version (over learned embeddings, which give nearly identical results) because it **might extrapolate** to sequences longer than those seen in training.
 
-### El argumento de complejidad (Sec. 4, Tabla 1)
+### The complexity argument (Sec. 4, Table 1)
 
-Es la justificación teórica del diseño, y merece leerse con atención. Con $n$ = longitud de secuencia, $d$ = dimensión de representación, $k$ = kernel, $r$ = vecindario:
+This is the theoretical justification of the design, and it deserves careful reading. With $n$ = sequence length, $d$ = representation dimension, $k$ = kernel, $r$ = neighbourhood:
 
-| Tipo de capa | Complejidad por capa | Ops. secuenciales | Camino máximo |
+| Layer type | Complexity per layer | Sequential ops. | Maximum path |
 |---|---|---|---|
 | **Self-attention** | $O(n^2\cdot d)$ | $O(1)$ | $O(1)$ |
-| Recurrente | $O(n\cdot d^2)$ | $O(n)$ | $O(n)$ |
-| Convolucional | $O(k\cdot n\cdot d^2)$ | $O(1)$ | $O(\log_k n)$ |
-| Self-attention (restringida) | $O(r\cdot n\cdot d)$ | $O(1)$ | $O(n/r)$ |
+| Recurrent | $O(n\cdot d^2)$ | $O(n)$ | $O(n)$ |
+| Convolutional | $O(k\cdot n\cdot d^2)$ | $O(1)$ | $O(\log_k n)$ |
+| Self-attention (restricted) | $O(r\cdot n\cdot d)$ | $O(1)$ | $O(n/r)$ |
 
-Tres criterios: coste por capa, paralelizable (ops. secuenciales) y **longitud del camino** entre dependencias largas — cuanto más corto el camino que recorren las señales hacia delante y hacia atrás, más fácil aprender dependencias lejanas. La self-attention gana en los tres salvo en coste por capa, y ahí es **más barata que la recurrente cuando $n < d$**, que es el caso habitual con representaciones tipo word-piece o BPE.
+Three criteria: cost per layer, parallelisability (sequential ops.) and **path length** between long-range dependencies — the shorter the path signals travel forwards and backwards, the easier it is to learn distant dependencies. Self-attention wins on all three except cost per layer, and there it is **cheaper than the recurrent one when $n < d$**, which is the usual case with word-piece or BPE representations.
 
-> 💡 Ese $O(n^2 \cdot d)$ es exactamente la limitación que definiría la década siguiente: Longformer, FlashAttention, Mamba... El propio paper ya apunta la *restricted self-attention* como salida.
+> 💡 That $O(n^2 \cdot d)$ is exactly the limitation that would define the following decade: Longformer, FlashAttention, Mamba... The paper itself already points to *restricted self-attention* as a way out.
 
-### Entrenamiento (Sec. 5)
+### Training (Sec. 5)
 
-- **Datos:** WMT 2014 EN-DE (4.5M pares, BPE con vocabulario compartido de ~37000 tokens) y EN-FR (36M frases, word-piece de 32000). Batches de ~25000 tokens fuente y 25000 destino.
-- **Hardware:** 8 GPUs NVIDIA P100. Base: 100K pasos ≈ **12 horas**. Big: 300K pasos ≈ **3.5 días**.
-- **Optimizador (Eq. 3):** Adam con $\beta_1=0.9$, $\beta_2=0.98$, $\epsilon=10^{-9}$, y el célebre **schedule con warmup**:
+- **Data:** WMT 2014 EN-DE (4.5M pairs, BPE with a shared vocabulary of ~37000 tokens) and EN-FR (36M sentences, word-piece of 32000). Batches of ~25000 source and 25000 target tokens.
+- **Hardware:** 8 NVIDIA P100 GPUs. Base: 100K steps ≈ **12 hours**. Big: 300K steps ≈ **3.5 days**.
+- **Optimiser (Eq. 3):** Adam with $\beta_1=0.9$, $\beta_2=0.98$, $\epsilon=10^{-9}$, and the celebrated **warmup schedule**:
 $$lrate = d_{\text{model}}^{-0.5}\cdot\min\!\left(step\_num^{-0.5},\ step\_num\cdot warmup\_steps^{-1.5}\right)$$
-Sube linealmente durante los primeros $warmup\_steps = 4000$ pasos y luego decae como $1/\sqrt{step}$.
-- **Regularización:** dropout residual $P_{drop}=0.1$ (a la salida de cada sub-layer y a la suma embeddings+PE) y **label smoothing** $\epsilon_{ls}=0.1$ — que *empeora* la perplejidad (el modelo aprende a estar más inseguro) pero *mejora* accuracy y BLEU.
-- **Inferencia:** beam search con haz 4 y penalización de longitud $\alpha=0.6$; promediado de los últimos 5 checkpoints (base) o 20 (big).
+It rises linearly for the first $warmup\_steps = 4000$ steps and then decays as $1/\sqrt{step}$.
+- **Regularisation:** residual dropout $P_{drop}=0.1$ (on the output of each sub-layer and on the embeddings+PE sum) and **label smoothing** $\epsilon_{ls}=0.1$ — which *hurts* perplexity (the model learns to be less certain) but *improves* accuracy and BLEU.
+- **Inference:** beam search with beam 4 and length penalty $\alpha=0.6$; averaging of the last 5 checkpoints (base) or 20 (big).
 
-## Resultados principales
+## Main results
 
-- **WMT14 EN-DE (Tabla 2):** Transformer (big) **28.4 BLEU**, >2.0 por encima del mejor resultado previo *incluidos ensembles*. El modelo **base** (27.3) ya supera a todo lo publicado, con coste de entrenamiento $3.3\times10^{18}$ FLOPs frente a $\sim10^{20}$ de los competidores — **un orden de magnitud o dos más barato**.
-- **WMT14 EN-FR:** **41.8 BLEU** (big), nuevo estado del arte de modelo único, con menos de 1/4 del coste del anterior. *(Nota: el texto de la Sec. 6.1 dice 41.0 mientras el abstract y la Tabla 2 dicen 41.8 — inconsistencia conocida del paper.)*
-- **Ablaciones (Tabla 3)** — la parte más instructiva:
-  - **(A) Número de cabezas:** una sola cabeza es **0.9 BLEU peor** que la mejor configuración, pero **demasiadas cabezas también empeora**. Hay un óptimo (8–16).
-  - **(B) Reducir $d_k$ perjudica**, lo que sugiere que "determinar compatibilidad no es fácil" y que una función más sofisticada que el producto escalar podría ayudar.
-  - **(C)** Modelos más grandes, mejores. **(D)** El dropout es muy útil contra el sobreajuste.
-  - **(E) Embeddings posicionales aprendidos ≈ sinusoides** (25.7 vs 25.8 BLEU dev). La elección sinusoidal fue por extrapolación, no por rendimiento.
-- **Generalización (Sec. 6.3, Tabla 4):** un Transformer de 4 capas en *constituency parsing* del Penn Treebank da **91.3 F1** solo con WSJ (40K frases) y **92.7** semi-supervisado — superando a todos los previos salvo el RNNG de Dyer et al., y **sin apenas tuning específico**. Prueba de que la arquitectura no es un truco de traducción.
+- **WMT14 EN-DE (Table 2):** Transformer (big) **28.4 BLEU**, >2.0 above the best previous result *including ensembles*. The **base** model (27.3) already beats everything published, with a training cost of $3.3\times10^{18}$ FLOPs against $\sim10^{20}$ for the competitors — **one or two orders of magnitude cheaper**.
+- **WMT14 EN-FR:** **41.8 BLEU** (big), a new single-model state of the art, at less than 1/4 of the previous cost. *(Note: the text of Sec. 6.1 says 41.0 while the abstract and Table 2 say 41.8 — a known inconsistency in the paper.)*
+- **Ablations (Table 3)** — the most instructive part:
+  - **(A) Number of heads:** a single head is **0.9 BLEU worse** than the best configuration, but **too many heads also hurts**. There is an optimum (8–16).
+  - **(B) Reducing $d_k$ hurts**, suggesting that "determining compatibility is not easy" and that a more sophisticated function than the dot product might help.
+  - **(C)** Bigger models, better. **(D)** Dropout is very useful against overfitting.
+  - **(E) Learned positional embeddings ≈ sinusoids** (25.7 vs 25.8 BLEU dev). The sinusoidal choice was for extrapolation, not performance.
+- **Generalisation (Sec. 6.3, Table 4):** a 4-layer Transformer on Penn Treebank *constituency parsing* gives **91.3 F1** with WSJ alone (40K sentences) and **92.7** semi-supervised — beating all previous results except the RNNG of Dyer et al., and **with hardly any task-specific tuning**. Proof that the architecture is not a translation trick.
 
-## Puntos fuertes y limitaciones
+## Strengths and limitations
 
-**Fuertes:** simplicidad radical — quitar componentes (recurrencia, convolución) y mejorar resultados es el mejor tipo de resultado; el argumento de complejidad de la Tabla 1 es una justificación de diseño *a priori*, no un ajuste *post hoc*; las ablaciones son honestas y ricas (incluyendo que más cabezas empeoran y que las sinusoides no aportan sobre lo aprendido); la eficiencia es el verdadero titular (1–2 órdenes de magnitud menos FLOPs); y generaliza fuera de traducción.
+**Strengths:** radical simplicity — removing components (recurrence, convolution) and improving results is the best kind of result; the complexity argument of Table 1 is an *a priori* design justification, not a *post hoc* rationalisation; the ablations are honest and rich (including that more heads hurt and that sinusoids add nothing over learned embeddings); efficiency is the real headline (1–2 orders of magnitude fewer FLOPs); and it generalises beyond translation.
 
-**Limitaciones (unas del paper, otras solo visibles en retrospectiva):**
-- **El cuello de botella $O(n^2)$** en memoria y cómputo respecto a la longitud de secuencia. El paper lo reconoce y propone atención restringida como trabajo futuro; toda una línea de investigación posterior (Longformer, FlashAttention, S4/Mamba) nace de aquí.
-- **Post-norm.** El paper usa $\mathrm{LayerNorm}(x+\mathrm{Sublayer}(x))$, que resultó ser **inestable de entrenar sin warmup cuidadoso** — de ahí el schedule de la Eq. (3). Los modelos modernos usan **pre-norm** ($x + \mathrm{Sublayer}(\mathrm{LayerNorm}(x))$), mucho más estable (Xiong et al. 2020).
-- **El título exagera un poco.** La atención no es "todo lo que necesitas": las FFN por posición son ~2/3 de los parámetros y hacen trabajo esencial, y los residuales, la normalización y el schedule de learning rate son igual de necesarios para que entrene.
-- **Componentes superados:** las sinusoides han cedido ante **RoPE**; la ReLU del FFN ante **GELU/SwiGLU**; Adam ante **AdamW**. Nada de esto resta al núcleo.
-- **Enmarcado como traducción.** El paper no anticipa que la verdadera aplicación sería el **modelado de lenguaje a escala** (BERT, GPT). La escala máxima aquí son 213M parámetros.
-- **Sin teoría de por qué funciona:** la justificación es empírica y de complejidad; la interpretabilidad se despacha con "las cabezas parecen aprender tareas distintas" y unos ejemplos en el apéndice.
+**Limitations (some the paper's, others visible only in hindsight):**
+- **The $O(n^2)$ bottleneck** in memory and compute with respect to sequence length. The paper acknowledges it and proposes restricted attention as future work; a whole line of later research (Longformer, FlashAttention, S4/Mamba) is born here.
+- **Post-norm.** The paper uses $\mathrm{LayerNorm}(x+\mathrm{Sublayer}(x))$, which turned out to be **unstable to train without careful warmup** — hence the schedule of Eq. (3). Modern models use **pre-norm** ($x + \mathrm{Sublayer}(\mathrm{LayerNorm}(x))$), which is far more stable (Xiong et al. 2020).
+- **The title overstates slightly.** Attention is not "all you need": the position-wise FFNs are ~2/3 of the parameters and do essential work, and the residuals, the normalisation and the learning-rate schedule are equally necessary for it to train at all.
+- **Superseded components:** the sinusoids have given way to **RoPE**; the FFN's ReLU to **GELU/SwiGLU**; Adam to **AdamW**. None of this detracts from the core.
+- **Framed as translation.** The paper does not anticipate that the real application would be **language modelling at scale** (BERT, GPT). The largest scale here is 213M parameters.
+- **No theory of why it works:** the justification is empirical and complexity-based; interpretability is dispatched with "the heads seem to learn different tasks" and a few examples in the appendix.
 
-## Ideas de implementación
+## Implementation ideas
 
-El Transformer es probablemente **el ejercicio más rentable de toda la pista de deep learning**: implementarlo desde cero fuerza a entender álgebra lineal por lotes, enmascaramiento y normalización. Plan por piezas (estilo Lasso/Markowitz):
+The Transformer is probably **the highest-yield exercise on the whole deep learning track**: implementing it from scratch forces one to understand batched linear algebra, masking and normalisation. A plan in pieces (lasso/Markowitz style):
 
-1. **Scaled dot-product attention (Eq. 1)** en numpy puro, sin batching: $QK^\top$, escala, softmax, $\times V$. ~10 líneas. **Validar el porqué del $\sqrt{d_k}$**: generar $q,k$ gaussianos y comprobar empíricamente que $\mathrm{Var}(q\cdot k)= d_k$, y graficar cómo se satura el softmax (y se muere el gradiente) sin la escala. Es la nota 4 del paper hecha figura.
-2. **Multi-head attention** con las proyecciones $W^Q, W^K, W^V, W^O$ y el *reshape* a $h$ cabezas. Verificar que el coste en parámetros es **igual** al de una cabeza a dimensión completa (la afirmación de la Sec. 3.2.2).
-3. **Máscara causal** del decoder: matriz triangular con $-\infty$, comprobando que la fila $i$ solo pone masa en columnas $\le i$. Visualizar la matriz de atención antes/después.
-4. **Positional encoding sinusoidal:** implementar y **dibujar el mapa de calor** $PE(pos, i)$ (una figura preciosa). Verificar numéricamente la propiedad clave: que $PE_{pos+k}$ es combinación lineal de $PE_{pos}$ con matriz independiente de $pos$ (es una rotación 2×2 por cada par de dimensiones — conexión directa con RoPE).
-5. **Bloque encoder completo:** multi-head + FFN + residual + LayerNorm, en PyTorch. Contar parámetros y **verificar el reparto ~1/3 atención, ~2/3 FFN**.
-6. **Transformer mínimo entrenable** sobre una tarea de juguete (copiar/invertir secuencias, o traducción de números a texto). Reproducir el **schedule de learning rate de la Eq. (3)** y graficarlo.
-7. **Ablación propia:** repetir la fila (A) de la Tabla 3 a escala de juguete — variar $h \in \{1,2,4,8\}$ a cómputo constante y comprobar que una sola cabeza pierde y que demasiadas también.
-8. **Validar contra `torch.nn.MultiheadAttention`** con los mismos pesos, comprobando igualdad numérica.
+1. **Scaled dot-product attention (Eq. 1)** in pure numpy, without batching: $QK^\top$, scale, softmax, $\times V$. ~10 lines. **Validate the reason for the $\sqrt{d_k}$**: generate Gaussian $q,k$ and check empirically that $\mathrm{Var}(q\cdot k)= d_k$, and plot how the softmax saturates (and the gradient dies) without the scaling. It is footnote 4 of the paper turned into a figure.
+2. **Multi-head attention** with the projections $W^Q, W^K, W^V, W^O$ and the *reshape* into $h$ heads. Verify that the parameter cost is **equal** to that of one head at full dimension (the claim of Sec. 3.2.2).
+3. **Causal mask** of the decoder: a triangular matrix with $-\infty$, checking that row $i$ places mass only on columns $\le i$. Visualise the attention matrix before and after.
+4. **Sinusoidal positional encoding:** implement it and **draw the heat map** $PE(pos, i)$ (a beautiful figure). Verify numerically the key property: that $PE_{pos+k}$ is a linear combination of $PE_{pos}$ with a matrix independent of $pos$ (it is a 2×2 rotation for each pair of dimensions — a direct connection with RoPE).
+5. **A full encoder block:** multi-head + FFN + residual + LayerNorm, in PyTorch. Count parameters and **verify the ~1/3 attention, ~2/3 FFN split**.
+6. **A minimal trainable Transformer** on a toy task (copying/reversing sequences, or translating numbers into words). Reproduce the **learning-rate schedule of Eq. (3)** and plot it.
+7. **An ablation of my own:** repeat row (A) of Table 3 at toy scale — vary $h \in \{1,2,4,8\}$ at constant compute and check that a single head loses and that too many do too.
+8. **Validate against `torch.nn.MultiheadAttention`** with the same weights, checking numerical equality.
 
-## Conexiones
+## Connections
 
-- **Ruta A del [ROADMAP](../ROADMAP.md):** este paper es el destino de la línea histórica RNN → atención. Leer antes **Bahdanau (2014)** —el origen real de la atención, donde aún hay RNN— hace que el salto se entienda como "quitar la RNN", que es exactamente la tesis. **Luong (2015)** aporta la atención multiplicativa que aquí se escala.
-- **Ruta D (ingeniería):** casi toda esa ruta son parches a limitaciones de *este* paper — **RoPE** (sustituye las sinusoides), **FlashAttention** (ataca el $O(n^2)$ en memoria), **AdamW** (sustituye el Adam+warmup), **Layer Normalization** (el pre/post-norm), **multi-query attention** (abarata la inferencia).
-- **Ruta B (tokenización):** el paper usa **BPE** (Sennrich 2015) y **word-piece** (GNMT 2016) sin discutirlos; son prerrequisito para entender la capa de entrada.
-- **[Tibshirani (1996), Lasso](1996-tibshirani-lasso.md):** conexión lateral pero real — el softmax de la atención produce pesos **densos** (todos > 0), y hay toda una línea de *sparse attention* que busca lo que el $L_1$ hace en regresión: poner ceros exactos.
+- **Track A of the [ROADMAP](../ROADMAP.md):** this paper is the destination of the historical line RNN → attention. Reading **Bahdanau (2014)** first — the real origin of attention, where the RNN is still present — makes the leap intelligible as "remove the RNN", which is exactly the thesis. **Luong (2015)** contributes the multiplicative attention that is scaled here.
+- **Track D (engineering):** almost all of that track consists of patches to limitations of *this* paper — **RoPE** (replaces the sinusoids), **FlashAttention** (attacks the $O(n^2)$ in memory), **AdamW** (replaces Adam+warmup), **Layer Normalization** (the pre/post-norm question), **multi-query attention** (cheapens inference).
+- **Track B (tokenisation):** the paper uses **BPE** (Sennrich 2015) and **word-piece** (GNMT 2016) without discussing them; they are prerequisites for understanding the input layer.
+- **[Tibshirani (1996), Lasso](1996-tibshirani-lasso.md):** a lateral but real connection — the attention softmax produces **dense** weights (all > 0), and there is a whole line of *sparse attention* seeking what $L_1$ does in regression: exact zeros.

@@ -1,5 +1,5 @@
-# Entorno conda del repo. Crear con:  conda env create -f environment.yml
-# Activar con:                        conda activate papers
+# The repo's conda environment. Create with:  conda env create -f environment.yml
+# Activate with:                              conda activate papers
 name: papers
 channels:
   - conda-forge

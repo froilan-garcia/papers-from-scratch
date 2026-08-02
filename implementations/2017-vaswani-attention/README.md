@@ -20,107 +20,107 @@ Built incrementally, same as the [Lasso](../1996-tibshirani-lasso/). Current sta
 Pieces 1–4 are **numpy only** — deliberately, because the whole point is to see
 the algebra. `torch` enters at Piece 5.
 
-## Fundamentos — de dónde sale cada pieza
+## Fundamentals — where each piece comes from
 
-Notas de repaso antes de picar código. La idea es no tratar la atención como una
-caja negra de tres letras (Q, K, V) sino ver **qué operación es realmente**.
+Notes to work through before writing code. The idea is not to treat attention as a
+black box of three letters (Q, K, V) but to see **what operation it actually is**.
 
-### 1. La atención es una media ponderada, y los pesos los decide un producto escalar
+### 1. Attention is a weighted average, and a dot product decides the weights
 
-Quitando toda la notación, la atención hace esto: para cada posición, produce una
-**combinación convexa de los values**. Lo único no trivial es de dónde salen los
-pesos.
+Stripping away all the notation, attention does this: for each position, it produces
+a **convex combination of the values**. The only non-trivial part is where the
+weights come from.
 
-    salida_i = sum_j  alpha_ij * v_j        con  sum_j alpha_ij = 1,  alpha_ij >= 0
+    output_i = sum_j  alpha_ij * v_j        with  sum_j alpha_ij = 1,  alpha_ij >= 0
 
-Los $\alpha_{ij}$ salen de un softmax sobre las **compatibilidades** entre la
-query $i$ y la key $j$. Y la compatibilidad elegida es la más simple posible: el
-**producto escalar** $q_i \cdot k_j$, que mide alineamiento. En forma matricial
-(Eq. 1 del paper):
+The $\alpha_{ij}$ come from a softmax over the **compatibilities** between query $i$
+and key $j$. And the compatibility chosen is the simplest possible: the **dot
+product** $q_i \cdot k_j$, which measures alignment. In matrix form (Eq. 1 of the
+paper):
 
 $$\mathrm{Attention}(Q,K,V) = \mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V$$
 
-Dimensiones, que es donde se pierde uno: $Q \in \mathbb R^{n_q \times d_k}$,
-$K \in \mathbb R^{n_k \times d_k}$, $V \in \mathbb R^{n_k \times d_v}$. Entonces
-$QK^\top \in \mathbb R^{n_q \times n_k}$ (la **matriz de atención**, una fila por
-query), el softmax es **por filas**, y la salida queda en $\mathbb R^{n_q \times d_v}$.
-Nótese que $n_q$ y $n_k$ pueden diferir — eso es justo lo que permite la atención
-encoder-decoder.
+Dimensions, which is where one gets lost: $Q \in \mathbb R^{n_q \times d_k}$,
+$K \in \mathbb R^{n_k \times d_k}$, $V \in \mathbb R^{n_k \times d_v}$. Then
+$QK^\top \in \mathbb R^{n_q \times n_k}$ (the **attention matrix**, one row per
+query), the softmax is **row-wise**, and the output lands in
+$\mathbb R^{n_q \times d_v}$. Note that $n_q$ and $n_k$ may differ — which is exactly
+what makes encoder-decoder attention possible.
 
-### 2. El $\sqrt{d_k}$ no es cosmético (nota 4 del paper)
+### 2. The $\sqrt{d_k}$ is not cosmetic (footnote 4 of the paper)
 
-Este es el detalle que conviene *derivar*, no memorizar. Supongamos $q, k$ con
-componentes independientes de media 0 y varianza 1. Entonces:
+This is the detail worth *deriving* rather than memorising. Suppose $q, k$ have
+independent components of mean 0 and variance 1. Then:
 
 $$q\cdot k = \sum_{i=1}^{d_k} q_i k_i
 \quad\Longrightarrow\quad
 E[q\cdot k] = 0, \qquad \mathrm{Var}(q\cdot k) = \sum_{i=1}^{d_k}\mathrm{Var}(q_ik_i) = d_k,$$
 
-usando independencia y $\mathrm{Var}(q_ik_i) = E[q_i^2k_i^2] = E[q_i^2]E[k_i^2] = 1$.
+using independence and $\mathrm{Var}(q_ik_i) = E[q_i^2k_i^2] = E[q_i^2]E[k_i^2] = 1$.
 
-Así que la **desviación típica de los logits crece como $\sqrt{d_k}$**. Con
-$d_k = 64$ eso son logits de magnitud típica $\pm 8$, y diferencias de ese orden
-entre ellos. El softmax con logits muy separados se **satura**: se acerca a un
-one-hot, y su jacobiano
+So the **standard deviation of the logits grows like $\sqrt{d_k}$**. With $d_k = 64$
+that means logits of typical magnitude $\pm 8$, and differences of that order between
+them. A softmax with widely separated logits **saturates**: it approaches a one-hot,
+and its Jacobian
 
 $$\frac{\partial\,\mathrm{softmax}(z)_i}{\partial z_j} = \mathrm{softmax}(z)_i(\delta_{ij} - \mathrm{softmax}(z)_j)$$
 
-tiende a **cero** cuando alguna componente $\to 1$ y el resto $\to 0$. Gradiente
-muerto, no aprende. Dividir por $\sqrt{d_k}$ devuelve la varianza a 1 y mantiene
-el softmax en su régimen sensible. **Pieza 1 lo comprueba numéricamente.**
+tends to **zero** when one component $\to 1$ and the rest $\to 0$. Dead gradient, no
+learning. Dividing by $\sqrt{d_k}$ returns the variance to 1 and keeps the softmax in
+its sensitive regime. **Piece 1 checks this numerically.**
 
-### 3. Multi-head: por qué no sale más caro
+### 3. Multi-head: why it does not cost more
 
-Con una sola cabeza a dimensión $d_{\text{model}}$, las proyecciones serían
-$W^Q, W^K, W^V \in \mathbb R^{d_{\text{model}}\times d_{\text{model}}}$. Con $h$
-cabezas, cada una proyecta a $d_k = d_v = d_{\text{model}}/h$, así que cada
-$W_i^Q \in \mathbb R^{d_{\text{model}}\times d_{\text{model}}/h}$. Apilando las
-$h$ cabezas:
+With a single head at dimension $d_{\text{model}}$, the projections would be
+$W^Q, W^K, W^V \in \mathbb R^{d_{\text{model}}\times d_{\text{model}}}$. With $h$
+heads, each projects to $d_k = d_v = d_{\text{model}}/h$, so each
+$W_i^Q \in \mathbb R^{d_{\text{model}}\times d_{\text{model}}/h}$. Stacking the $h$
+heads:
 
     h * (d_model x d_model/h)  =  d_model x d_model
 
-**El mismo número de parámetros.** Por eso el paper dice que el coste total es
-similar al de la atención de cabeza única a dimensión completa. Lo que se gana es
-que cada cabeza puede especializarse en un subespacio distinto; lo que se pierde
-es resolución por cabeza — de ahí que la Tabla 3(A) muestre que **demasiadas
-cabezas también empeora**. Con $d_{\text{model}}=512$ y $h=8$: $d_k=d_v=64$.
+**The same number of parameters.** That is why the paper says the total cost is
+similar to that of single-head attention at full dimension. What is gained is that
+each head can specialise in a different subspace; what is lost is resolution per
+head — hence Table 3(A) showing that **too many heads also hurts**. With
+$d_{\text{model}}=512$ and $h=8$: $d_k=d_v=64$.
 
-### 4. La máscara causal, y por qué es $-\infty$ y no 0
+### 4. The causal mask, and why it is $-\infty$ and not 0
 
-Para que el decoder sea autorregresivo, la posición $i$ no puede ver la $j > i$.
-La tentación es poner a cero los pesos después del softmax, pero eso **rompe la
-normalización** (dejarían de sumar 1). La solución del paper es enmascarar
-**antes**, poniendo los logits ilegales a $-\infty$:
+For the decoder to be autoregressive, position $i$ must not see position $j > i$. The
+temptation is to zero the weights after the softmax, but that **breaks the
+normalisation** (they would stop summing to 1). The paper's solution is to mask
+**before**, setting the illegal logits to $-\infty$:
 
     softmax(...,-inf, ...)  ->  exp(-inf) = 0
 
-Así el cero sale *del propio softmax* y las filas siguen sumando 1. En código se
-usa un número muy negativo (`-1e9`) por estabilidad numérica.
+That way the zero comes out *of the softmax itself* and the rows still sum to 1. In
+code a very negative number (`-1e9`) is used for numerical stability.
 
-### 5. Positional encoding: por qué sinusoides
+### 5. Positional encoding: why sinusoids
 
-Sin recurrencia ni convolución, la atención es **permutación-equivariante**: si
-barajas las posiciones de entrada, la salida se baraja igual. Es decir, el modelo
-**no sabe el orden**. Hay que inyectarlo, y el paper lo suma a los embeddings:
+Without recurrence or convolution, attention is **permutation-equivariant**: if you
+shuffle the input positions, the output shuffles the same way. That is, the model
+**does not know the order**. It has to be injected, and the paper adds it to the
+embeddings:
 
 $$PE_{(pos,2i)} = \sin\!\left(\frac{pos}{10000^{2i/d_{\text{model}}}}\right),\qquad
 PE_{(pos,2i+1)} = \cos\!\left(\frac{pos}{10000^{2i/d_{\text{model}}}}\right)$$
 
-La propiedad que lo motiva: para cada par de dimensiones $(2i, 2i+1)$ y con
-$\omega_i = 10000^{-2i/d_{\text{model}}}$, un desplazamiento fijo $k$ actúa como una
-**rotación**:
+The property that motivates it: for each pair of dimensions $(2i, 2i+1)$ and with
+$\omega_i = 10000^{-2i/d_{\text{model}}}$, a fixed shift $k$ acts as a **rotation**:
 
 $$\begin{pmatrix}\sin(\omega_i(pos+k))\\ \cos(\omega_i(pos+k))\end{pmatrix}
 =\begin{pmatrix}\cos\omega_i k & \sin\omega_i k\\ -\sin\omega_i k & \cos\omega_i k\end{pmatrix}
 \begin{pmatrix}\sin(\omega_i\,pos)\\ \cos(\omega_i\,pos)\end{pmatrix}$$
 
-La matriz **no depende de $pos$**, solo del desplazamiento $k$ — que es
-exactamente lo que el paper quiere decir con *"$PE_{pos+k}$ puede representarse
-como función lineal de $PE_{pos}$"*. Esa observación es la semilla directa de
-**RoPE** (Ruta D del ROADMAP), que en vez de *sumar* la codificación **rota** las
-queries y keys. La Pieza 4 verifica la identidad numéricamente.
+The matrix **does not depend on $pos$**, only on the shift $k$ — which is exactly
+what the paper means by *"$PE_{pos+k}$ can be represented as a linear function of
+$PE_{pos}$"*. That observation is the direct seed of **RoPE** (Track D of the
+ROADMAP), which instead of *adding* the encoding **rotates** the queries and keys.
+Piece 4 verifies the identity numerically.
 
 ## Stack
 
-`numpy` (Piezas 1–4), `torch` (5–8), `matplotlib` para las figuras. Nada fuera
-del stack base del repo.
+`numpy` (Pieces 1–4), `torch` (5–8), `matplotlib` for the figures. Nothing outside
+the repo's base stack.

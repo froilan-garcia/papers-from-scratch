@@ -16,37 +16,37 @@ Desktop.ini
 *.out
 *.synctex.gz
 
-# Data y salidas pesadas
+# Data and heavy outputs
 implementations/**/data/
 implementations/**/outputs/
 *.ckpt
 *.pt
 
-# PDFs de papers: no se versionan.
-# 1) Peso: el historial de git crecería cientos de MB de forma permanente.
-# 2) Copyright: este repo es público (portfolio); redistribuir los PDFs
-#    publicados (Annals of Statistics, JMLR, NeurIPS, IEEE...) no procede.
-# El inventario con los enlaces de descarga vive en papers/INDEX.md, que sí
-# se versiona — es lo que aporta valor y es compartible.
+# Paper PDFs: not versioned.
+# 1) Weight: the git history would grow by hundreds of MB, permanently.
+# 2) Copyright: this repo is public (a portfolio); redistributing published
+#    PDFs (Annals of Statistics, JMLR, NeurIPS, IEEE...) is not appropriate.
+# The inventory with the download links lives in papers/INDEX.md, which IS
+# versioned — it is what adds value and it is shareable.
 papers/*.pdf
 !papers/INDEX.md
 
-# Notas personales: no se publican
+# Personal notes: not published
 GUIA-LECTURA.md
 
-# Búsqueda de prácticas: CV, cartas de motivación, calendario de solicitudes y
-# plan de preparación. Es material personal y además estratégico — publicar a
-# qué firmas se aplica y cuándo juega en contra. Vive fuera del repo, en
-# Desktop/quant-practicas/. La pista de LECTURA quant sí se queda: está en
-# ROADMAP.md, sección "Papers quant para el flujo /paper".
+# Internship search: CV, motivation letters, application calendar and
+# preparation plan. It is personal material and also strategic — publishing
+# which firms are being applied to, and when, works against the applicant. It
+# lives outside the repo. The quant READING track does stay: it is in
+# ROADMAP.md, section "Quant papers for the /paper workflow".
 quant/
 
-# Trabajo en curso que no se publica hasta estar entendido a fondo.
-# Lasso: la reproducción de la Tabla 3 (Sec. 7) corre y el ordenamiento de
-# métodos sale, pero los niveles de error no cuadran con ninguna sigma y el
-# diagnóstico depende de un montaje de simulación que todavía no domino.
-# Se queda en local hasta entonces; lo publicado es el solver, próstata y el
-# cotejo contra sklearn, que sí están cerrados.
+# Work in progress, not published until it is understood in depth.
+# Lasso: the reproduction of Table 3 (Sec. 7) runs and the ordering of methods
+# comes out, but the error levels do not match under any sigma and the
+# diagnosis depends on a simulation setup that is not yet commanded. It stays
+# local until then; what is published is the solver, the prostate data and the
+# cross-check against sklearn, which are closed.
 implementations/1996-tibshirani-lasso/simulation.py
 implementations/1996-tibshirani-lasso/competitors.py
 implementations/1996-tibshirani-lasso/NOTAS-LOCALES.md

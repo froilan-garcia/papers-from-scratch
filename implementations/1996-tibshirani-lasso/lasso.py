@@ -2,7 +2,7 @@
 
 Objective of Eq. (1) and the sequential sign-constraint algorithm of Sec. 6.
 Deliberately NOT coordinate descent: that is Friedman et al. (2007), eleven
-years later.  See README.md, "Reglas de esta implementacion".
+years later.  See README.md, "Rules of this implementation".
 
 Convention: the objective is the paper's, unscaled.
 

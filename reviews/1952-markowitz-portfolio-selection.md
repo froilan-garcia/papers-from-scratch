@@ -1,123 +1,123 @@
 # Portfolio Selection
 
-**Autores:** Harry Markowitz (The Rand Corporation) · **Año:** 1952 · **Venue:** The Journal of Finance, 7(1), 77–91 · **Enlace/DOI:** [10.1111/j.1540-6261.1952.tb01525.x](https://doi.org/10.1111/j.1540-6261.1952.tb01525.x) · [JSTOR 2975974](https://www.jstor.org/stable/2975974) · [PDF (curso HKUST)](https://www.math.hkust.edu.hk/~maykwok/courses/ma362/07F/markowitz_JF.pdf)
-**Campo:** economía financiera / optimización · **Leído:** 2026-07-29
+**Authors:** Harry Markowitz (The Rand Corporation) · **Year:** 1952 · **Venue:** The Journal of Finance, 7(1), 77–91 · **Link/DOI:** [10.1111/j.1540-6261.1952.tb01525.x](https://doi.org/10.1111/j.1540-6261.1952.tb01525.x) · [JSTOR 2975974](https://www.jstor.org/stable/2975974) · [PDF (HKUST course)](https://www.math.hkust.edu.hk/~maykwok/courses/ma362/07F/markowitz_JF.pdf)
+**Field:** financial economics / optimisation · **Read:** 2026-07-29
 
 ## TL;DR
 
-Markowitz funda la **teoría moderna de carteras (MPT)** convirtiendo el refrán "no pongas todos los huevos en la misma cesta" en un problema de optimización. Rechaza la regla de *maximizar el retorno esperado descontado* (que nunca implica diversificación: pone todo en el activo de mayor valor) y propone la **regla media-varianza (E-V)**: retorno esperado $E$ deseable, varianza $V$ indeseable, y el inversor debe elegir una cartera **eficiente** —mínima $V$ para cada $E$, máxima $E$ para cada $V$—. La clave: el riesgo de una cartera lo gobiernan las **covarianzas**, no las varianzas individuales; por eso funciona la diversificación, y por eso solo funciona "la buena" (entre activos poco correlados). El paper es deliberadamente **geométrico**: resuelve los casos de 3 y 4 activos con isomedias e isovarianzas, sin dar el algoritmo general. Nobel de Economía 1990.
+Markowitz founds **modern portfolio theory (MPT)** by turning the proverb "don't put all your eggs in one basket" into an optimisation problem. He rejects the rule of *maximising discounted expected return* (which never implies diversification: it puts everything in the single highest-valued asset) and proposes the **mean-variance (E-V) rule**: expected return $E$ desirable, variance $V$ undesirable, and the investor should choose an **efficient** portfolio — minimum $V$ for each $E$, maximum $E$ for each $V$. The key: portfolio risk is governed by the **covariances**, not by the individual variances; that is why diversification works, and why only "the right kind" works (among weakly correlated assets). The paper is deliberately **geometric**: it solves the 3- and 4-asset cases with isomean and isovariance curves, without giving the general algorithm. Nobel Prize in Economics, 1990.
 
-## Contexto y motivación
+## Context and motivation
 
-Antes de 1952 no había teoría formal de *cómo combinar* activos. Markowitz separa el problema en **dos etapas** (p. 77):
+Before 1952 there was no formal theory of *how to combine* assets. Markowitz separates the problem into **two stages** (p. 77):
 
-1. De la observación y la experiencia se forman **creencias** sobre el comportamiento futuro de los activos ($\mu_i$, $\sigma_{ij}$).
-2. De esas creencias se elige la cartera.
+1. From observation and experience one forms **beliefs** about the future behaviour of the assets ($\mu_i$, $\sigma_{ij}$).
+2. From those beliefs one chooses the portfolio.
 
-**Este paper trata solo la segunda etapa**; lo dice al abrir y lo repite al cerrar (p. 91). La primera —cómo estimar $\mu_i$ y $\sigma_{ij}$— queda explícitamente fuera.
+**This paper deals only with the second stage**; it says so on opening and repeats it on closing (p. 91). The first — how to estimate $\mu_i$ and $\sigma_{ij}$ — is explicitly left out.
 
-**El ataque a la regla del valor descontado (pp. 77–78).** Si $R = \sum_i X_i R_i$ con $R_i$ el retorno descontado del activo $i$, entonces $R$ es una media ponderada de los $R_i$ con pesos no negativos que suman 1. Maximizarla exige $X_i = 1$ para el activo de mayor $R_i$ (y si hay empates, cualquier reparto entre ellos sirve igual). Conclusión de Markowitz: *"In no case is a diversified portfolio preferred to all non-diversified portfolios"*. Como la diversificación es observada y sensata, la regla debe rechazarse **a la vez como hipótesis descriptiva y como máxima normativa**.
+**The attack on the discounted-value rule (pp. 77–78).** If $R = \sum_i X_i R_i$ with $R_i$ the discounted return of asset $i$, then $R$ is a weighted average of the $R_i$ with non-negative weights summing to 1. Maximising it requires $X_i = 1$ for the asset with the largest $R_i$ (and if there are ties, any split among them does equally well). Markowitz's conclusion: *"In no case is a diversified portfolio preferred to all non-diversified portfolios"*. Since diversification is both observed and sensible, the rule must be rejected **both as a descriptive hypothesis and as a normative maxim**.
 
-**El ataque a "diversifica y confía en la ley de los grandes números" (p. 79).** Existe una regla intermedia —repartir entre los activos de máximo retorno esperado, confiando en que la LGN haga que el rendimiento real se acerque al esperado— que también falla:
+**The attack on "diversify and trust the law of large numbers" (p. 79).** There is an intermediate rule — spread across the assets of maximum expected return, trusting that the LLN will bring the realised return close to the expected one — which also fails:
 
 > *"This presumption, that the law of large numbers applies to a portfolio of securities, cannot be accepted. The returns from securities are too intercorrelated. Diversification cannot eliminate all variance."*
 
-La correlación pone un **suelo** a la reducción de riesgo por diversificación. Esta es la grieta por la que entra toda la teoría posterior del riesgo sistemático.
+Correlation puts a **floor** on the risk reduction achievable by diversification. This is the crack through which all the later theory of systematic risk enters.
 
-## Metodología
+## Methodology
 
-**El objeto (p. 81).** Con $N$ activos, $X_i$ la fracción de riqueza en el activo $i$, $\mu_i = E(R_i)$, y $\sigma_{ij} = E[(R_i - \mu_i)(R_j - \mu_j)] = \rho_{ij}\sigma_i\sigma_j$ la covarianza (con $\sigma_{ii}$ la varianza). El retorno de la cartera $R = \sum_i R_i X_i$ es una suma ponderada de variables aleatorias, con:
+**The object (p. 81).** With $N$ assets, $X_i$ the fraction of wealth in asset $i$, $\mu_i = E(R_i)$, and $\sigma_{ij} = E[(R_i - \mu_i)(R_j - \mu_j)] = \rho_{ij}\sigma_i\sigma_j$ the covariance (with $\sigma_{ii}$ the variance). The portfolio return $R = \sum_i R_i X_i$ is a weighted sum of random variables, with:
 
 $$E = \sum_{i=1}^N X_i \,\mu_i, \qquad V = \sum_{i=1}^N \sum_{j=1}^N \sigma_{ij}\, X_i X_j.$$
 
-Los $R_i$ son aleatorios; los $X_i$ **no** — los fija el inversor. Restricciones: $\sum_i X_i = 1$ y **$X_i \ge 0$** (el paper excluye explícitamente las ventas en corto).
+The $R_i$ are random; the $X_i$ are **not** — the investor sets them. Constraints: $\sum_i X_i = 1$ and **$X_i \ge 0$** (the paper explicitly excludes short selling).
 
-**La regla E-V (p. 82, Fig. 1).** De todas las combinaciones $(E,V)$ alcanzables, el inversor elige una **eficiente**: mínima $V$ para $E$ dada, o máxima $E$ para $V$ dada. La Fig. 1 dibuja el conjunto alcanzable como una región y marca su frontera eficiente.
+**The E-V rule (p. 82, Fig. 1).** Of all attainable combinations $(E,V)$, the investor picks an **efficient** one: minimum $V$ for given $E$, or maximum $E$ for given $V$. Fig. 1 draws the attainable set as a region and marks its efficient frontier.
 
-> ⚠️ **Ojo con los ejes:** el paper dibuja $V$ en la vertical y $E$ en la horizontal (Figs. 1 y 6), al revés de la convención moderna ($\sigma$ horizontal, $E$ vertical). Al reproducir las figuras hay que decidir si se es fiel al original o se traduce.
+> ⚠️ **Watch the axes:** the paper plots $V$ vertically and $E$ horizontally (Figs. 1 and 6), the reverse of the modern convention ($\sigma$ horizontal, $E$ vertical). When reproducing the figures one has to decide whether to be faithful to the original or to translate.
 
-**El caso de 3 activos (p. 83).** El modelo se reduce a las ecuaciones numeradas del paper:
+**The 3-asset case (p. 83).** The model reduces to the paper's numbered equations:
 
 $$\text{1)}\ E = \sum_{i=1}^{3} X_i\mu_i \qquad \text{2)}\ V = \sum_{i=1}^{3}\sum_{j=1}^{3} X_iX_j\sigma_{ij} \qquad \text{3)}\ \sum_{i=1}^{3}X_i = 1 \qquad \text{4)}\ X_i \ge 0$$
 
-Sustituyendo 3′) $X_3 = 1 - X_1 - X_2$ se pasa a **geometría bidimensional** en $(X_1, X_2)$. En particular (Eq. 1′):
+Substituting 3′) $X_3 = 1 - X_1 - X_2$ moves everything into **two-dimensional geometry** in $(X_1, X_2)$. In particular (Eq. 1′):
 
 $$E = \mu_3 + X_1(\mu_1 - \mu_3) + X_2(\mu_2 - \mu_3).$$
 
-El conjunto alcanzable es el **triángulo $abc$** (el símplex) de la Fig. 2.
+The attainable set is the **triangle $abc$** (the simplex) of Fig. 2.
 
-**Isomedias e isovarianzas (p. 84).** Markowitz define la *isomean curve* como el lugar de carteras con $E$ dada, y la *isovariance line* como el de carteras con $V$ dada. Del análisis de las fórmulas:
+**Isomean and isovariance curves (p. 84).** Markowitz defines the *isomean curve* as the locus of portfolios with given $E$, and the *isovariance line* as that of portfolios with given $V$. From the formulas:
 
-- Las **isomedias son rectas paralelas** ($E$ es lineal en $X$). Despejando de la Eq. (1′):
+- The **isomeans are parallel straight lines** ($E$ is linear in $X$). Solving Eq. (1′):
 $$X_2 = \frac{E - \mu_3}{\mu_2 - \mu_3} - \frac{\mu_1 - \mu_3}{\mu_2 - \mu_3}X_1,$$
-cuya **pendiente no depende de $E$** (solo cambia la ordenada en el origen) — de ahí el paralelismo.
-- Las **isovarianzas son elipses concéntricas**, centradas en el punto $\hat{X}$ que **minimiza $V$**. La varianza crece al alejarse de $\hat{X}$.
+whose **slope does not depend on $E$** (only the intercept changes) — hence the parallelism.
+- The **isovariances are concentric ellipses**, centred at the point $\hat{X}$ that **minimises $V$**. The variance grows as one moves away from $\hat{X}$.
 
-> Detalle técnico fino (nota 12, p. 89): para que las isovarianzas sean **elipses** es *necesario y suficiente* que no haya dos carteras distintas con retornos perfectamente correlados. Si las hay, la forma degenera.
+> A fine technical detail (footnote 12, p. 89): for the isovariances to be **ellipses** it is *necessary and sufficient* that no two distinct portfolios have perfectly correlated returns. If there are, the shape degenerates.
 
-**El conjunto eficiente y la *critical line* (p. 85, Figs. 2–3).** Para una $E$ dada, la mejor cartera es el punto donde la **recta isomedia es tangente a una elipse isovarianza**; Markowitz lo llama $\hat{X}(E)$. Al variar $E$, esos puntos trazan una curva que —afirma, omitiendo el álgebra— **es una recta**: la ***critical line* $l$**, que pasa por $\hat{X}$.
+**The efficient set and the *critical line* (p. 85, Figs. 2–3).** For a given $E$, the best portfolio is the point where the **isomean line is tangent to an isovariance ellipse**; Markowitz calls it $\hat{X}(E)$. As $E$ varies, those points trace a curve which — he asserts, omitting the algebra — **is a straight line**: the ***critical line* $l$**, passing through $\hat{X}$.
 
-El conjunto eficiente se construye recorriendo esa lógica **dentro del triángulo**:
+The efficient set is built by following that logic **inside the triangle**:
 
-- Si $\hat{X}$ **cae dentro** del conjunto alcanzable (Fig. 2), $\hat{X}$ es eficiente y el conjunto eficiente arranca ahí, avanza por la critical line hasta topar con un borde, y sigue por el borde hasta el punto de máxima $E$.
-- Si $\hat{X}$ **cae fuera** (Fig. 3), se empieza en el punto alcanzable de mínima varianza (sobre un borde), se avanza hasta cortar la critical line, se sigue por ella hasta otro borde, y se termina en el vértice de máxima $E$.
+- If $\hat{X}$ **falls inside** the attainable set (Fig. 2), $\hat{X}$ is efficient and the efficient set starts there, runs along the critical line until it hits an edge, and continues along the edge to the point of maximum $E$.
+- If $\hat{X}$ **falls outside** (Fig. 3), one starts at the attainable point of minimum variance (on an edge), moves until crossing the critical line, follows it to another edge, and finishes at the vertex of maximum $E$.
 
-El resultado general (p. 87, Fig. 4 para 4 activos en el tetraedro): **el conjunto eficiente es siempre una poligonal — una serie de segmentos conectados**, con un extremo en la cartera de mínima varianza y el otro en la de máximo retorno esperado.
+The general result (p. 87, Fig. 4 for 4 assets in the tetrahedron): **the efficient set is always a polygonal chain — a series of connected segments**, with one end at the minimum-variance portfolio and the other at the maximum-expected-return one.
 
-> **Matiz histórico importante:** el término *critical line* y su papel geométrico **sí están en este paper de 1952** (incluida la nota 10, que esboza cómo recorrer las líneas críticas de los subespacios $X_i = 0$ en el caso general). Lo que **no** hay es el algoritmo sistemático: eso llega en **Markowitz (1956)**, *"The optimization of a quadratic function subject to linear constraints"*. Hoy el problema se resuelve trivialmente como un **QP**.
+> **An important historical nuance:** the term *critical line* and its geometric role **are indeed in this 1952 paper** (including footnote 10, which sketches how to traverse the critical lines of the subspaces $X_i = 0$ in the general case). What is **not** there is the systematic algorithm: that comes in **Markowitz (1956)**, *"The optimization of a quadratic function subject to linear constraints"*. Today the problem is solved trivially as a **QP**.
 
-**La frontera en el espacio $(E,V)$ (p. 87, Figs. 5–6).** Sobre el plano de las $X$, $E$ es un **plano** y $V$ un **paraboloide**. Restringidos al conjunto eficiente (que es poligonal), la sección del plano da segmentos rectos y la del paraboloide da **arcos de parábola**. Por tanto, al graficar $V$ frente a $E$ para carteras eficientes se obtiene **una serie de segmentos de parábola conectados** (Fig. 6) — no una única parábola, precisamente por las restricciones $X_i \ge 0$ que van activándose.
+**The frontier in $(E,V)$ space (p. 87, Figs. 5–6).** Over the plane of the $X$'s, $E$ is a **plane** and $V$ a **paraboloid**. Restricted to the efficient set (which is polygonal), the section of the plane gives straight segments and that of the paraboloid gives **parabolic arcs**. Therefore, plotting $V$ against $E$ for efficient portfolios yields **a series of connected parabolic segments** (Fig. 6) — not a single parabola, precisely because of the $X_i \ge 0$ constraints becoming active one by one.
 
-**Por qué la diversificación funciona, y el "tipo correcto" (p. 89).** Aquí está la aportación conceptual más citada:
+**Why diversification works, and the "right kind" (p. 89).** Here is the most-cited conceptual contribution:
 
 > *"Not only does the E-V hypothesis imply diversification, it implies the 'right kind' of diversification for the 'right reason'."*
 
-Con dos activos, $V = X_1^2\sigma_1^2 + X_2^2\sigma_2^2 + 2X_1X_2\rho_{12}\sigma_1\sigma_2$: si $\rho_{12} < 1$, la varianza de la cartera cae por debajo de la media ponderada de las individuales. De ahí el ejemplo célebre: una cartera de **sesenta valores ferroviarios no está tan bien diversificada** como una del mismo tamaño repartida entre ferrocarril, utilities, minería y manufactura, porque las empresas de un mismo sector tienden a ir mal a la vez. La adecuación de la diversificación **no depende del número de activos**, sino de evitar activos con **covarianzas altas entre sí**.
+With two assets, $V = X_1^2\sigma_1^2 + X_2^2\sigma_2^2 + 2X_1X_2\rho_{12}\sigma_1\sigma_2$: if $\rho_{12} < 1$, the portfolio variance falls below the weighted average of the individual ones. Hence the famous example: a portfolio of **sixty railway securities is not as well diversified** as one of the same size spread across railways, utilities, mining and manufacturing, because firms in the same sector tend to do badly at the same time. The adequacy of diversification **does not depend on the number of assets**, but on avoiding assets with **high covariances among themselves**.
 
-**Robustez ante la medida de riesgo (p. 89).** Si en vez de $V$ el inversor usara la desviación típica $\sigma = \sqrt{V}$ o el coeficiente de dispersión $\sigma/E$, **su elección seguiría estando en el mismo conjunto eficiente** (son transformaciones monótonas de $V$ a $E$ fija).
+**Robustness to the risk measure (p. 89).** If instead of $V$ the investor used the standard deviation $\sigma = \sqrt{V}$ or the coefficient of dispersion $\sigma/E$, **their choice would still lie in the same efficient set** (these are monotone transformations of $V$ at fixed $E$).
 
-**Justificación de la regla (pp. 90–91).** Markowitz **no** deriva E-V de axiomas de utilidad esperada (nada de utilidad cuadrática aquí — eso es posterior, en su libro de 1959). La defiende como *"a working hypothesis and a working maxim"* para instituciones que consideran el rendimiento bueno, el riesgo malo y el juego evitable. Y acota su alcance con el **tercer momento** $M_3$ (nota 13): si la utilidad fuese $U(E,V,M_3)$ con $\partial U/\partial M_3 \neq 0$, el inversor aceptaría algunas apuestas justas. Por eso E-V describe la conducta de **"inversión"** y no la de **"especulación"**.
+**Justification of the rule (pp. 90–91).** Markowitz does **not** derive E-V from expected utility axioms (no quadratic utility here — that is later, in his 1959 book). He defends it as *"a working hypothesis and a working maxim"* for institutions that regard return as good, risk as bad and gambling as to be avoided. And he bounds its scope with the **third moment** $M_3$ (footnote 13): if utility were $U(E,V,M_3)$ with $\partial U/\partial M_3 \neq 0$, the investor would accept some fair bets. That is why E-V describes the behaviour of **"investment"** and not of **"speculation"**.
 
-## Resultados principales
+## Main results
 
-- **La regla de máximo retorno descontado queda descartada**: nunca implica diversificación, ni como descripción ni como norma. La regla E-V sí la implica, y por la razón correcta (las covarianzas).
-- **Caracterización geométrica completa** del conjunto eficiente para 3 y 4 activos vía isomedias (rectas paralelas) e isovarianzas (elipses concéntricas), con la *critical line* como eje del argumento.
-- **El conjunto eficiente es una poligonal** (segmentos conectados) en el espacio de carteras, y una **serie de arcos de parábola** en el plano $(E,V)$, para cualquier número de activos.
-- **La ley de los grandes números no elimina el riesgo**: los retornos están demasiado intercorrelados; la diversificación tiene un suelo.
-- **El riesgo relevante es la covarianza**, no la varianza individual — la semilla directa del $\beta$ del CAPM una década después.
+- **The maximum-discounted-return rule is discarded**: it never implies diversification, neither as description nor as norm. The E-V rule does imply it, and for the right reason (the covariances).
+- **A complete geometric characterisation** of the efficient set for 3 and 4 assets via isomeans (parallel lines) and isovariances (concentric ellipses), with the *critical line* as the axis of the argument.
+- **The efficient set is a polygonal chain** (connected segments) in portfolio space, and a **series of parabolic arcs** in the $(E,V)$ plane, for any number of assets.
+- **The law of large numbers does not eliminate risk**: returns are too intercorrelated; diversification has a floor.
+- **The relevant risk is covariance**, not individual variance — the direct seed of the CAPM's $\beta$ a decade later.
 
-## Puntos fuertes y limitaciones
+## Strengths and limitations
 
-**Fuertes:** convierte una intuición cualitativa en un problema de optimización convexa bien definido; identifica la **covarianza** como el objeto central del riesgo (de ahí derivan CAPM, APT y el *factor investing*); la exposición geométrica es de una claridad excepcional y directamente reproducible; honestidad sobre el alcance —dice qué no hace (la etapa 1, el caso $n$ general, la dinámica) y anuncia el tratamiento general futuro—; funda un campo entero.
+**Strengths:** it turns a qualitative intuition into a well-defined convex optimisation problem; it identifies **covariance** as the central object of risk (from which CAPM, APT and *factor investing* all derive); the geometric exposition is exceptionally clear and directly reproducible; it is honest about its scope — it says what it does not do (stage 1, the general $n$ case, dynamics) and announces the future general treatment; and it founds an entire field.
 
-**Limitaciones (unas reconocidas por el propio autor, otras visibles en retrospectiva):**
+**Limitations (some acknowledged by the author, others visible in hindsight):**
 
-- **Autoimpuestas y declaradas (p. 79):** *(1)* no deriva resultados analíticamente para $N$ activos, solo geométricamente para 3 y 4; *(2)* asume **creencias probabilísticas estáticas** — modelo de un solo periodo, sin rebalanceo ni costes de transacción.
-- **Depende de $\mu_i$ y $\sigma_{ij}$ como inputs.** Markowitz **es consciente** y lo señala al final (p. 91): sugiere *tentativamente* usar los momentos observados del pasado, pero añade que *"better methods, which take into account more information, can be found"* y que hace falta una reformulación probabilística del análisis de valores — *"another story"*. La crítica moderna es que la optimización **amplifica** el error de estimación (*error maximization*, Michaud 1989): pesos extremos, inestables, malos fuera de muestra.
-- **La varianza es simétrica**: penaliza igual el lado bueno y el malo. El paper acota esto vía $M_3$ (asimetría), pero la alternativa que el propio Markowitz preferiría después —la **semivarianza**— **no aparece aquí** (es de 1959).
-- **Sin activo libre de riesgo.** Añadirlo (Tobin, 1958) da el **teorema de separación en dos fondos** y la *capital market line*; sobre eso Sharpe (1964) construye el CAPM. Este paper es el cimiento, no el edificio.
-- **Sin ventas en corto** ($X_i \ge 0$), lo que es una elección de modelado razonable pero limita el espacio de carteras y es justo lo que hace que la frontera sea poligonal a trozos.
-- **Colas pesadas y momentos superiores**: la estructura $(E,V)$ ignora curtosis y (salvo la nota sobre $M_3$) asimetría, que Mandelbrot y Fama documentarían como esenciales en mercados reales.
+- **Self-imposed and declared (p. 79):** *(1)* it does not derive results analytically for $N$ assets, only geometrically for 3 and 4; *(2)* it assumes **static probabilistic beliefs** — a single-period model, with no rebalancing or transaction costs.
+- **It depends on $\mu_i$ and $\sigma_{ij}$ as inputs.** Markowitz **is aware** and says so at the end (p. 91): he *tentatively* suggests using observed past moments, but adds that *"better methods, which take into account more information, can be found"* and that a probabilistic reformulation of security analysis is needed — *"another story"*. The modern criticism is that optimisation **amplifies** estimation error (*error maximization*, Michaud 1989): extreme, unstable weights, poor out of sample.
+- **Variance is symmetric**: it penalises the upside and the downside equally. The paper bounds this via $M_3$ (skewness), but the alternative Markowitz himself would later prefer — the **semivariance** — **does not appear here** (it is from 1959).
+- **No risk-free asset.** Adding one (Tobin, 1958) gives the **two-fund separation theorem** and the *capital market line*; on that Sharpe (1964) builds the CAPM. This paper is the foundation, not the building.
+- **No short selling** ($X_i \ge 0$), which is a reasonable modelling choice but restricts the space of portfolios and is exactly what makes the frontier piecewise polygonal.
+- **Heavy tails and higher moments**: the $(E,V)$ structure ignores kurtosis and (apart from the note on $M_3$) skewness, which Mandelbrot and Fama would document as essential in real markets.
 
-## Ideas de implementación
+## Implementation ideas
 
-Todo el núcleo es álgebra lineal reproducible con numpy/scipy. Propuesta por piezas (al estilo del Lasso):
+The whole core is linear algebra reproducible with numpy/scipy. A proposal in pieces (in the style of the lasso):
 
-1. **Frontera eficiente en forma cerrada** (caso relajado, solo $\sum X_i = 1$, permitiendo cortos) vía multiplicadores de Lagrange. Con $A = \mathbf 1^\top\Sigma^{-1}\mathbf 1$, $B = \mathbf 1^\top\Sigma^{-1}\boldsymbol\mu$, $C = \boldsymbol\mu^\top\Sigma^{-1}\boldsymbol\mu$, $D = AC - B^2$:
+1. **Efficient frontier in closed form** (relaxed case, only $\sum X_i = 1$, allowing shorts) via Lagrange multipliers. With $A = \mathbf 1^\top\Sigma^{-1}\mathbf 1$, $B = \mathbf 1^\top\Sigma^{-1}\boldsymbol\mu$, $C = \boldsymbol\mu^\top\Sigma^{-1}\boldsymbol\mu$, $D = AC - B^2$:
 $$V(E) = \frac{AE^2 - 2BE + C}{D}, \qquad \mathbf w_{\min} = \frac{\Sigma^{-1}\mathbf 1}{A}.$$
-Es una **parábola** en $(E,V)$ — coherente con la Fig. 6 del paper, que sin restricciones de signo sería un único arco. ~20 líneas.
-2. **Frontera con $X_i \ge 0$** como **QP** (`scipy.optimize` o `cvxpy`): min $\mathbf w^\top\Sigma\mathbf w$ s.a. $\boldsymbol\mu^\top\mathbf w = E^\*$, $\sum w_i = 1$, $w_i \ge 0$; barrer $E^\*$. **Verificar la tesis del paper**: que los pesos óptimos trazan una **poligonal** y que $(E,V)$ da **arcos de parábola conectados**, detectando los quiebros donde un $w_i$ toca 0.
-3. **Reproducir la Fig. 2** (la joya pedagógica): triángulo del símplex en $(X_1,X_2)$, **rectas isomedia**, **elipses isovarianza**, el centro $\hat X$, la ***critical line*** y el conjunto eficiente en negrita. Y la **Fig. 3** como segundo caso (con $\hat X$ fuera del triángulo).
-4. **Demo del suelo de la diversificación**: $V$ de la cartera equiponderada frente a $N$, comparando activos incorrelados ($V \to 0$) vs correlados ($V \to$ covarianza media). Es la refutación de la LGN de la p. 79, en una figura.
-5. **Ejemplo "sesenta ferroviarias" (p. 89)**: dos carteras del mismo tamaño, una intra-sector (correlación alta) y otra multi-sector, mostrando que la segunda domina. La tesis del "*right kind of diversification*" hecha código.
-6. **Datos reales**: unos pocos tickers, estimar $\boldsymbol\mu$ y $\Sigma$, trazar la frontera, marcar mínima varianza y tangente.
-7. **Frontera remuestreada** *(extensión — enlaza con el bootstrap)*: remuestrear retornos con bootstrap, recalcular la frontera $B$ veces y visualizar su **inestabilidad**. Es exactamente la preocupación que Markowitz deja abierta en la p. 91, con la herramienta de Efron.
-8. **Activo libre de riesgo → capital market line** *(extensión, Tobin 1958)*: cartera tangente y recta de asignación de capital; antesala del CAPM.
+It is a **parabola** in $(E,V)$ — consistent with the paper's Fig. 6, which without sign constraints would be a single arc. ~20 lines.
+2. **Frontier with $X_i \ge 0$** as a **QP** (`scipy.optimize` or `cvxpy`): min $\mathbf w^\top\Sigma\mathbf w$ s.t. $\boldsymbol\mu^\top\mathbf w = E^\*$, $\sum w_i = 1$, $w_i \ge 0$; sweep $E^\*$. **Verify the paper's thesis**: that the optimal weights trace a **polygonal chain** and that $(E,V)$ gives **connected parabolic arcs**, detecting the kinks where some $w_i$ hits 0.
+3. **Reproduce Fig. 2** (the pedagogical jewel): the simplex triangle in $(X_1,X_2)$, the **isomean lines**, the **isovariance ellipses**, the centre $\hat X$, the ***critical line*** and the efficient set in bold. And **Fig. 3** as a second case (with $\hat X$ outside the triangle).
+4. **A demonstration of the diversification floor**: $V$ of the equally weighted portfolio against $N$, comparing uncorrelated assets ($V \to 0$) with correlated ones ($V \to$ the average covariance). It is the refutation of the LLN on p. 79, in one figure.
+5. **The "sixty railways" example (p. 89)**: two portfolios of the same size, one within a sector (high correlation) and one across sectors, showing that the second dominates. The "*right kind of diversification*" thesis turned into code.
+6. **Real data**: a handful of tickers, estimate $\boldsymbol\mu$ and $\Sigma$, trace the frontier, mark the minimum-variance and tangency portfolios.
+7. **Resampled frontier** *(extension — links with the bootstrap)*: resample returns with the bootstrap, recompute the frontier $B$ times and visualise its **instability**. It is exactly the concern Markowitz leaves open on p. 91, with Efron's tool.
+8. **Risk-free asset → capital market line** *(extension, Tobin 1958)*: tangency portfolio and capital allocation line; the antechamber of the CAPM.
 
-Validar contra `PyPortfolioOpt` o contra la solución analítica de mínima varianza.
+Validate against `PyPortfolioOpt` or against the analytic minimum-variance solution.
 
-## Conexiones
+## Connections
 
-- **[Efron (1979), Bootstrap](1979-efron-bootstrap.md):** el bootstrap es la vía estándar para meter incertidumbre en la frontera eficiente —notoriamente inestable— remuestreando retornos y obteniendo una distribución de carteras óptimas (Michaud). El puente es exacto: Markowitz cierra el paper (p. 91) diciendo que estimar $\mu_i$ y $\sigma_{ij}$ del pasado es solo una sugerencia tentativa y que hacen falta métodos mejores; el bootstrap es una de las respuestas.
-- **[Tibshirani (1996), Lasso](1996-tibshirani-lasso.md):** penalizar los pesos con $L_1$ (Brodie et al. 2009, *"Sparse and stable Markowitz portfolios"*) produce carteras **esparsas y estables**, atacando el problema de pesos extremos. La misma geometría del rombo $L_1$ que anula coeficientes anula posiciones. Nota curiosa: ambos problemas son **QP con restricciones**, y ambos tienen soluciones **lineales a trozos** en su parámetro (la *critical line* de Markowitz ↔ el *regularization path* del Lasso vía LARS).
-- **Futuras del [ROADMAP](../ROADMAP.md), pista quant:** Tobin (1958, separación en dos fondos), Sharpe (1964, CAPM — el equilibrio construido sobre esta frontera), Black & Scholes (1973), Kalman (1960, estimación secuencial de $\boldsymbol\mu$/$\Sigma$), y López de Prado (2016, *Hierarchical Risk Parity* — evita invertir $\Sigma$, atacando el mismo talón de Aquiles).
+- **[Efron (1979), Bootstrap](1979-efron-bootstrap.md):** the bootstrap is the standard route to injecting uncertainty into the efficient frontier — notoriously unstable — by resampling returns and obtaining a distribution of optimal portfolios (Michaud). The bridge is exact: Markowitz closes the paper (p. 91) saying that estimating $\mu_i$ and $\sigma_{ij}$ from the past is only a tentative suggestion and that better methods are needed; the bootstrap is one of the answers.
+- **[Tibshirani (1996), Lasso](1996-tibshirani-lasso.md):** penalising the weights with $L_1$ (Brodie et al. 2009, *"Sparse and stable Markowitz portfolios"*) produces **sparse and stable** portfolios, attacking the extreme-weights problem. The same $L_1$ diamond geometry that annihilates coefficients annihilates positions. A curious note: both problems are **constrained QPs**, and both have **piecewise linear** solutions in their parameter (Markowitz's *critical line* ↔ the lasso's *regularization path* via LARS).
+- **Future ones from the [ROADMAP](../ROADMAP.md), quant track:** Tobin (1958, two-fund separation), Sharpe (1964, CAPM — the equilibrium built on this frontier), Black & Scholes (1973), Kalman (1960, sequential estimation of $\boldsymbol\mu$/$\Sigma$), and López de Prado (2016, *Hierarchical Risk Parity* — avoiding the inversion of $\Sigma$, attacking the same Achilles heel).
