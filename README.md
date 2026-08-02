@@ -105,3 +105,16 @@ syllabus, a quantitative-finance track (portfolio theory, covariance estimation,
 financial time series), and a deep-learning track running from RNNs through the
 Transformer to modern LLMs and generative models. `papers/INDEX.md` is the full
 inventory, with download links.
+
+## How this repo is written
+
+Written with an AI assistant (Claude), recorded in the `Co-Authored-By` trailer of
+every commit. The working rule is that nothing goes in that I cannot derive and
+defend on a whiteboard.
+
+That rule is why [DERIVATIONS.md](implementations/1996-tibshirani-lasso/DERIVATIONS.md)
+exists at all: working the mathematics through myself, in my own order rather than the
+paper's, is how I check that I understand what the code does. And it is why the
+Section 7 simulations of the lasso are deliberately absent — they run, but I have not
+yet pinned down the setup well enough to say whose numbers are wrong, and saying it
+anyway would be claiming more than I know.
