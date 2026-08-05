@@ -34,6 +34,12 @@ papers/*.pdf
 # Personal notes: not published
 GUIA-LECTURA.md
 
+# Claude Code local permissions: machine-specific and personal. They accumulate
+# allowed commands from whatever is being worked on, including other projects,
+# so they do not belong in a repo meant to be read by others. The shared part
+# of the configuration — CLAUDE.md and .claude/skills/ — IS versioned.
+.claude/settings.local.json
+
 # Internship search: CV, motivation letters, application calendar and
 # preparation plan. It is personal material and also strategic — publishing
 # which firms are being applied to, and when, works against the applicant. It
