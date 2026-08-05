@@ -11,7 +11,7 @@ results of the paper are in the [review](../../reviews/1996-tibshirani-lasso.md)
 > **Status: closed.** The solver, the orthonormal case, the $p=2$ case, the prostate
 > data, the paper's figures and the cross-check against `scikit-learn`. An earlier
 > version was discarded for using conventions and an algorithm that are not the
-> paper's; it is archived on the `lasso-v1-archive` branch and is not the reference.
+> paper's.
 >
 > **What is not here:** the reproduction of Table 3 (the Sec. 7 simulations). It runs
 > and the ordering of methods comes out, but the error levels do not match under any
