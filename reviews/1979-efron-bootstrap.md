@@ -40,6 +40,8 @@ $$\mathrm{Var}_*(\bar{X}^* - \bar{x}) = \frac{\bar{x}(1-\bar{x})}{n}.$$
 
 In a Monte Carlo experiment with the median ($n=13$, $\mathcal{N}(0,1)$), the conclusion is sober: **the simplest bootstrap (3.6) does almost as well as the smoothed and symmetric versions** (Table 1). The bootstrap estimates $E_F R = 0.95$ reasonably with only $n=13$.
 
+> **Later note.** Two numbers in that experiment do not survive checking. Eq. (3.12) as printed lacks a factor $\sqrt n$ — without it the tabulated quantity drifts to 0 with $n$ and Table 1 cannot be reproduced — and the true value is $E_F R = 0.9822 \pm 0.0012$, not $0.95$. Neither affects the conclusion, since every column of Table 1 moves together. See the [implementation](../implementations/1979-efron-bootstrap/).
+
 **Relation to the jackknife (Sec. 5).** Writing $P_i^* = N_i^*/n$ (the proportion of times $x_i$ appears in the bootstrap sample) and expanding $R(\mathbf{P}^*)$ in a Taylor series about $\mathbf{P}^* = \mathbf{e}/n$:
 $$R(\mathbf{P}^*) \doteq R(\mathbf{e}/n) + (\mathbf{P}^* - \mathbf{e}/n)\mathbf{U} + \tfrac{1}{2}(\mathbf{P}^* - \mathbf{e}/n)\mathbf{V}(\mathbf{P}^* - \mathbf{e}/n)'$$
 one obtains (Eqs. 5.8–5.11) the expressions for bias and variance:
@@ -52,7 +54,7 @@ These coincide with Jaeckel's **infinitesimal jackknife**; the ordinary jackknif
 
 ## Main results
 
-- **Median (Sec. 3):** the bootstrap correctly estimates (asymptotically) the variance $n E_*(R^*)^2 \to 1/4f^2(\theta)$, **a case in which the jackknife is inconsistent** ($n\,\mathrm{Var}(R) \to \tfrac{1}{4f^2}\cdot[\chi_2^2/2]^2$, with mean 2 and variance 20). It is the flagship argument for the bootstrap.
+- **Median (Sec. 3):** the bootstrap correctly estimates (asymptotically) the variance $n E_*(R^*)^2 \to 1/4f^2(\theta)$, **a case in which the jackknife is inconsistent** ($n\,\mathrm{Var}(R) \to \tfrac{1}{4f^2}\cdot[\chi_2^2/2]^2$, with mean 2 and variance 20). It is the flagship argument for the bootstrap. *(Later note: that limit law is not the right one. The jackknife variance of the median is driven by the **two** spacings flanking $x_{(m)}$, so the limit is $\tfrac{1}{4f^2}[\chi_4^2/4]^2$, of mean 1.5 and variance 5.25 — confirmed quantile by quantile in the [implementation](../implementations/1979-efron-bootstrap/). The inconsistency, which is the point, stands.)*
 - **Error rates in discriminant analysis (Sec. 4, Table 2):** the bootstrap estimates both the bias ($E_* R^*$) and the standard deviation ($SD_*(R^*)$) of the classification error, and its estimator of $R$ has **~3× less variability than cross-validation / leave-one-out** (SD 0.078 vs 0.026 for the same bias).
 - **Wilcoxon (Sec. 6):** the bootstrap reproduces the classical formula for the variance of the Wilcoxon statistic (Eq. 6.7).
 - **Regression (Sec. 7):** resampling the **residuals** $\hat\epsilon_i$ gives $\mathrm{Cov}_*\hat\beta^* = \hat\sigma^2 G^{-1}$ (Eq. 7.7), the classical formula; the bootstrap "symmetrises" the data automatically, something the jackknife needs to be told to do by hand.
@@ -70,6 +72,8 @@ These coincide with Jaeckel's **infinitesimal jackknife**; the ordinary jackknif
 - The choice of $N$ (number of Monte Carlo replicates): the paper notes that going from 100 to 10000 barely improves the bias, but gives no systematic guidance (that would come with the $BC_a$ theory).
 
 ## Implementation ideas
+
+> **Later note (2026-08-09).** The [implementation](../implementations/1979-efron-bootstrap/) is done and closed at four of the paper's eight sections. Ideas 1 and 4 are complete, and two things not on this list turned out to matter more than most of it: the **regression of Sec. 7**, where the paper's thesis about the jackknife is settled a second time and by a different route, and **Fig. 1** with Remark B, which is the only real data in the paper. Idea 3 (the variants of $\hat F$) is deliberately skipped: the paper's own Table 1 shows all seven columns agreeing, so reproducing them confirms a null result. Idea 5 became Remark D instead — the *diagnosis* is in the paper and is worth having; the cures (percentile, $BC_a$) are 1981–1987 and stay out. Ideas 2 and 6, and the rest of the post-1979 family, are mapped in the implementation's README with the hook each would attach to. Three errata of the paper turned up along the way, each noted above in its place.
 
 The bootstrap is one of the most rewarding papers to implement: it is all Monte Carlo with numpy. What was asked for (several kinds of bootstrap) fits together as a family, **marking what is in the paper and what is a modern extension**:
 
