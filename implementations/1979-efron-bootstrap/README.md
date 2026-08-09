@@ -29,6 +29,12 @@ results of the paper are in the [review](../../reviews/1979-efron-bootstrap.md).
 >   of bagging. Left out for size, not for lack of interest.
 > - **Remark K, the parametric bootstrap.**
 >
+> One thing here is not in the paper and not, as far as I have found, anywhere else:
+> the limiting law of the jackknife variance of a sample median **depends on the parity
+> of $n$**, because an odd sample has a middle observation that can itself be deleted and
+> an even one does not. Both cases are derived and simulated —
+> [the section](#the-limit-law-depends-on-the-parity-of-n).
+>
 > Confidence intervals and the block bootstrap are **not in this paper** at all — they
 > are 1981–1989. See [what came next](#what-came-next-and-is-not-in-this-paper).
 > [`DERIVATIONS.md`](DERIVATIONS.md) covers sections 1–7 of ten, with their figures: the
@@ -100,7 +106,7 @@ comparison of four estimators at the end. `numpy`, `scipy` and `matplotlib` only
 | Eq. (5.10) $=$ the bootstrap variance, for the mean | ✅ to $10^{-9}$; the ordinary jackknife is exactly $\tfrac{n}{n-1}$ of it |
 | Eq. (5.13), $\tilde U_i / U_i = 1 + O(1/n)$ | ✅ $n(v_{\text{ord}}/v_{\text{inf}} - 1)$ stays near 1 from $n=10$ to $160$ |
 | The jackknife is inconsistent for the median (Sec. 3) | ✅ its spread does not shrink with $n$ |
-| that inconsistency's limit law, $[\chi^2_2/2]^2$, mean 2, variance 20 | ✅ for **even** $n$ — but Sec. 3 works with $n$ odd, where it is $[\chi^2_4/4]^2$; see below |
+| that inconsistency's limit law, $[\chi^2_2/2]^2$, mean 2, variance 20 | ✅ for **even** $n$ — but Sec. 3 works with $n$ odd, where it is $[\chi^2_4/4]^2$; the law depends on the parity, which the paper does not say. **The one result here that is not in the paper** — see below |
 | Remark J: deleting in groups of $g = O(\sqrt n)$ repairs the median | ✅ it converges, but slowly — see below |
 | Remark B, $\hat\rho = .945$ for the nine pairs of Fig. 1 | ✅ 0.944848 |
 | Fig. 1: $\hat\rho^*$ straggles left, $\tanh^{-1}\hat\rho^*$ straggles right | ✅ and the reason is not the transformation's shape — see below |
@@ -206,19 +212,29 @@ the jackknife column walks to $1.5 \times \pi/2$ with a spread that does not.
 
 ### The limit law depends on the parity of $n$
 
-Sec. 3 prints $n\,\hat v_{\text{jack}} \to \frac{1}{4f^2(\theta)}[\chi^2_2/2]^2$, mean 2
-and variance 20, in a section that has assumed $n = 2m-1$ **odd**. That law is the
-**even** one, and it is right for even $n$:
+The jackknife estimate of the variance of a sample median does not converge, and *what
+it converges to instead* turns out to depend on whether the sample size is odd or even:
 
-- **$n$ even.** Deleting leaves an odd sample with a single middle value. The replicates
-  take *two* values, $\hat v_{\text{jack}} = \frac{n-1}{4}(x_{(m+1)}-x_{(m)})^2$, one
-  spacing enters, and the limit is $[\chi^2_2/2]^2$ — mean 2, variance 20.
+$$n\,\hat v_{\text{jack}} \;\xrightarrow{\;d\;}\; \frac{1}{4f^2(\theta)} \times
+\begin{cases}
+\left[\chi^2_2/2\right]^2, & n \text{ even} \quad (\text{mean } 2,\;\text{variance } 20)\\[4pt]
+\left[\chi^2_4/4\right]^2, & n \text{ odd} \quad\;\; (\text{mean } 1.5,\;\text{variance } 5.25)
+\end{cases}$$
+
+The mechanism is one observation:
+
+- **$n$ even.** Deleting leaves an odd sample with a single middle value, so the
+  replicates take *two* values, $\hat v_{\text{jack}} = \frac{n-1}{4}(x_{(m+1)}-x_{(m)})^2$,
+  and **one** spacing enters.
 - **$n$ odd.** Deleting leaves an even sample, and there is now a middle observation that
-  can itself be deleted. The replicates take *three* values, two spacings enter, and the
-  limit is $[\chi^2_4/4]^2$ — mean 1.5, variance 5.25.
+  can itself be deleted — the case with no analogue above. The replicates take *three*
+  values and **two** spacings enter, so the limit averages them and is correspondingly
+  tamer.
 
-Simulating $40\,000$ samples at each of $n = 4000$ and $n = 4001$ separates them at every
-quantile:
+Since $n\times(\text{a spacing at the median}) \to \mathrm{Exp}(f(\theta))$, one spacing
+gives the square of an exponential and two give the square of their mean, which is the
+whole of the difference. Simulating $40\,000$ samples at each of $n = 4000$ and
+$n = 4001$ separates the two at every quantile:
 
 | | mean | var | $q_{.10}$ | $q_{.25}$ | $q_{.50}$ | $q_{.75}$ | $q_{.90}$ | $q_{.99}$ |
 |---|---|---|---|---|---|---|---|---|
@@ -227,19 +243,23 @@ quantile:
 | simulated, $n=4001$ (odd) | 1.510 | 5.42 | 0.070 | 0.228 | 0.702 | 1.80 | 3.84 | 11.2 |
 | $[\chi^2_4/4]^2$ | 1.502 | 5.24 | 0.071 | 0.231 | 0.705 | 1.81 | 3.78 | 11.1 |
 
-So this is **not an error in the paper**: the formula is correct, and what the sentence
-omits is that the parity decides which of two laws applies — naming, in a section built
-on odd $n$, the one that belongs to even $n$. In the odd setting the estimator is the
-milder of the two, biased by 50% rather than 100% and a quarter as variable, so the
-paper's argument is conservative where it is made. The conclusion is identical in both
-parities: the limit is a random variable, so no amount of data makes the jackknife
-settle.
+Two estimators one sample size apart, on the same distribution, converging to different
+laws. It is a small thing, but it is the kind of small thing that a resampling method is
+supposed to be immune to, and it is not visible from the formula.
 
-An earlier version of this README claimed the printed law was simply wrong. It was not,
-and the reason the error survived is worth recording: the closed form here rejected even
-$n$ outright, inheriting a restriction that Sec. 6 genuinely needs and this calculation
-never did. Code that refuses the inputs on which a claim would fail cannot be used to
-test that claim.
+**What this says about the paper.** Sec. 3 prints the $[\chi^2_2/2]^2$ law — the **even**
+one — in a section that has assumed $n = 2m-1$ odd. The formula is correct; what the
+sentence omits is that the parity decides which of two laws applies. In the odd setting
+where the claim is made, the estimator is the milder of the two, biased by 50% rather
+than 100% and a quarter as variable, so the argument is conservative exactly where Efron
+needs it. His conclusion is identical in both parities: the limit is a random variable,
+so no amount of data makes the jackknife settle.
+
+**What it says about the code.** This implementation missed the parity for as long as
+its closed form rejected even $n$ outright — a restriction inherited from Sec. 6, which
+genuinely needs a unique middle order statistic, by a calculation that never did. Code
+that refuses the inputs on which a claim would fail cannot be used to test that claim.
+Both parities are implemented now, and both appear in the checks.
 
 ### Remark J's repair works, and is expensive
 

@@ -1014,13 +1014,38 @@ of mean $E[E^2] = 2$ and variance $E[E^4] - 4 = 20$.
 
 ### 7.8 Which law is which
 
-So the limiting law of the jackknife variance of a median **depends on the parity of the
+Putting Sections 7.6 and 7.7 side by side gives a single statement. The even case is
+the standard one — it is what Efron prints, and it is what the usual treatments of why
+the jackknife fails for quantiles derive; the odd case follows from the same argument
+with one more spacing in it. What we have not found stated anywhere is the contrast:
+
+$$\boxed{\;n\,\hat v_{\mathrm{jack}} \;\xrightarrow{\;d\;}\;
+\frac{1}{4f^2(\theta)} \times
+\begin{cases}
+\big[\chi^2_2/2\big]^2, & n \text{ even},\\[4pt]
+\big[\chi^2_4/4\big]^2, & n \text{ odd}.
+\end{cases}\;}$$
+
+The limiting law of the jackknife variance of a median **depends on the parity of the
 sample size**, through nothing more than whether there is a middle observation to delete:
 
 | | replicates take | spacings involved | limit, in units of $1/4f^2$ | mean | variance |
 |---|---|---|---|---|---|
 | $n$ even | 2 values | 1 | $[\chi^2_2/2]^2$ | 2 | 20 |
 | $n$ odd | 3 values | 2 | $[\chi^2_4/4]^2$ | 1.5 | 5.25 |
+
+The two entries in the last column are the same random variable seen once and averaged
+twice: $n$ times a spacing at the median converges to an exponential of rate $f(\theta)$,
+so one spacing contributes the square of an exponential and two contribute the square of
+their mean. Averaging a second draw before squaring is what takes the mean from 2 to 1.5
+and the variance from 20 to 5.25 — a quarter of the spread, bought with one observation
+of sample size.
+
+This is a curiosity rather than a hazard — the parity of a sample size is not something
+one chooses on statistical grounds — but it is the kind of curiosity a resampling method
+is supposed not to have, and neither law announces it. It has one practical edge: a
+simulation reporting that the jackknife overestimates the variance of a median by a
+factor 2, and another reporting 1.5, can both be right and be measuring the same thing.
 
 This is worth stating carefully, because Section 3 of the paper prints
 $\frac{1}{4f^2(\theta)}[\chi^2_2/2]^2$, "mean 2 and variance 20", in a section that has
@@ -1049,19 +1074,19 @@ every quantile:
 
 Each simulated row tracks its own law and neither is a rounding of the other.
 
-Two remarks are worth making about how this was found, since both are lessons rather
-than results. The first is that the odd case is the *milder* of the two: with a second
-spacing averaged in, the estimate is biased by 50% rather than 100% and is a quarter as
-variable. The paper's argument is therefore conservative in the setting where it is
-made, and its conclusion — that the jackknife is not even consistent for the median —
-holds in both parities, since a random limit is a random limit either way.
+Note also that the odd case, the one Efron's section is set in, is the *milder* of the
+two: with a second spacing averaged in, the estimate is biased by 50% rather than 100%
+and is a quarter as variable. The argument is therefore conservative where it is made,
+and its conclusion — that the jackknife is not even consistent for the median — holds in
+both parities, since a random limit is a random limit either way.
 
-The second is that this parity was invisible from the code for as long as the code
-enforced odd $n$. `median_pmf` requires it, because Section 6.2 needs a single order
-statistic; the jackknife closed form inherited the requirement for no reason at all, and
-with it the impossibility of ever observing the even case. An implementation that
-refuses the inputs on which a claim would fail cannot be used to test that claim, and
-that is not a remark about this implementation in particular.
+One remark on how this was found, since it is a lesson rather than a result. The parity
+was invisible from the code for as long as the code enforced odd $n$. `median_pmf`
+requires it, because Section 6.2 needs a single middle order statistic; the jackknife
+closed form inherited the requirement for no reason at all, and with it the
+impossibility of ever observing the even case. An implementation that refuses the inputs
+on which a claim would fail cannot be used to test that claim, and that is not a remark
+about this implementation in particular.
 
 ### 7.9 Where each method looks
 
