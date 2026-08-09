@@ -34,6 +34,14 @@ papers/*.pdf
 # Personal notes: not published
 GUIA-LECTURA.md
 
+# Obsidian. The repo is also usable as a vault — the reviews and derivations are
+# markdown and the PDFs are right there — and opening it creates this folder:
+# workspace layout, plugin state and per-machine preferences. None of it is about
+# the papers. Note that Obsidian's own [[wikilinks]] and ![[embeds]] render as
+# literal text on GitHub, so anything committed keeps standard markdown links;
+# turn off "Use [[Wikilinks]]" in Settings → Files & Links.
+.obsidian/
+
 # Claude Code local permissions: machine-specific and personal. They accumulate
 # allowed commands from whatever is being worked on, including other projects,
 # so they do not belong in a repo meant to be read by others. The shared part
