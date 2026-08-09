@@ -92,7 +92,7 @@ comparison of four estimators at the end. `numpy`, `scipy` and `matplotlib` only
 | $n\,E_*(R^*)^2 \to 1/4f^2(\theta) = \pi/2$ | ✅ but slowly — see below |
 | Table 1, column (3.6): AVE 1.01, S.D. .31 | ✅ AVE 1.011, S.D. .317 (20000 trials) |
 | Eq. (3.12) as printed | ❌ **needs a factor $\sqrt n$** to produce Table 1 |
-| Eq. (3.13), $E_F R = 0.95$ | ❌ **ours is 0.9822 ± 0.0012** |
+| Eq. (3.13), $E_F R = 0.95$ | ⚠️ ours is 0.9822 ± 0.0012 — see below |
 | Eq. (5.7), $\mathbf{e}U = 0$, $\mathbf{e}V = -n\mathbf{U}'$, $\mathbf{e}V\mathbf{e}' = 0$ | ✅ to $10^{-6}$ by finite differences |
 | Eq. (5.14), $U$ and $V$ for the ratio estimator | ✅ to $2\times10^{-7}$ |
 | Eq. (5.8), $E_*R^* = R(\mathbf{e}/n) + \bar V/2n$ | ✅ lands on Eq. (5.15) to 8 decimals |
@@ -100,7 +100,7 @@ comparison of four estimators at the end. `numpy`, `scipy` and `matplotlib` only
 | Eq. (5.10) $=$ the bootstrap variance, for the mean | ✅ to $10^{-9}$; the ordinary jackknife is exactly $\tfrac{n}{n-1}$ of it |
 | Eq. (5.13), $\tilde U_i / U_i = 1 + O(1/n)$ | ✅ $n(v_{\text{ord}}/v_{\text{inf}} - 1)$ stays near 1 from $n=10$ to $160$ |
 | The jackknife is inconsistent for the median (Sec. 3) | ✅ its spread does not shrink with $n$ |
-| that inconsistency's limit law, $[\chi^2_2/2]^2$, mean 2, variance 20 | ❌ **ours is $[\chi^2_4/4]^2$, mean 1.5, variance 5.25** |
+| that inconsistency's limit law, $[\chi^2_2/2]^2$, mean 2, variance 20 | ✅ for **even** $n$ — but Sec. 3 works with $n$ odd, where it is $[\chi^2_4/4]^2$; see below |
 | Remark J: deleting in groups of $g = O(\sqrt n)$ repairs the median | ✅ it converges, but slowly — see below |
 | Remark B, $\hat\rho = .945$ for the nine pairs of Fig. 1 | ✅ 0.944848 |
 | Fig. 1: $\hat\rho^*$ straggles left, $\tanh^{-1}\hat\rho^*$ straggles right | ✅ and the reason is not the transformation's shape — see below |
@@ -128,18 +128,25 @@ It changes nothing about the paper's argument — $R^*$ is scale invariant eithe
 that invariance is the only property Sec. 3 uses — but it has to be put back to
 reproduce a single number of Table 1.
 
-### $E_F R$ is 0.982, not 0.95
+### $E_F R$: ours is 0.982, the paper says 0.95
 
 With the scaling settled, the true value can be simulated directly: $400\,000$ samples
-of size 13 from $\mathcal{N}(0,1)$ give $0.9822 \pm 0.0012$, which is **27 standard
-errors** from the paper's 0.95. The asymptotic median distribution
-$\mathcal{N}(0, \pi/2n)$ would give exactly 1, approached from below, so 0.95 is not the
-asymptotic value either. The paper does not say how it was obtained.
+of size 13 from $\mathcal{N}(0,1)$ give $0.9822 \pm 0.0012$. The asymptotic median
+distribution $\mathcal{N}(0, \pi/2n)$ gives exactly 1, approached from below, so 0.95 is
+not the asymptotic value either, and no other natural reading produces it: scaling by
+$\sqrt{n-1}$ instead gives 0.943 but then Table 1's own column comes out at 0.971
+against its printed 1.01, so no single convention reconciles both numbers.
 
-This matters for reading Table 1: against 0.95 the plain bootstrap looks biased upwards
-by 6%, and against 0.982 by 3%. The paper's conclusion — that the plain bootstrap does
-as well as the smoothed and symmetrized versions — is untouched, since all columns move
-together.
+**This is a discrepancy and not an erratum.** The gap is 0.03, and the paper does not say
+how 0.95 was obtained; a Monte Carlo estimate over a few hundred trials — the scale of
+everything else in Section 3 — carries a standard error of about 0.025, which places
+0.95 comfortably within sampling error of 0.982. Our $\pm 0.0012$ is the precision of
+*our* computation, not a measure of how far the paper is from the truth.
+
+It matters for reading Table 1 either way: against 0.95 the plain bootstrap looks biased
+upwards by 6%, and against 0.982 by 3%. The paper's conclusion — that the plain
+bootstrap does as well as the smoothed and symmetrized versions — is untouched, since
+all columns move together.
 
 ### Why the asymptotics are slow
 
@@ -182,39 +189,57 @@ only three values, so with $a = x_{(m)} - x_{(m-1)}$ and $b = x_{(m+1)} - x_{(m)
 $$v_{\text{jack}} = \frac{(m-1)^2}{2(2m-1)}\left[a^2 + b^2 - \frac{(m-1)(a-b)^2}{2m-1}\right]
 \;\sim\; \frac{n\,(a+b)^2}{16},$$
 
-a function of three order statistics however large $n$ is. Since $n(a+b)$ converges in
+a function of three order statistics however large $n$ is (two, if $n$ is even — the
+parity matters, and the next section is about that). Since $n(a+b)$ converges in
 *distribution* to $\Gamma(2,1)/f(\theta)$ rather than concentrating, $n\,v_{\text{jack}}$
 never settles:
 
 | $n$ | truth $n\,\mathrm{Var}_F$ | jackknife: mean (s.d.) | bootstrap: mean (s.d.) |
 |---|---|---|---|
-| 13 | 1.492 | 1.883 (2.42) | 1.882 (1.23) |
-| 51 | 1.564 | 2.242 (3.35) | 1.774 (0.91) |
-| 201 | 1.585 | 2.314 (3.58) | 1.677 (0.65) |
-| 1001 | 1.583 | 2.320 (3.57) | 1.627 (0.43) |
+| 13 | 1.488 | 1.881 (2.42) | 1.893 (1.24) |
+| 51 | 1.565 | 2.225 (3.29) | 1.777 (0.89) |
+| 201 | 1.595 | 2.374 (3.58) | 1.687 (0.65) |
+| 1001 | 1.537 | 2.375 (3.59) | 1.625 (0.42) |
 
 The bootstrap column walks towards $1/4f^2 = \pi/2 = 1.571$ with a spread that shrinks;
 the jackknife column walks to $1.5 \times \pi/2$ with a spread that does not.
 
-### The limit law is $[\chi^2_4/4]^2$, not $[\chi^2_2/2]^2$
+### The limit law depends on the parity of $n$
 
-The expression above gives
-$n\,v_{\text{jack}} \to \frac{1}{4f^2(\theta)}\left[\chi^2_4/4\right]^2$, of mean **1.5**
-and variance **5.25**. Sec. 3 prints $\frac{1}{4f^2(\theta)}[\chi^2_2/2]^2$, of mean 2
-and variance 20. Simulating at $n = 4001$ ($40\,000$ trials) settles it, and not only in
-the moments — the whole distribution is ours, quantile by quantile:
+Sec. 3 prints $n\,\hat v_{\text{jack}} \to \frac{1}{4f^2(\theta)}[\chi^2_2/2]^2$, mean 2
+and variance 20, in a section that has assumed $n = 2m-1$ **odd**. That law is the
+**even** one, and it is right for even $n$:
+
+- **$n$ even.** Deleting leaves an odd sample with a single middle value. The replicates
+  take *two* values, $\hat v_{\text{jack}} = \frac{n-1}{4}(x_{(m+1)}-x_{(m)})^2$, one
+  spacing enters, and the limit is $[\chi^2_2/2]^2$ — mean 2, variance 20.
+- **$n$ odd.** Deleting leaves an even sample, and there is now a middle observation that
+  can itself be deleted. The replicates take *three* values, two spacings enter, and the
+  limit is $[\chi^2_4/4]^2$ — mean 1.5, variance 5.25.
+
+Simulating $40\,000$ samples at each of $n = 4000$ and $n = 4001$ separates them at every
+quantile:
 
 | | mean | var | $q_{.10}$ | $q_{.25}$ | $q_{.50}$ | $q_{.75}$ | $q_{.90}$ | $q_{.99}$ |
 |---|---|---|---|---|---|---|---|---|
-| simulated | 1.506 | 5.16 | 0.068 | 0.230 | 0.707 | 1.82 | 3.82 | 11.1 |
-| $[\chi^2_4/4]^2$ | 1.497 | 5.19 | 0.071 | 0.232 | 0.703 | 1.81 | 3.79 | 11.0 |
-| $[\chi^2_2/2]^2$ (paper) | 2.000 | 20.4 | 0.011 | 0.082 | 0.479 | 1.92 | 5.29 | 21.2 |
+| simulated, $n=4000$ (even) | 2.005 | 19.6 | 0.011 | 0.084 | 0.480 | 1.93 | 5.39 | 21.0 |
+| $[\chi^2_2/2]^2$ | 2.002 | 19.8 | 0.011 | 0.082 | 0.481 | 1.92 | 5.31 | 21.2 |
+| simulated, $n=4001$ (odd) | 1.510 | 5.42 | 0.070 | 0.228 | 0.702 | 1.80 | 3.84 | 11.2 |
+| $[\chi^2_4/4]^2$ | 1.502 | 5.24 | 0.071 | 0.231 | 0.705 | 1.81 | 3.78 | 11.1 |
 
-Both variables have mean 1 before squaring, so the slip is in the degrees of freedom:
-the median's jackknife is driven by the *two* spacings flanking $x_{(m)}$, hence
-$\chi^2_4$, not one. The paper's point is untouched and if anything overstated — the
-limit is a random variable either way, so no amount of data makes the jackknife settle,
-and it is biased upwards by 50% rather than 100%.
+So this is **not an error in the paper**: the formula is correct, and what the sentence
+omits is that the parity decides which of two laws applies — naming, in a section built
+on odd $n$, the one that belongs to even $n$. In the odd setting the estimator is the
+milder of the two, biased by 50% rather than 100% and a quarter as variable, so the
+paper's argument is conservative where it is made. The conclusion is identical in both
+parities: the limit is a random variable, so no amount of data makes the jackknife
+settle.
+
+An earlier version of this README claimed the printed law was simply wrong. It was not,
+and the reason the error survived is worth recording: the closed form here rejected even
+$n$ outright, inheriting a restriction that Sec. 6 genuinely needs and this calculation
+never did. Code that refuses the inputs on which a claim would fail cannot be used to
+test that claim.
 
 ### Remark J's repair works, and is expensive
 
@@ -229,16 +254,16 @@ the bootstrap:
 
 | $n$ | $d = 2$ | $d \sim \sqrt n$ | $d \sim n^{3/5}$ | bootstrap |
 |---|---|---|---|---|
-| 101 | 2.494 (3.70) | 2.015 (1.66) | 1.916 (1.35) | 1.742 (0.75) |
-| 401 | 2.591 (3.98) | 1.950 (1.37) | 1.847 (1.09) | 1.646 (0.53) |
-| 1601 | 2.621 (3.66) | 1.812 (1.11) | 1.724 (0.86) | 1.599 (0.38) |
-| 6401 | 2.795 (4.61) | 1.762 (0.89) | 1.691 (0.67) | 1.593 (0.25) |
+| 101 | 2.687 (3.82) | 2.058 (1.74) | 1.929 (1.39) | 1.719 (0.75) |
+| 401 | 2.724 (4.02) | 1.975 (1.43) | 1.860 (1.14) | 1.644 (0.54) |
+| 1601 | 2.843 (4.28) | 1.865 (1.12) | 1.779 (0.86) | 1.624 (0.37) |
+| 6401 | 2.718 (4.10) | 1.750 (0.91) | 1.682 (0.68) | 1.586 (0.26) |
 
 Grouping is not by itself the cure: at $d = 2$ the estimator is as lost as at $d = 1$,
 since two deletions still move $\mathbf{P}^*$ by $O(1/n)$. What repairs it is letting $d$
 **grow** — both growing rules walk towards $\pi/2$ with a spread that shrinks. So the
-claim holds, with poor constants: at $n = 6401$ the $\sqrt n$ rule is still 12% high and
-three and a half times as variable as the bootstrap, which needed neither a repair nor a
+claim holds, with poor constants: at $n = 6401$ the $\sqrt n$ rule is still 11% high and
+3.5 times as variable as the bootstrap, which needed neither a repair nor a
 choice of $d$.
 
 ### Figure 1, and why the skew changes sides

@@ -231,28 +231,33 @@ def fig_jackknife(path="ded_jackknife.png"):
     ax1.legend(frameon=False, fontsize=8)
 
     rng = np.random.default_rng(2)
-    n_big, trials = 4001, 40_000
-    ratios = []
-    for _ in range(trials // 2000):
-        s = rng.normal(size=(2000, n_big))
-        ratios.append(n_big * median_jackknife_var_batch(s) / (np.pi / 2))
-    ratios = np.concatenate(ratios)
-
     edges = np.linspace(0, 8, 41)
-    ax2.hist(ratios, bins=edges, density=True, color="0.85",
-             label=f"simulated, $n = {n_big}$")
     w = np.linspace(1e-4, 8, 400)
-    # Densities of the two candidates, by change of variable from the
-    # exponential: 2 exp(-2 sqrt(w)) and exp(-sqrt(w)) / (2 sqrt(w)).
-    ax2.plot(w, 2 * np.exp(-2 * np.sqrt(w)), color="#166534", lw=1.6,
-             label="$[\\chi^2_4/4]^2$  (ours)")
-    ax2.plot(w, np.exp(-np.sqrt(w)) / (2 * np.sqrt(w)), color="#b91c1c",
-             lw=1.6, ls="--", label="$[\\chi^2_2/2]^2$  (as printed)")
+
+    # The two candidate densities, by change of variable from the exponential:
+    # exp(-sqrt w)/(2 sqrt w) for a single spacing, 2 exp(-2 sqrt w) for the
+    # average of two.  Which one applies depends on the parity of n.
+    for n_big, colour, dens, name in [
+            (4000, "#b91c1c", lambda v: np.exp(-np.sqrt(v)) / (2 * np.sqrt(v)),
+             "$[\\chi^2_2/2]^2$"),
+            (4001, "#166534", lambda v: 2 * np.exp(-2 * np.sqrt(v)),
+             "$[\\chi^2_4/4]^2$")]:
+        ratios = []
+        for _ in range(40_000 // 2000):
+            s = rng.normal(size=(2000, n_big))
+            ratios.append(n_big * median_jackknife_var_batch(s) / (np.pi / 2))
+        parity = "even" if n_big % 2 == 0 else "odd"
+        ax2.hist(np.concatenate(ratios), bins=edges, density=True,
+                 histtype="step", lw=1.4, color=colour,
+                 label=f"simulated, $n={n_big}$ ({parity})")
+        ax2.plot(w, dens(w), color=colour, lw=1.2, ls="--", alpha=0.85,
+                 label=name)
+
     ax2.set_ylim(0, 1.1)
     ax2.set_xlabel("$n\\,\\hat v_{\\mathrm{jack}} \\,/\\, (1/4f^2)$")
     ax2.set_ylabel("density")
-    ax2.set_title("the limit law of the jackknife variance")
-    ax2.legend(frameon=False, fontsize=8)
+    ax2.set_title("the limit law, and the parity it depends on")
+    ax2.legend(frameon=False, fontsize=7.5)
 
     fig.tight_layout()
     fig.savefig(path, bbox_inches="tight")

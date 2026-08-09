@@ -247,33 +247,49 @@ def jackknife_bias(R, n):
 # Step 4 — the median, where the linearisation has nothing to linearise
 # --------------------------------------------------------------------------
 #
-# Deleting one observation from an odd sample n = 2m - 1 leaves an even one,
-# whose median is the average of its two middle values.  Which two depends
-# only on whether the deleted point sat below the median, above it, or was
-# the median itself, so with a = x_(m) - x_(m-1) and b = x_(m+1) - x_(m) the
-# n leave-one-out medians take only three values relative to x_(m):
+# The parity of n matters here, and it is the whole of Sec. 7.6 of
+# DERIVATIONS.md.  Both cases are implemented, and the reason is worth stating
+# plainly: an implementation that accepts only odd n cannot discover that the
+# answer depends on the parity, and this one did not until the even case was
+# put in beside it.
+#
+# ODD, n = 2m - 1.  Deleting one observation leaves an even sample, whose
+# median is the average of its two middle values.  Which two depends only on
+# whether the deleted point sat below the median, above it, or was the median
+# itself, so with a = x_(m) - x_(m-1) and b = x_(m+1) - x_(m) the n
+# leave-one-out medians take THREE values relative to x_(m):
 #
 #     b/2        (m - 1 times)   deleting any point below the median
 #     -a/2       (m - 1 times)   deleting any point above it
 #     (b - a)/2  (once)          deleting the median
 #
-# The jackknife variance is therefore a function of a and b alone: of three
-# order statistics out of n, however large n is.  That is the whole disease,
-# and the closed form below is written to make it impossible to miss.
+# EVEN, n = 2m.  Deleting leaves an odd sample and a single order statistic,
+# and the middle case disappears: the n leave-one-out medians take TWO values,
+# x_(m+1) for each of the m deletions at or below x_(m) and x_(m) for each of
+# the m above.  One spacing enters instead of two, and that single difference
+# changes the limiting law.
+#
+# Either way the estimate is a function of two or three order statistics out
+# of n, however large n is, which is the disease itself.
 
 def median_jackknife_var(x):
     """Ordinary jackknife variance of the sample median, in closed form.
 
-    Summing the three values above and their squares gives, for n = 2m - 1,
+    For n = 2m - 1 odd, summing the three values above and their squares,
 
-        v = (m-1)^2 / [2(2m-1)] * [ a^2 + b^2 - (m-1)(a-b)^2 / (2m-1) ],
+        v = (m-1)^2 / [2(2m-1)] * [ a^2 + b^2 - (m-1)(a-b)^2 / (2m-1) ];
 
-    which is checked against the brute-force jackknife in __main__.
+    for n = 2m even, with d = x_(m+1) - x_(m), the two-valued case collapses to
+
+        v = (n-1) d^2 / 4.
+
+    Both are checked against the brute-force jackknife in __main__.
     """
     x = np.sort(np.asarray(x, dtype=float))
     n = x.shape[0]
+    m = n // 2
     if n % 2 == 0:
-        raise ValueError("Sec. 3 takes n = 2m - 1 odd")
+        return float((n - 1) * (x[m] - x[m - 1]) ** 2 / 4)
     m = (n + 1) // 2
     a = x[m - 1] - x[m - 2]
     b = x[m] - x[m - 1]
@@ -284,11 +300,15 @@ def median_jackknife_var(x):
 def median_jackknife_var_batch(samples):
     """median_jackknife_var applied row-wise to a (trials, n) array.
 
-    Only the three middle order statistics are needed, so the rows are
+    Only two or three middle order statistics are needed, so the rows are
     partitioned rather than sorted.
     """
     samples = np.asarray(samples, dtype=float)
     n = samples.shape[1]
+    if n % 2 == 0:
+        m = n // 2
+        part = np.partition(samples, [m - 1, m], axis=1)
+        return (n - 1) * (part[:, m] - part[:, m - 1]) ** 2 / 4
     m = (n + 1) // 2
     part = np.partition(samples, [m - 2, m - 1, m], axis=1)
     a = part[:, m - 1] - part[:, m - 2]
@@ -376,6 +396,9 @@ def median_bootstrap_var_batch(samples):
 
 
 if __name__ == "__main__":
+    # The demonstrations that produce a table quoted in the README seed their
+    # own generator, so that inserting a block above them does not silently
+    # change numbers written down elsewhere.  It has happened twice.
     rng = np.random.default_rng(0)
 
     # --- The differentiator, against Eq. (5.14) ----------------------------
@@ -518,7 +541,7 @@ if __name__ == "__main__":
     print("\nThe median, ordinary jackknife (Eq. 5.12) vs the closed form:\n")
     print(f"{'n':>5}  {'leave-one-out':>15}  {'via Eq. (5.12)':>15}"
           f"  {'closed form':>15}  {'distinct U-tilde':>17}")
-    for n in [5, 9, 13, 25]:
+    for n in [5, 8, 9, 12, 13, 25]:
         x = rng.normal(size=n)
         R = median_functional(x)
         # Tukey's formula on the n leave-one-out medians, written out by hand:
@@ -528,28 +551,22 @@ if __name__ == "__main__":
         distinct = np.unique(np.round(jackknife_U(R, n), 12)).size
         print(f"{n:5d}  {v_loo:15.10f}  {jackknife_var(R, n):15.10f}"
               f"  {median_jackknife_var(x):15.10f}  {distinct:17d}")
-    print("  three distinct pseudo-values at every n: the jackknife variance")
-    print("  of the median is a function of x_(m-1), x_(m), x_(m+1) and nothing else")
+    print("  three distinct pseudo-values at odd n and two at even n, whatever")
+    print("  n is: the jackknife variance of the median is a function of the")
+    print("  two or three central order statistics and of nothing else, and")
+    print("  that count is what decides the limit law below")
 
     # --- The median, step three: it does not converge ----------------------
     #
     # n * Var-hat should settle at 1/4f^2(theta) = pi/2 for F = N(0,1).  The
     # bootstrap column does.  The jackknife column cannot: it is built from
-    # two spacings, a and b, and n*a and n*b converge in DISTRIBUTION to
-    # exponentials instead of concentrating.  Writing the closed form to
-    # leading order,
-    #
-    #     n * v_jack  ~  [n(a + b)]^2 / 16  ->  [Gamma(2,1)]^2 / 16 f^2,
-    #
-    # so n*v_jack / (1/4f^2) -> [chi^2_4 / 4]^2, a random variable of mean 1.5
-    # and variance 5.25 -- it never settles anywhere.  The paper states the
-    # same failure with a different limit law, [chi^2_2/2]^2 of mean 2 and
-    # variance 20 (Sec. 3, after Eq. 3.7); the simulation below matches ours.
-    # Both variables have mean 1 before squaring, so the discrepancy is a
-    # degrees-of-freedom slip, and the conclusion Efron draws from it -- that
-    # the jackknife is not even consistent here -- is untouched.
+    # the spacings around the median, and n times a spacing converges in
+    # DISTRIBUTION to an exponential instead of concentrating.  How many
+    # spacings enter depends on the parity of n, and so does the limit --
+    # see the parity table further down.
 
     limit = np.pi / 2                       # 1/(4 f^2(0)) for the standard normal
+    rng = np.random.default_rng(101)
     print(f"\nThe median, consistency (F = N(0,1), n * Var -> {limit:.4f}):\n")
     print(f"{'n':>6}  {'truth':>8}  {'jackknife: mean':>16}  {'s.d.':>7}"
           f"  {'bootstrap: mean':>16}  {'s.d.':>7}")
@@ -568,27 +585,42 @@ if __name__ == "__main__":
               f"  {v_b.mean():16.4f}  {v_b.std():7.4f}")
     print("  the bootstrap's spread shrinks with n and the jackknife's does not")
 
-    # --- and the limit law itself ------------------------------------------
+    # --- the limit law, and the parity it depends on ------------------------
+    #
+    # Sec. 3 states the limit as (1/4f^2)[chi^2_2/2]^2, of mean 2 and variance
+    # 20, in a section that has assumed n = 2m - 1 odd.  That law is the EVEN
+    # one.  With n even the leave-one-out medians take two values and a single
+    # spacing enters, giving [chi^2_2/2]^2 exactly as printed; with n odd they
+    # take three and two spacings enter, giving [chi^2_4/4]^2, of mean 1.5 and
+    # variance 5.25.  Both are simulated below against both candidates, which
+    # is the only honest way to present it: neither law is wrong, and which
+    # one applies is decided by a parity the statement does not mention.
 
-    print("\nThe limiting law of n * v_jack / (1/4f^2), n = 4001:\n")
-    n, n_trials = 4001, 40_000
-    ratios = []
-    for _ in range(n_trials // 2000):
-        s = rng.normal(size=(2000, n))
-        ratios.append(n * median_jackknife_var_batch(s) / limit)
-    ratios = np.concatenate(ratios)
-    target = (rng.chisquare(4, size=400_000) / 4) ** 2
-    paper = (rng.chisquare(2, size=400_000) / 2) ** 2
+    rng = np.random.default_rng(102)
     qs = [0.1, 0.25, 0.5, 0.75, 0.9, 0.99]
-    print(f"{'':>21}  {'mean':>7}  {'var':>7}  "
+    laws = [("[chi^2_2/2]^2  (as printed)", (rng.chisquare(2, 400_000) / 2) ** 2),
+            ("[chi^2_4/4]^2", (rng.chisquare(4, 400_000) / 4) ** 2)]
+
+    print("\nThe limiting law of n * v_jack / (1/4f^2), by the parity of n:\n")
+    print(f"{'':>28}  {'mean':>7}  {'var':>7}  "
           + " ".join(f"{f'q{q:.2f}':>6}" for q in qs))
-    for label, v in [("simulated", ratios),
-                     ("ours, [chi^2_4/4]^2", target),
-                     ("paper, [chi^2_2/2]^2", paper)]:
+    rows = []
+    for n in [4000, 4001]:
+        ratios = []
+        for _ in range(40_000 // 2000):
+            s = rng.normal(size=(2000, n))
+            ratios.append(n * median_jackknife_var_batch(s) / limit)
+        rows.append((f"simulated, n = {n} ({'even' if n % 2 == 0 else 'odd'})",
+                     np.concatenate(ratios)))
+    for label, v in rows + laws:
         quant = " ".join(f"{q:6.3f}" for q in np.quantile(v, qs))
-        print(f"{label:>21}  {v.mean():7.3f}  {v.var():7.3f}  {quant}")
-    print("\n  the simulated column follows [chi^2_4/4]^2 quantile by quantile,")
-    print("  and departs from the paper's law everywhere, not only in the moments")
+        print(f"{label:>28}  {v.mean():7.3f}  {v.var():7.3f}  {quant}")
+    print("\n  each simulated row follows one of the two laws quantile by")
+    print("  quantile and neither is a rounding of the other.  The printed law")
+    print("  is the even one; Sec. 3 works with n odd, where a second spacing")
+    print("  enters and the estimate is less wild than advertised -- biased by")
+    print("  50% rather than 100%.  The inconsistency, which is the point, is")
+    print("  the same in both cases: the limit is random, not a number")
 
     # --- Remark J: deleting in groups repairs it ---------------------------
     #
@@ -623,6 +655,7 @@ if __name__ == "__main__":
     def even(v):
         return max(2, 2 * int(round(v / 2)))
 
+    rng = np.random.default_rng(103)
     print(f"\nRemark J: does delete-d converge? (limit {limit:.4f}, 2000 trials)\n")
     print(f"{'n':>6}  " + "  ".join(f"{lbl:<20}" for lbl in
           ["d = 2", "d ~ sqrt(n)", "d ~ n^(3/5)", "bootstrap"]).rstrip())
@@ -638,7 +671,10 @@ if __name__ == "__main__":
         for c, d in zip(chunks, ds):
             v = n * np.concatenate(c)
             cells.append(f"d={d:<4}{v.mean():5.3f} ({v.std():5.3f})")
+            if d == ds[1]:
+                last_sqrt = (v.mean(), v.std())
         v = n * np.concatenate(boot)
+        last_boot = (v.mean(), v.std())
         cells.append(f"     {v.mean():5.3f} ({v.std():5.3f})")
         print(f"{n:6d}  " + "  ".join(cells))
     print("\n  mean (s.d. across trials).  Grouping is not by itself the cure:")
@@ -646,6 +682,7 @@ if __name__ == "__main__":
     print("  deletions still move P* by O(1/n).  What repairs it is letting d")
     print("  GROW -- both growing rules walk towards the limit with a spread")
     print("  that shrinks, the faster rule faster -- which is Remark J's claim,")
-    print("  though the constants are poor: at n = 6401 the sqrt(n) rule is")
-    print("  still 12% high and three and a half times as variable as the")
-    print("  bootstrap, which needed no repair and no choice of d")
+    print(f"  though the constants are poor: at n = {n} the sqrt(n) rule is")
+    print(f"  still {last_sqrt[0] / limit - 1:.0%} high and"
+          f" {last_sqrt[1] / last_boot[1]:.1f} times as variable as the bootstrap,")
+    print("  which needed no repair and no choice of d")

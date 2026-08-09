@@ -979,39 +979,91 @@ $$E\left[\frac{\chi^2_4}{4}\right]^2 = \frac{E\,\Gamma(2,1)^2}{4} = \frac{6}{4} 
 and variance $\frac{120 - 36}{16} = 5.25$, in units of the correct answer
 $\frac{1}{4f^2}$ of Section 6.4. So the jackknife estimate of the variance of a median
 is not consistent, is biased upward by 50% on average, and has a standard deviation more
-than twice its own target. That conclusion is Efron's, and it is the flagship argument
-of the paper.
+than twice its own target. That is Efron's conclusion and the flagship argument of the
+paper.
 
-**The limit law he prints, however, is a different one.** Section 3 of the paper gives
-$\frac{1}{4f^2(\theta)}[\chi^2_2/2]^2$, "mean 2 and variance 20". Note that
-$\chi^2_2/2$ is a single standard exponential where $\chi^2_4/4$ is the average of two:
-both have mean 1, so the two candidate laws are indistinguishable at the level of the
-normalisation and differ in everything else. The slip is one of degrees of freedom, and
-its source is visible in the derivation above — the jackknife variance of a median is
-driven by the **two** spacings that flank $x_{(m)}$, not by one.
+### 7.7 The same calculation for an even sample
 
-The two laws are easy to tell apart, since both densities are elementary: with
-$W = [\chi^2_4/4]^2$ and $W' = [\chi^2_2/2]^2$, changing variables from the exponential
-gives
+Everything above assumed $n$ odd, which Section 6.1 adopted so that the median would be
+a single order statistic. It is worth doing the even case as well, and not for
+completeness: the answer changes.
 
-$$f_W(w) = 2e^{-2\sqrt{w}}, \qquad f_{W'}(w) = \frac{e^{-\sqrt{w}}}{2\sqrt{w}} .$$
+Let $n = 2m$, so that $\hat\theta = \frac{x_{(m)} + x_{(m+1)}}{2}$. Deleting one
+observation now leaves an *odd* sample, whose median is a single order statistic, and
+the three-way split collapses to a two-way one: deleting any of the $m$ observations at
+or below $x_{(m)}$ leaves the median at $x_{(m+1)}$, and deleting any of the $m$ at or
+above $x_{(m+1)}$ leaves it at $x_{(m)}$. The middle case — deleting the median itself —
+has no analogue, because there is no single median to delete.
 
-Simulating $40\,000$ samples of size $n = 4001$ from $\mathcal{N}(0,1)$ and computing
-$n\hat v_{\mathrm{jack}} / (\pi/2)$ from the closed form gives mean $1.506$ and variance
-$5.16$, against $1.5$ and $5.25$ for $W$ and $2$ and $20$ for $W'$; and the agreement is
-not confined to the moments:
+With $d = x_{(m+1)} - x_{(m)}$ the $n$ replicates take two values, $\pm d/2$ about their
+own mean, $m$ times each, so
+
+$$\sum_i \big(\hat\theta_{(i)} - \hat\theta_{(\cdot)}\big)^2 = 2m\left(\frac{d}{2}\right)^2
+= \frac{n d^2}{4},
+\qquad
+\hat v_{\mathrm{jack}} = \frac{n-1}{n}\cdot\frac{n d^2}{4} = \frac{(n-1)\,d^2}{4}.$$
+
+Then $n\hat v_{\mathrm{jack}} \sim \frac{[n d]^2}{4}$, and a **single** spacing is
+involved where the odd case had two, so $nd \to E/f(\theta)$ with $E$ one standard
+exponential and
+
+$$\boxed{\;n\,\hat v_{\mathrm{jack}} \;\xrightarrow{\;d\;}\;
+\frac{1}{4f^2(\theta)}\left[\frac{\chi^2_2}{2}\right]^{2}\;}$$
+
+of mean $E[E^2] = 2$ and variance $E[E^4] - 4 = 20$.
+
+### 7.8 Which law is which
+
+So the limiting law of the jackknife variance of a median **depends on the parity of the
+sample size**, through nothing more than whether there is a middle observation to delete:
+
+| | replicates take | spacings involved | limit, in units of $1/4f^2$ | mean | variance |
+|---|---|---|---|---|---|
+| $n$ even | 2 values | 1 | $[\chi^2_2/2]^2$ | 2 | 20 |
+| $n$ odd | 3 values | 2 | $[\chi^2_4/4]^2$ | 1.5 | 5.25 |
+
+This is worth stating carefully, because Section 3 of the paper prints
+$\frac{1}{4f^2(\theta)}[\chi^2_2/2]^2$, "mean 2 and variance 20", in a section that has
+assumed $n = 2m-1$ odd. **That law is the even one, and it is correct as a statement
+about even samples.** What the sentence does not say is that the parity matters; read in
+the setting where it appears, it names the wrong one of the two.
+
+The two are easy to tell apart, both densities being elementary. Writing
+$W = [\chi^2_2/2]^2$ and $W' = [\chi^2_4/4]^2$ and changing variables from the
+exponential,
+
+$$f_W(w) = \frac{e^{-\sqrt{w}}}{2\sqrt{w}},
+\qquad
+f_{W'}(w) = 2e^{-2\sqrt{w}} .$$
+
+Simulating $40\,000$ samples at $n = 4000$ and at $n = 4001$ from $\mathcal{N}(0,1)$ and
+computing $n\hat v_{\mathrm{jack}} / (\pi/2)$ from the closed forms separates them at
+every quantile:
 
 | | mean | var | $q_{.10}$ | $q_{.25}$ | $q_{.50}$ | $q_{.75}$ | $q_{.90}$ | $q_{.99}$ |
 |---|---|---|---|---|---|---|---|---|
-| simulated | 1.506 | 5.16 | 0.068 | 0.230 | 0.707 | 1.82 | 3.82 | 11.1 |
-| $[\chi^2_4/4]^2$ | 1.497 | 5.19 | 0.071 | 0.232 | 0.703 | 1.81 | 3.79 | 11.0 |
-| $[\chi^2_2/2]^2$ | 2.000 | 20.4 | 0.011 | 0.082 | 0.479 | 1.92 | 5.29 | 21.2 |
+| simulated, $n = 4000$ (even) | 2.005 | 19.6 | 0.011 | 0.084 | 0.480 | 1.93 | 5.39 | 21.0 |
+| $[\chi^2_2/2]^2$ | 2.002 | 19.8 | 0.011 | 0.082 | 0.481 | 1.92 | 5.31 | 21.2 |
+| simulated, $n = 4001$ (odd) | 1.510 | 5.42 | 0.070 | 0.228 | 0.702 | 1.80 | 3.84 | 11.2 |
+| $[\chi^2_4/4]^2$ | 1.502 | 5.24 | 0.071 | 0.231 | 0.705 | 1.81 | 3.78 | 11.1 |
 
-Efron's conclusion survives intact, and is if anything overstated: the estimate is
-biased by 50% rather than by 100%, and the limit is random either way, which is the
-whole of the argument.
+Each simulated row tracks its own law and neither is a rounding of the other.
 
-### 7.7 Where each method looks
+Two remarks are worth making about how this was found, since both are lessons rather
+than results. The first is that the odd case is the *milder* of the two: with a second
+spacing averaged in, the estimate is biased by 50% rather than 100% and is a quarter as
+variable. The paper's argument is therefore conservative in the setting where it is
+made, and its conclusion — that the jackknife is not even consistent for the median —
+holds in both parities, since a random limit is a random limit either way.
+
+The second is that this parity was invisible from the code for as long as the code
+enforced odd $n$. `median_pmf` requires it, because Section 6.2 needs a single order
+statistic; the jackknife closed form inherited the requirement for no reason at all, and
+with it the impossibility of ever observing the even case. An implementation that
+refuses the inputs on which a claim would fail cannot be used to test that claim, and
+that is not a remark about this implementation in particular.
+
+### 7.9 Where each method looks
 
 There is a single quantity behind everything in this section, and it is worth extracting
 because it explains both the failure and its repair: **how far from $\mathbf{e}/n$ each
@@ -1052,15 +1104,15 @@ $n\hat v$ as follows.
 
 | $n$ | $d = 2$ | $d \sim \sqrt n$ | $d \sim n^{3/5}$ | bootstrap |
 |---|---|---|---|---|
-| 101 | 2.494 (3.70) | 2.015 (1.66) | 1.916 (1.35) | 1.742 (0.75) |
-| 401 | 2.591 (3.98) | 1.950 (1.37) | 1.847 (1.09) | 1.646 (0.53) |
-| 1601 | 2.621 (3.66) | 1.812 (1.11) | 1.724 (0.86) | 1.599 (0.38) |
-| 6401 | 2.795 (4.61) | 1.762 (0.89) | 1.691 (0.67) | 1.593 (0.25) |
+| 101 | 2.687 (3.82) | 2.058 (1.74) | 1.929 (1.39) | 1.719 (0.75) |
+| 401 | 2.724 (4.02) | 1.975 (1.43) | 1.860 (1.14) | 1.644 (0.54) |
+| 1601 | 2.843 (4.28) | 1.865 (1.12) | 1.779 (0.86) | 1.624 (0.37) |
+| 6401 | 2.718 (4.10) | 1.750 (0.91) | 1.682 (0.68) | 1.586 (0.26) |
 
 At $d = 2$ the estimator is as lost as at $d = 1$, since two deletions still move
 $\mathbf{P}^*$ by $O(1/n)$. Letting $d$ grow repairs it, faster for the faster rule, and
-the constants are poor: at $n = 6401$ the $\sqrt n$ rule is still 12% high and three and
-a half times as variable as the bootstrap, which needed neither a repair nor a choice of
+the constants are poor: at $n = 6401$ the $\sqrt n$ rule is still 11% high and 3.5 times
+as variable as the bootstrap, which needed neither a repair nor a choice of
 $d$.
 
 ![Where each method evaluates R, and the limit law of the jackknife variance](ded_jackknife.png)
@@ -1070,18 +1122,20 @@ plot, of slopes $-\tfrac12$, $-1$ and $-\tfrac34$. What to look at is not the va
 the separation — the gap between the blue and red lines is the entire content of Remark
 J, and the green line is the repair placed deliberately between them.
 
-The right panel settles Section 7.6. The grey histogram is $n\hat v_{\mathrm{jack}}$ at
-$n = 4001$, in units of $1/4f^2$; the two curves are the elementary densities derived
-above, drawn and not fitted. The simulated distribution follows one of them and not the
-other, and the disagreement with the printed law is not a matter of tails: the two
-curves differ over the whole range, including near zero, where the paper's law has a
-singularity that the data plainly do not.
+The right panel settles Section 7.8. Two simulations, at $n = 4000$ and $n = 4001$, each
+against the elementary density derived for its own parity — drawn, not fitted. What to
+look at is that the two outlines do not coincide: one sample size apart, the same
+estimator on the same distribution converges to two different laws, and each follows its
+own. The red pair has a singularity at the origin and a heavier tail; the green pair,
+which averages a second spacing, has neither.
 
 *Verified in [`jackknife.py`](jackknife.py): the identities of Eq. (5.7) to $10^{-6}$;
 Eqs. (5.14)–(5.15), the paper's only worked derivatives, to $2\times 10^{-7}$; the mean
-and variance checks of Section 7.4; the collapse to zero for the median; the closed form
-of Section 7.6 against both a brute-force deletion and Eq. (5.12), to ten decimals; and
-the delete-$d$ estimator against an enumeration of all $\binom92$ deletions.*
+and variance checks of Section 7.4; the collapse to zero for the median; the closed
+forms of Sections 7.6 and 7.7 against both a brute-force deletion and Eq. (5.12), at
+$n = 5, 8, 9, 12, 13, 25$ and to ten decimals, which is where the two-valued and
+three-valued cases sit side by side; and the delete-$d$ estimator against an enumeration
+of all $\binom92$ deletions.*
 
 With that, the thread announced at the start of this document is closed. How smooth $R$
 is as a function of the distribution it is fed decided everything: it decided that the
