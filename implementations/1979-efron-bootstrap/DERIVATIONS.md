@@ -663,7 +663,7 @@ $F$, and a discrete $\hat F$ with $n$ atoms misrepresents a smooth $F$ in one di
 when the statistic averages everything and in the other when it depends on the local
 spacing of a few central observations.
 
-### 6.6 Table 1, and two numbers that do not check out
+### 6.6 Table 1, and two numbers that do not reproduce
 
 The paper's Monte Carlo comparison, its Table 1, tabulates for $n = 13$ and
 $F = \mathcal{N}(0,1)$ the bootstrap expectation of
@@ -693,19 +693,36 @@ scaling settled this can be simulated directly, and $400\,000$ samples of size 1
 
 $$E_F R \;=\; 0.9822 \pm 0.0012,$$
 
-**twenty-seven standard errors** from $0.95$. Nor is $0.95$ the asymptotic value: by
-Section 6.4 the median is approximately $\mathcal{N}(0, \frac{\pi}{2n})$, so
+which is not $0.95$. Nor is $0.95$ the asymptotic value: by Section 6.4 the median is
+approximately $\mathcal{N}(0, \frac{\pi}{2n})$, so
 
 $$\sqrt n \; E_F\big|\mathrm{median}\big|
 \;\longrightarrow\; \sqrt n \cdot \sqrt{\frac{2}{\pi}} \cdot \sqrt{\frac{\pi}{2n}}
 \;=\; 1,$$
 
-approached from below. The paper does not say how $0.95$ was obtained.
+approached from below. Nor does any other natural reading produce it: scaling by
+$\sqrt{n-1}$ rather than $\sqrt n$ would give $0.943$, but then column (3.6) of Table 1
+comes out at $0.971$ against its printed $1.01$, so no single convention reconciles both
+of the paper's numbers at once.
 
-This changes how Table 1 reads and not what it concludes. Measured against $0.95$ the
-plain bootstrap looks biased upward by 6%; measured against $0.982$, by 3%. Every column
-moves together, so the conclusion — that the plain bootstrap does as well as the
-smoothed and symmetrized versions — is untouched.
+**This is a discrepancy and not an error, and the distinction is worth being careful
+about.** The gap is $0.03$. The paper does not say how $0.95$ was obtained, and a Monte
+Carlo estimate over a few hundred trials — the scale of every other experiment in the
+section — carries a standard error of about $0.025$, which places $0.95$ comfortably
+within sampling error of $0.982$. The $\pm 0.0012$ above is the precision of *our*
+computation and says nothing about how far the paper is from the truth; quoting it as
+though it measured the paper's error would be a misuse of it, and an easy one to commit.
+
+That is the difference between this and the missing $\sqrt n$ above. The factor is a
+discrepancy internal to the paper — a printed definition and a printed table that cannot
+both be right — and needs no external computation to establish. This one is a
+disagreement between our number and theirs, and the honest report is the disagreement,
+not a verdict.
+
+Either way it changes how Table 1 reads and not what it concludes. Measured against
+$0.95$ the plain bootstrap looks biased upward by 6%; measured against $0.982$, by 3%.
+Every column moves together, so the conclusion — that the plain bootstrap does as well as
+the smoothed and symmetrized versions — is untouched.
 
 *All of Section 6 is checked in [`median.py`](median.py): the six probabilities Efron
 prints for $n = 13$ to $7\times10^{-5}$, his printing precision; the closed form against

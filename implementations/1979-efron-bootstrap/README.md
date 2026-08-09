@@ -243,9 +243,16 @@ $n = 4001$ separates the two at every quantile:
 | simulated, $n=4001$ (odd) | 1.510 | 5.42 | 0.070 | 0.228 | 0.702 | 1.80 | 3.84 | 11.2 |
 | $[\chi^2_4/4]^2$ | 1.502 | 5.24 | 0.071 | 0.231 | 0.705 | 1.81 | 3.78 | 11.1 |
 
-Two estimators one sample size apart, on the same distribution, converging to different
-laws. It is a small thing, but it is the kind of small thing that a resampling method is
-supposed to be immune to, and it is not visible from the formula.
+![Where each method evaluates R, and the limit law of the jackknife variance](ded_jackknife.png)
+
+The right panel is the table above, drawn. Two outlines, at $n = 4000$ and $n = 4001$,
+each against the density derived for its own parity — drawn from the closed forms, not
+fitted. What to look at is that they do not coincide: one sample size apart, the same
+estimator on the same distribution follows two different laws. The red pair has a
+singularity at the origin and a heavier tail; the green pair, which averages a second
+spacing before squaring, has neither. It is a small thing, but it is the kind of small
+thing a resampling method is supposed to be immune to, and it is not visible from either
+formula. *(The left panel belongs to the next section.)*
 
 **What this says about the paper.** Sec. 3 prints the $[\chi^2_2/2]^2$ law — the **even**
 one — in a section that has assumed $n = 2m-1$ odd. The formula is correct; what the
@@ -265,8 +272,14 @@ Both parities are implemented now, and both appear in the checks.
 
 Remark J diagnoses the failure as an overdependence on $\mathbf{P}^*$ within $1/n$ of
 $\mathbf{e}/n$ — Eq. (8.14) — where the median is locally constant, while the bootstrap
-looks out at distance $n^{-1/2}$. The cure proposed is to delete observations in groups
-of size $g$, with "$g = O(n^{1/2})$"; the paper asserts the result and gives no numbers.
+looks out at distance $n^{-1/2}$. That is the **left panel of the figure above**: the
+r.m.s. distance $\|\mathbf{P}^* - \mathbf{e}/n\|$ at which each method evaluates $R$,
+three straight lines of slopes $-\tfrac12$, $-1$ and $-\tfrac34$. The gap between the
+blue line and the red one is the whole of the diagnosis, and the green line is the cure
+placed deliberately between them.
+
+The cure proposed is to delete observations in groups of size $g$, with
+"$g = O(n^{1/2})$"; the paper asserts the result and gives no numbers.
 These are the numbers, as mean (s.d.) of $n\hat v$ over 2000 trials, computed exactly —
 the delete-$d$ distribution of the median is a negative hypergeometric, so the
 $\binom{n}{d}$ deletions are summed rather than sampled, exactly as Eq. (3.5) does for
