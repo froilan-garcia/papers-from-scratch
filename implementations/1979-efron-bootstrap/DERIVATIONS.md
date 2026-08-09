@@ -560,8 +560,9 @@ independently of the rest, so the number that do is $\mathrm{Binomial}(n, l/n)$ 
 $$\mathrm{Prob}_*\{X^*_{(m)} > x_{(l)}\}
 \;=\; \mathrm{Prob}\Big\{\mathrm{Bi}\big(n, \tfrac{l}{n}\big) \le m-1\Big\}.$$
 
-The events for consecutive $l$ are nested, $\{X^*_{(m)} > x_{(l-1)}\} \supset
-\{X^*_{(m)} > x_{(l)}\}$, and differ precisely by $\{X^*_{(m)} = x_{(l)}\}$. Differencing,
+The events for consecutive $l$ are nested — the resample median exceeding $x_{(l)}$
+implies it exceeds $x_{(l-1)}$ — and the two differ precisely by the event
+$\{X^*_{(m)} = x_{(l)}\}$. Differencing,
 
 $$\mathrm{Prob}_*\{R^* = x_{(l)} - x_{(m)}\}
 \;=\; \mathrm{Prob}\Big\{\mathrm{Bi}\big(n, \tfrac{l-1}{n}\big) \le m-1\Big\}
@@ -729,8 +730,9 @@ comparing a function with its own linearisation.
 ### 7.1 The moments of a resample
 
 Everything below needs the first two moments of $\mathbf{P}^*$, and Section 3.1 has
-already supplied the distribution: $\mathbf{N}^* \sim \mathrm{Multinomial}(n;
-\frac1n, \dots, \frac1n)$. From the standard multinomial moments,
+already supplied the distribution:
+$\mathbf{N}^* \sim \mathrm{Multinomial}(n; \frac1n, \dots, \frac1n)$.
+From the standard multinomial moments,
 
 $$E\,N_i^* = 1, \qquad \mathrm{Var}\,N_i^* = n\cdot\frac1n\Big(1-\frac1n\Big) = 1 - \frac1n,
 \qquad \mathrm{Cov}\,(N_i^*, N_j^*) = -n\cdot\frac{1}{n^2} = -\frac1n \;\;(i\ne j),$$
@@ -853,9 +855,9 @@ Section 5.1, which forces
 $$\frac{\bar V}{2n} = -\frac{\hat\sigma^2}{n},
 \qquad\text{that is}\qquad \bar V = -2\hat\sigma^2,$$
 
-and the variance formula must reproduce the leading term of Section 5.2. Both hold:
-numerical differentiation gives $\bar V = -1.32832870$ against $-2\hat\sigma^2 =
--1.32832853$ at $n=5$, and $\sum_i U_i^2/n^2 = 0.104222328$ against
+and the variance formula must reproduce the leading term of Section 5.2. Both hold. At
+$n = 5$, numerical differentiation gives $\bar V = -1.32832870$ against
+$-2\hat\sigma^2 = -1.32832853$, and $\sum_i U_i^2/n^2 = 0.104222328$ against
 $(\hat\mu_4 - \hat\sigma^4)/n = 0.104222303$. The two sections were computed by entirely
 different routes — one by taking expectations under $\hat F$, the other by
 differentiating a weight functional — and they meet.

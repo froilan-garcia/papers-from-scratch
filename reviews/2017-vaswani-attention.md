@@ -31,8 +31,10 @@ Compared with Bahdanau's **additive attention** (which uses a one-layer feed-for
 
 Instead of a single attention in dimension $d_{\text{model}}$, $Q$, $K$ and $V$ are linearly projected **$h$ times** with different learned projections, attended to in parallel, and concatenated:
 
-$$\mathrm{MultiHead}(Q,K,V) = \mathrm{Concat}(\mathrm{head}_1,\dots,\mathrm{head}_h)W^O,
-\qquad \mathrm{head}_i = \mathrm{Attention}(QW_i^Q, KW_i^K, VW_i^V)$$
+$$
+\mathrm{MultiHead}(Q,K,V) = \mathrm{Concat}(\mathrm{head}_1,\dots,\mathrm{head}_h)W^O,
+\qquad \mathrm{head}_i = \mathrm{Attention}(QW_i^Q, KW_i^K, VW_i^V)
+$$
 
 Motivation: it allows jointly attending to information from **different representation subspaces** at different positions; with a single head, averaging prevents this. Configuration: $h=8$, $d_k = d_v = d_{\text{model}}/h = 64$. Since each head operates in reduced dimension, **the total cost is similar to that of a single-head attention at full dimension**.
 
@@ -49,9 +51,13 @@ Motivation: it allows jointly attending to information from **different represen
 - **Position-wise FFN (Eq. 2):** $\mathrm{FFN}(x) = \max(0, xW_1+b_1)W_2+b_2$, applied identically at each position, with inner layer $d_{ff}=2048$. Equivalent to two convolutions of kernel 1.
 - **Embeddings:** shared between the two embedding layers and the pre-softmax transformation; multiplied by $\sqrt{d_{\text{model}}}$.
 - **Positional encoding:** since there is neither recurrence nor convolution, order has to be injected. They use sinusoids with frequencies in geometric progression from $2\pi$ to $10000\cdot 2\pi$:
-$$PE_{(pos,2i)} = \sin\!\left(pos/10000^{2i/d_{\text{model}}}\right), \qquad
-PE_{(pos,2i+1)} = \cos\!\left(pos/10000^{2i/d_{\text{model}}}\right)$$
-The hypothesis: for any fixed offset $k$, $PE_{pos+k}$ is a **linear function** of $PE_{pos}$, which would make it easy to learn to attend by relative position. They chose the sinusoidal version (over learned embeddings, which give nearly identical results) because it **might extrapolate** to sequences longer than those seen in training.
+
+  $$
+  PE_{(pos,2i)} = \sin\!\left(pos/10000^{2i/d_{\text{model}}}\right), \qquad
+  PE_{(pos,2i+1)} = \cos\!\left(pos/10000^{2i/d_{\text{model}}}\right)
+  $$
+
+  The hypothesis: for any fixed offset $k$, $PE_{pos+k}$ is a **linear function** of $PE_{pos}$, which would make it easy to learn to attend by relative position. They chose the sinusoidal version (over learned embeddings, which give nearly identical results) because it **might extrapolate** to sequences longer than those seen in training.
 
 ### The complexity argument (Sec. 4, Table 1)
 
