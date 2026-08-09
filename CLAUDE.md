@@ -21,6 +21,7 @@ papers/            Original PDFs. Naming: <year>-<first-author>-<short-title>.pd
                    The inventory with download links is papers/INDEX.md, which is versioned.
 reviews/           One markdown review per paper, same slug as the PDF.
 implementations/   One folder per paper, same slug. Each with its own README.md.
+tools/             Maintenance scripts for the repo itself, not for any paper.
 ROADMAP.md         Candidate papers organised by master's course; tick off completed ones.
 ```
 
@@ -78,7 +79,14 @@ Two forms are immune, and they are the ones to use:
 - **Display:** a fenced block tagged `math`, never a `$$` pair. Moving the delimiters onto their own lines does *not* help — both spellings are rewritten identically.
 - **Inline:** `` $`...`$ `` whenever the expression contains a backslash before punctuation, an asterisk, or anything else that is not a letter. Plain `$...$` is fine — and more readable in the source — when every escape is before a letter, as in `$\hat\sigma^2/n$`.
 
-This was established by feeding both spellings through `api.github.com/markdown` and reading back what survives, not by reasoning about the rules. That endpoint needs no authentication and is the way to settle any future doubt in one call, including for a private repo.
+This was established by feeding both spellings through `api.github.com/markdown` and reading back what survives, not by reasoning about the rules. That endpoint needs no authentication and works on a private repo, which is why `tools/check_math.py` can use it.
+
+```bash
+python tools/check_math.py             # offline, instant — run it before committing
+python tools/check_math.py --github    # ask GitHub itself; the ground truth
+```
+
+Run it after writing any document with mathematics in it. The offline pass applies the rules above; the `--github` pass posts each file to that endpoint and reports anything that came back different from what went in, which is how to settle a new doubt instead of arguing with the specification.
 
 ## Workflow
 
