@@ -38,9 +38,9 @@ and key $j$. And the compatibility chosen is the simplest possible: the **dot
 product** $q_i \cdot k_j$, which measures alignment. In matrix form (Eq. 1 of the
 paper):
 
-$$
+```math
 \mathrm{Attention}(Q,K,V) = \mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V
-$$
+```
 
 Dimensions, which is where one gets lost: $Q \in \mathbb R^{n_q \times d_k}$,
 $K \in \mathbb R^{n_k \times d_k}$, $V \in \mathbb R^{n_k \times d_v}$. Then
@@ -54,11 +54,11 @@ what makes encoder-decoder attention possible.
 This is the detail worth *deriving* rather than memorising. Suppose $q, k$ have
 independent components of mean 0 and variance 1. Then:
 
-$$
+```math
 q\cdot k = \sum_{i=1}^{d_k} q_i k_i
 \quad\Longrightarrow\quad
 E[q\cdot k] = 0, \qquad \mathrm{Var}(q\cdot k) = \sum_{i=1}^{d_k}\mathrm{Var}(q_ik_i) = d_k,
-$$
+```
 
 using independence and $\mathrm{Var}(q_ik_i) = E[q_i^2k_i^2] = E[q_i^2]E[k_i^2] = 1$.
 
@@ -67,9 +67,9 @@ that means logits of typical magnitude $\pm 8$, and differences of that order be
 them. A softmax with widely separated logits **saturates**: it approaches a one-hot,
 and its Jacobian
 
-$$
+```math
 \frac{\partial\,\mathrm{softmax}(z)_i}{\partial z_j} = \mathrm{softmax}(z)_i(\delta_{ij} - \mathrm{softmax}(z)_j)
-$$
+```
 
 tends to **zero** when one component $\to 1$ and the rest $\to 0$. Dead gradient, no
 learning. Dividing by $\sqrt{d_k}$ returns the variance to 1 and keeps the softmax in
@@ -110,19 +110,19 @@ shuffle the input positions, the output shuffles the same way. That is, the mode
 **does not know the order**. It has to be injected, and the paper adds it to the
 embeddings:
 
-$$
+```math
 PE_{(pos,2i)} = \sin\!\left(\frac{pos}{10000^{2i/d_{\text{model}}}}\right),\qquad
 PE_{(pos,2i+1)} = \cos\!\left(\frac{pos}{10000^{2i/d_{\text{model}}}}\right)
-$$
+```
 
 The property that motivates it: for each pair of dimensions $(2i, 2i+1)$ and with
 $\omega_i = 10000^{-2i/d_{\text{model}}}$, a fixed shift $k$ acts as a **rotation**:
 
-$$
+```math
 \begin{pmatrix}\sin(\omega_i(pos+k))\\ \cos(\omega_i(pos+k))\end{pmatrix}
 =\begin{pmatrix}\cos\omega_i k & \sin\omega_i k\\ -\sin\omega_i k & \cos\omega_i k\end{pmatrix}
 \begin{pmatrix}\sin(\omega_i\,pos)\\ \cos(\omega_i\,pos)\end{pmatrix}
-$$
+```
 
 The matrix **does not depend on $pos$**, only on the shift $k$ — which is exactly
 what the paper means by *"$PE_{pos+k}$ can be represented as a linear function of

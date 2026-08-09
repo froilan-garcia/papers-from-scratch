@@ -21,9 +21,9 @@ The key observation: in those models attention was already doing the heavy lifti
 
 Attention maps a **query** and a set of **key-value** pairs to an output, which is a weighted sum of the values; the weight of each value is given by a compatibility function between the query and its key. Packing the queries into $Q$, the keys into $K$ and the values into $V$:
 
-$$
+```math
 \mathrm{Attention}(Q,K,V) = \mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V
-$$
+```
 
 **Why $\sqrt{d_k}$?** It is the most-cited detail and the paper justifies it in footnote 4: if the components of $q$ and $k$ are independent with mean 0 and variance 1, then $q\cdot k = \sum_{i=1}^{d_k} q_ik_i$ has mean 0 and **variance $d_k$**. With large $d_k$ the dot products blow up in magnitude, pushing the softmax into regions of **tiny gradient** (saturation). Dividing by $\sqrt{d_k}$ renormalises the variance to 1 and avoids this.
 
@@ -33,10 +33,10 @@ Compared with Bahdanau's **additive attention** (which uses a one-layer feed-for
 
 Instead of a single attention in dimension $d_{\text{model}}$, $Q$, $K$ and $V$ are linearly projected **$h$ times** with different learned projections, attended to in parallel, and concatenated:
 
-$$
+```math
 \mathrm{MultiHead}(Q,K,V) = \mathrm{Concat}(\mathrm{head}_1,\dots,\mathrm{head}_h)W^O,
 \qquad \mathrm{head}_i = \mathrm{Attention}(QW_i^Q, KW_i^K, VW_i^V)
-$$
+```
 
 Motivation: it allows jointly attending to information from **different representation subspaces** at different positions; with a single head, averaging prevents this. Configuration: $h=8$, $d_k = d_v = d_{\text{model}}/h = 64$. Since each head operates in reduced dimension, **the total cost is similar to that of a single-head attention at full dimension**.
 
@@ -54,10 +54,10 @@ Motivation: it allows jointly attending to information from **different represen
 - **Embeddings:** shared between the two embedding layers and the pre-softmax transformation; multiplied by $\sqrt{d_{\text{model}}}$.
 - **Positional encoding:** since there is neither recurrence nor convolution, order has to be injected. They use sinusoids with frequencies in geometric progression from $2\pi$ to $10000\cdot 2\pi$:
 
-  $$
+  ```math
   PE_{(pos,2i)} = \sin\!\left(pos/10000^{2i/d_{\text{model}}}\right), \qquad
   PE_{(pos,2i+1)} = \cos\!\left(pos/10000^{2i/d_{\text{model}}}\right)
-  $$
+  ```
 
   The hypothesis: for any fixed offset $k$, $PE_{pos+k}$ is a **linear function** of $PE_{pos}$, which would make it easy to learn to attend by relative position. They chose the sinusoidal version (over learned embeddings, which give nearly identical results) because it **might extrapolate** to sequences longer than those seen in training.
 
@@ -81,10 +81,10 @@ Three criteria: cost per layer, parallelisability (sequential ops.) and **path l
 - **Data:** WMT 2014 EN-DE (4.5M pairs, BPE with a shared vocabulary of ~37000 tokens) and EN-FR (36M sentences, word-piece of 32000). Batches of ~25000 source and 25000 target tokens.
 - **Hardware:** 8 NVIDIA P100 GPUs. Base: 100K steps ≈ **12 hours**. Big: 300K steps ≈ **3.5 days**.
 - **Optimiser (Eq. 3):** Adam with $\beta_1=0.9$, $\beta_2=0.98$, $\epsilon=10^{-9}$, and the celebrated **warmup schedule**:
-$$
+```math
 lrate = d_{\text{model}}^{-0.5}\cdot\min\!\left(step\_num^{-0.5},\ step\_num\cdot warmup\_steps^{-1.5}\right)
-$$
-It rises linearly for the first $warmup\_steps = 4000$ steps and then decays as $1/\sqrt{step}$.
+```
+It rises linearly for the first $`warmup\_steps = 4000`$ steps and then decays as $1/\sqrt{step}$.
 - **Regularisation:** residual dropout $P_{drop}=0.1$ (on the output of each sub-layer and on the embeddings+PE sum) and **label smoothing** $\epsilon_{ls}=0.1$ — which *hurts* perplexity (the model learns to be less certain) but *improves* accuracy and BLEU.
 - **Inference:** beam search with beam 4 and length penalty $\alpha=0.6$; averaging of the last 5 checkpoints (base) or 20 (big).
 
@@ -121,7 +121,7 @@ The Transformer is probably **the highest-yield exercise on the whole deep learn
 4. **Sinusoidal positional encoding:** implement it and **draw the heat map** $PE(pos, i)$ (a beautiful figure). Verify numerically the key property: that $PE_{pos+k}$ is a linear combination of $PE_{pos}$ with a matrix independent of $pos$ (it is a 2×2 rotation for each pair of dimensions — a direct connection with RoPE).
 5. **A full encoder block:** multi-head + FFN + residual + LayerNorm, in PyTorch. Count parameters and **verify the ~1/3 attention, ~2/3 FFN split**.
 6. **A minimal trainable Transformer** on a toy task (copying/reversing sequences, or translating numbers into words). Reproduce the **learning-rate schedule of Eq. (3)** and plot it.
-7. **An ablation of my own:** repeat row (A) of Table 3 at toy scale — vary $h \in \{1,2,4,8\}$ at constant compute and check that a single head loses and that too many do too.
+7. **An ablation of my own:** repeat row (A) of Table 3 at toy scale — vary $`h \in \{1,2,4,8\}`$ at constant compute and check that a single head loses and that too many do too.
 8. **Validate against `torch.nn.MultiheadAttention`** with the same weights, checking numerical equality.
 
 ## Connections

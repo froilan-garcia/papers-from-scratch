@@ -61,9 +61,9 @@ method from the problem statement to the choice of the penalty in 20 sections.
 Two results in there go beyond the paper: the closed form that survives outside
 the orthonormal case,
 
-$$
+```math
 \hat\beta_A = \hat\beta^{\,\mathrm{ols}(A)} - \lambda\,(X_A^\top X_A)^{-1}s_A,
-$$
+```
 
 from which the piecewise linearity of the coefficient paths follows as a theorem;
 and a proof of the stability the abstract only asserts — the lasso is a projection

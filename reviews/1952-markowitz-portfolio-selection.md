@@ -28,9 +28,9 @@ Correlation puts a **floor** on the risk reduction achievable by diversification
 
 **The object (p. 81).** With $N$ assets, $X_i$ the fraction of wealth in asset $i$, $\mu_i = E(R_i)$, and $\sigma_{ij} = E[(R_i - \mu_i)(R_j - \mu_j)] = \rho_{ij}\sigma_i\sigma_j$ the covariance (with $\sigma_{ii}$ the variance). The portfolio return $R = \sum_i R_i X_i$ is a weighted sum of random variables, with:
 
-$$
+```math
 E = \sum_{i=1}^N X_i \,\mu_i, \qquad V = \sum_{i=1}^N \sum_{j=1}^N \sigma_{ij}\, X_i X_j.
-$$
+```
 
 The $R_i$ are random; the $X_i$ are **not** — the investor sets them. Constraints: $\sum_i X_i = 1$ and **$X_i \ge 0$** (the paper explicitly excludes short selling).
 
@@ -40,24 +40,24 @@ The $R_i$ are random; the $X_i$ are **not** — the investor sets them. Constrai
 
 **The 3-asset case (p. 83).** The model reduces to the paper's numbered equations:
 
-$$
+```math
 \text{1)}\ E = \sum_{i=1}^{3} X_i\mu_i \qquad \text{2)}\ V = \sum_{i=1}^{3}\sum_{j=1}^{3} X_iX_j\sigma_{ij} \qquad \text{3)}\ \sum_{i=1}^{3}X_i = 1 \qquad \text{4)}\ X_i \ge 0
-$$
+```
 
 Substituting 3′) $X_3 = 1 - X_1 - X_2$ moves everything into **two-dimensional geometry** in $(X_1, X_2)$. In particular (Eq. 1′):
 
-$$
+```math
 E = \mu_3 + X_1(\mu_1 - \mu_3) + X_2(\mu_2 - \mu_3).
-$$
+```
 
 The attainable set is the **triangle $abc$** (the simplex) of Fig. 2.
 
 **Isomean and isovariance curves (p. 84).** Markowitz defines the *isomean curve* as the locus of portfolios with given $E$, and the *isovariance line* as that of portfolios with given $V$. From the formulas:
 
 - The **isomeans are parallel straight lines** ($E$ is linear in $X$). Solving Eq. (1′):
-$$
+```math
 X_2 = \frac{E - \mu_3}{\mu_2 - \mu_3} - \frac{\mu_1 - \mu_3}{\mu_2 - \mu_3}X_1,
-$$
+```
 whose **slope does not depend on $E$** (only the intercept changes) — hence the parallelism.
 - The **isovariances are concentric ellipses**, centred at the point $\hat{X}$ that **minimises $V$**. The variance grows as one moves away from $\hat{X}$.
 
@@ -112,11 +112,11 @@ With two assets, $V = X_1^2\sigma_1^2 + X_2^2\sigma_2^2 + 2X_1X_2\rho_{12}\sigma
 The whole core is linear algebra reproducible with numpy/scipy. A proposal in pieces (in the style of the lasso):
 
 1. **Efficient frontier in closed form** (relaxed case, only $\sum X_i = 1$, allowing shorts) via Lagrange multipliers. With $A = \mathbf 1^\top\Sigma^{-1}\mathbf 1$, $B = \mathbf 1^\top\Sigma^{-1}\boldsymbol\mu$, $C = \boldsymbol\mu^\top\Sigma^{-1}\boldsymbol\mu$, $D = AC - B^2$:
-$$
+```math
 V(E) = \frac{AE^2 - 2BE + C}{D}, \qquad \mathbf w_{\min} = \frac{\Sigma^{-1}\mathbf 1}{A}.
-$$
+```
 It is a **parabola** in $(E,V)$ — consistent with the paper's Fig. 6, which without sign constraints would be a single arc. ~20 lines.
-2. **Frontier with $X_i \ge 0$** as a **QP** (`scipy.optimize` or `cvxpy`): min $\mathbf w^\top\Sigma\mathbf w$ s.t. $\boldsymbol\mu^\top\mathbf w = E^\*$, $\sum w_i = 1$, $w_i \ge 0$; sweep $E^\*$. **Verify the paper's thesis**: that the optimal weights trace a **polygonal chain** and that $(E,V)$ gives **connected parabolic arcs**, detecting the kinks where some $w_i$ hits 0.
+2. **Frontier with $X_i \ge 0$** as a **QP** (`scipy.optimize` or `cvxpy`): min $\mathbf w^\top\Sigma\mathbf w$ s.t. $`\boldsymbol\mu^\top\mathbf w = E^\*`$, $\sum w_i = 1$, $w_i \ge 0$; sweep $`E^\*`$. **Verify the paper's thesis**: that the optimal weights trace a **polygonal chain** and that $(E,V)$ gives **connected parabolic arcs**, detecting the kinks where some $w_i$ hits 0.
 3. **Reproduce Fig. 2** (the pedagogical jewel): the simplex triangle in $(X_1,X_2)$, the **isomean lines**, the **isovariance ellipses**, the centre $\hat X$, the ***critical line*** and the efficient set in bold. And **Fig. 3** as a second case (with $\hat X$ outside the triangle).
 4. **A demonstration of the diversification floor**: $V$ of the equally weighted portfolio against $N$, comparing uncorrelated assets ($V \to 0$) with correlated ones ($V \to$ the average covariance). It is the refutation of the LLN on p. 79, in one figure.
 5. **The "sixty railways" example (p. 89)**: two portfolios of the same size, one within a sector (high correlation) and one across sectors, showing that the second dominates. The "*right kind of diversification*" thesis turned into code.

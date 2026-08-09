@@ -15,17 +15,17 @@ Least squares estimates have low bias but high variance, and with many predictor
 
 **Definition (Eq. 1).** With standardized predictors ($\sum_i x_{ij}/N = 0$, $\sum_i x_{ij}^2/N = 1$):
 
-$$
+```math
 \hat{\beta}^{lasso} = \arg\min_\beta \sum_{i=1}^N \Big(y_i - \alpha - \sum_j \beta_j x_{ij}\Big)^2 \quad \text{subject to} \quad \sum_j |\beta_j| \le t
-$$
+```
 
 Equivalent in Lagrangian form to penalising with $\lambda \sum_j |\beta_j|$. The parameter is usually normalised as $s = t / \sum_j |\hat{\beta}_j^{OLS}| \in [0, 1]$.
 
 **Orthonormal case (Eq. 3).** If $X^T X = I$, the solution is *soft thresholding*:
 
-$$
+```math
 \hat{\beta}_j = \mathrm{sign}(\hat{\beta}_j^{OLS})\,\big(|\hat{\beta}_j^{OLS}| - \gamma\big)^+
-$$
+```
 
 against ridge (which shrinks proportionally, $\hat{\beta}_j^{OLS}/(1+\gamma)$) and subset selection (*hard thresholding*). There is a direct connection with the wavelet soft shrinkage of Donoho & Johnstone (1994): the lasso asymptotically attains the risk of the ideal subset selector up to a factor $2\log p + 1$ (Section 10).
 
@@ -33,7 +33,7 @@ against ridge (which shrinks proportionally, $\hat{\beta}_j^{OLS}/(1+\gamma)$) a
 
 **Bayesian reading (Section 5).** The lasso is the posterior mode under independent double-exponential (Laplace) priors: $f(\beta_j) \propto \exp(-|\beta_j|/\tau)$ — more mass at 0 and in the tails than the normal prior implicit in ridge.
 
-**Choosing $t$ (Section 4).** Three methods: fivefold cross-validation over a grid of $s$, GCV using the effective number of parameters $p(t) = \mathrm{tr}\{X(X^TX + \lambda W^-)^{-1}X^T\}$ with $W = \mathrm{diag}(|\hat{\beta}_j|)$, and Stein's unbiased risk estimate (much cheaper: a single optimisation).
+**Choosing $t$ (Section 4).** Three methods: fivefold cross-validation over a grid of $s$, GCV using the effective number of parameters $`p(t) = \mathrm{tr}\{X(X^TX + \lambda W^-)^{-1}X^T\}`$ with $W = \mathrm{diag}(|\hat{\beta}_j|)$, and Stein's unbiased risk estimate (much cheaper: a single optimisation).
 
 **Algorithm (Section 6).** Quadratic programming, introducing the violated sign constraints $\delta_i^T \beta \le t$ sequentially (out of the $2^p$ possible ones; in practice it converges in $0.5p$–$0.75p$ iterations). David Gay's alternative: write $\beta_j = \beta_j^+ - \beta_j^-$ with $2p$ variables and $2p+1$ constraints. **Historical note:** nobody solves it this way today — LARS (Efron et al. 2004) and above all coordinate descent (Friedman et al. 2007, the basis of `glmnet`) made it trivial.
 
@@ -75,7 +75,7 @@ Everything central is reproducible in pure numpy:
 
 Things that only become clear after doing it, and that reading did not give:
 
-**Shrinkage is the toll, not the goal.** The $L_1$ ball is exactly the convex hull of the 1-sparse points $\{\pm t\,e_j\}$: one takes the models one actually wants and convexifies in order to be able to solve. The vertices survive — hence the zeros — but the optimum can land in the interior of a face, and that is the whole of the bias. Shrinking is what is paid for convexity, not what is sought; the acronym puts *Shrinkage* ahead of *Selection* and misleads. The proof is that the later literature (garotte, adaptive lasso, SCAD) is devoted to removing that shrinkage without losing the selection.
+**Shrinkage is the toll, not the goal.** The $L_1$ ball is exactly the convex hull of the 1-sparse points $`\{\pm t\,e_j\}`$: one takes the models one actually wants and convexifies in order to be able to solve. The vertices survive — hence the zeros — but the optimum can land in the interior of a face, and that is the whole of the bias. Shrinking is what is paid for convexity, not what is sought; the acronym puts *Shrinkage* ahead of *Selection* and misleads. The proof is that the later literature (garotte, adaptive lasso, SCAD) is devoted to removing that shrinkage without losing the selection.
 
 **"Shrinkage" is not even well defined outside the orthonormal design.** Eq. 3 and the four curves of Fig. 1 are the portrait of a special case. With correlated predictors there exists no function $h$ with $\hat\beta_j = h(\hat\beta_j^{OLS})$: over 140 random designs, for $\hat\beta_j^{OLS}\approx 2$ the lasso spreads values between 0 and 2.84. And with $p\ge3$ a coefficient can **grow** as the budget tightens (checked: from 0.95 to 1.81), the lasso analogue of the ridge upturn at $\rho>1/2$. The only thing that shrinks is the scalar $\sum_j|\beta_j|$.
 

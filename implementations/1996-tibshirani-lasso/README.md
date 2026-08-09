@@ -47,10 +47,10 @@ through the code.
 
 **1. The objective is the paper's, with no modern rescalings.** Eq. 1:
 
-$$
+```math
 \min_\beta \ \sum_{i=1}^N\Big(y_i - \alpha - \sum_j \beta_j x_{ij}\Big)^2
 \qquad \text{subject to} \quad \sum_j |\beta_j| \le t
-$$
+```
 
 Without the $\frac{1}{2N}$ of `glmnet`/`sklearn`, which is not in the paper: the
 $\frac12$ is there to make the derivative come out clean and the $\frac1N$ to keep
@@ -120,13 +120,13 @@ constant.
 **3. The orthonormal case, and from it Eq. 3** ✅ — If $X^\top X = I$ then
 $\hat\beta^{o}=X^\top y$ and
 
-$$
+```math
 \|y-X\beta\|^2 = \|y\|^2 - 2\beta^\top\hat\beta^o + \|\beta\|^2 = \|\beta-\hat\beta^o\|^2 + \text{const}
-$$
+```
 
 which **separates** the problem into $p$ one-dimensional problems tied by a single
 $\gamma\ge0$. Stationarity gives
-$\beta_j = \hat\beta^o_j - \gamma\,\mathrm{sign}(\beta_j)$, that is Eq. 3. *Validated:*
+$`\beta_j = \hat\beta^o_j - \gamma\,\mathrm{sign}(\beta_j)`$, that is Eq. 3. *Validated:*
 agrees with the solver to $1.8\times10^{-15}$ ([orthonormal.py](orthonormal.py)).
 
 **4. The paper's algorithm (Sec. 6)** ✅ — $\sum_j|\beta_j|\le t$ is equivalent to the
@@ -153,7 +153,7 @@ at those very points, so it decreases with $s$ and would always pick $s=1$.
 **7. Choosing $s$ (II): GCV** ⚠️ — The lasso is not a *linear smoother*; the bridge in
 Sec. 2.5 is to write $\sum_j|\beta_j| = \sum_j\beta_j^2/|\beta_j|$, which turns the fit
 into the ridge estimator of Eq. 9 and allows the trace
-$p(t) = \mathrm{tr}\{X(X^\top X+\lambda W^-)^{-1}X^\top\}$. The $\lambda$ comes from
+$`p(t) = \mathrm{tr}\{X(X^\top X+\lambda W^-)^{-1}X^\top\}`$. The $\lambda$ comes from
 Kuhn–Tucker: $|x_j^\top(y-X\hat\beta)| = \lambda$ for every active coordinate —
 checked, the spread across coordinates is $10^{-13}$. **It does not reproduce the
 paper's 0.44**; see below.
@@ -174,8 +174,8 @@ what ought to come out.
 
 **10. Against `scikit-learn`** ✅ — The first thing is not to compare but to **line up
 the conventions**, because the two objectives are not the same: the paper's is
-$\|y-X\beta\|^2$ with a constraint, the library's is
-$\frac{1}{2N}\|y-X\beta\|^2 + \alpha\|\beta\|_1$. Equating the two Lagrangian forms
+$`\|y-X\beta\|^2`$ with a constraint, the library's is
+$`\frac{1}{2N}\|y-X\beta\|^2 + \alpha\|\beta\|_1`$. Equating the two Lagrangian forms
 gives $\alpha = \lambda/N$, with the KKT $\lambda$ of
 [section 14](DERIVATIONS.md) — which is the only conversion used.
 
@@ -185,7 +185,7 @@ Three checks of increasing strength ([sklearn_check.py](sklearn_check.py)):
 |---|---|
 | One point: $s=0.44$, the model of Table 1 | max. diff. $1.4\times10^{-13}$, same support, same RSS to 10 decimals |
 | The whole path, 41 values of $s$ | max. diff. $8.1\times10^{-13}$ |
-| Against LARS, **with no conversion at all**, matched at equal $\|\beta\|_1$ | max. diff. $4.9\times10^{-14}$ across the 8 breakpoints |
+| Against LARS, **with no conversion at all**, matched at equal $`\|\beta\|_1`$ | max. diff. $4.9\times10^{-14}$ across the 8 breakpoints |
 
 The third is the one that counts, because it uses neither $\alpha$ nor $\lambda$: an
 error in the conversion cannot hide an error in the solver.
