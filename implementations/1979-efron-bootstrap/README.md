@@ -31,7 +31,9 @@ results of the paper are in the [review](../../reviews/1979-efron-bootstrap.md).
 >
 > Confidence intervals and the block bootstrap are **not in this paper** at all — they
 > are 1981–1989. See [what came next](#what-came-next-and-is-not-in-this-paper).
-> [`DERIVATIONS.md`](DERIVATIONS.md) covers sections 1–4 of nine, with their figures.
+> [`DERIVATIONS.md`](DERIVATIONS.md) covers sections 1–7 of ten, with their figures: the
+> thread from the mean to the jackknife is closed there, and what remains is the choice
+> of coordinate, regression, and the inferential step.
 
 ## Order of implementation
 
@@ -84,6 +86,7 @@ comparison of four estimators at the end. `numpy`, `scipy` and `matplotlib` only
 | $\mathrm{Var}_*(\bar X^* - \bar x) = \hat\sigma^2/n$, by enumeration | ✅ exact to machine precision (0.0e+00 at $n=3,5,10$) |
 | Eq. (2.8), $\bar x(1-\bar x)/n$ for 0/1 data | ✅ to 12 decimals |
 | Monte Carlo error is $O(N^{-1/2})$ | ✅ RMS $\times\sqrt N$ flat from $N=100$ to $6400$ |
+| Sec. 2 lists the variance among what Method 1 does "by hand", and does not | ✅ done in `DERIVATIONS.md` §5: bias exactly $-\hat\sigma^2/n$, and the exact $\mathrm{Var}_*$, to $10^{-16}$ |
 | Eq. (3.5) closed form vs. enumerating all $\binom{2n-1}{n}$ resamples | ✅ identical to 12 decimals, $n=5,7,9$ |
 | Eq. (3.6), the six probabilities for $n=13$ | ✅ to $7\times10^{-5}$, the paper's printing precision |
 | $n\,E_*(R^*)^2 \to 1/4f^2(\theta) = \pi/2$ | ✅ but slowly — see below |
@@ -185,10 +188,10 @@ never settles:
 
 | $n$ | truth $n\,\mathrm{Var}_F$ | jackknife: mean (s.d.) | bootstrap: mean (s.d.) |
 |---|---|---|---|
-| 13 | 1.488 | 1.886 (2.46) | 1.877 (1.24) |
-| 51 | 1.554 | 2.191 (3.24) | 1.773 (0.92) |
-| 201 | 1.583 | 2.284 (3.46) | 1.675 (0.64) |
-| 1001 | 1.588 | 2.370 (3.60) | 1.627 (0.43) |
+| 13 | 1.492 | 1.883 (2.42) | 1.882 (1.23) |
+| 51 | 1.564 | 2.242 (3.35) | 1.774 (0.91) |
+| 201 | 1.585 | 2.314 (3.58) | 1.677 (0.65) |
+| 1001 | 1.583 | 2.320 (3.57) | 1.627 (0.43) |
 
 The bootstrap column walks towards $1/4f^2 = \pi/2 = 1.571$ with a spread that shrinks;
 the jackknife column walks to $1.5 \times \pi/2$ with a spread that does not.
@@ -203,7 +206,7 @@ the moments — the whole distribution is ours, quantile by quantile:
 
 | | mean | var | $q_{.10}$ | $q_{.25}$ | $q_{.50}$ | $q_{.75}$ | $q_{.90}$ | $q_{.99}$ |
 |---|---|---|---|---|---|---|---|---|
-| simulated | 1.501 | 5.23 | 0.070 | 0.234 | 0.707 | 1.80 | 3.79 | 11.3 |
+| simulated | 1.506 | 5.16 | 0.068 | 0.230 | 0.707 | 1.82 | 3.82 | 11.1 |
 | $[\chi^2_4/4]^2$ | 1.497 | 5.19 | 0.071 | 0.232 | 0.703 | 1.81 | 3.79 | 11.0 |
 | $[\chi^2_2/2]^2$ (paper) | 2.000 | 20.4 | 0.011 | 0.082 | 0.479 | 1.92 | 5.29 | 21.2 |
 
@@ -226,10 +229,10 @@ the bootstrap:
 
 | $n$ | $d = 2$ | $d \sim \sqrt n$ | $d \sim n^{3/5}$ | bootstrap |
 |---|---|---|---|---|
-| 101 | 2.893 (4.18) | 2.124 (1.72) | 1.988 (1.37) | 1.749 (0.74) |
-| 401 | 2.740 (4.22) | 1.936 (1.34) | 1.832 (1.07) | 1.644 (0.52) |
-| 1601 | 2.673 (4.06) | 1.801 (1.12) | 1.716 (0.87) | 1.599 (0.37) |
-| 6401 | 2.617 (3.85) | 1.757 (0.90) | 1.692 (0.68) | 1.592 (0.25) |
+| 101 | 2.494 (3.70) | 2.015 (1.66) | 1.916 (1.35) | 1.742 (0.75) |
+| 401 | 2.591 (3.98) | 1.950 (1.37) | 1.847 (1.09) | 1.646 (0.53) |
+| 1601 | 2.621 (3.66) | 1.812 (1.11) | 1.724 (0.86) | 1.599 (0.38) |
+| 6401 | 2.795 (4.61) | 1.762 (0.89) | 1.691 (0.67) | 1.593 (0.25) |
 
 Grouping is not by itself the cure: at $d = 2$ the estimator is as lost as at $d = 1$,
 since two deletions still move $\mathbf{P}^*$ by $O(1/n)$. What repairs it is letting $d$

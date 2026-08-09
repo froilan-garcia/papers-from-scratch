@@ -186,6 +186,34 @@ def var_mean_formula(x):
     return float(np.mean((x - x.mean()) ** 2) / x.shape[0])
 
 
+def variance_moments_formula(x):
+    """(E_* R*, Var_* R*) for R* = sigma-hat^2* - sigma-hat^2, by hand.
+
+    The paper lists the variance among the statistics Method 1 can handle
+    "by hand" and does not carry it out; it is worth carrying out, because it
+    is the first case where the bootstrap reports a BIAS.
+
+    Under F-hat the X_i* are iid with known moments, so the two classical
+    finite-sample identities for the plug-in variance apply verbatim with
+    every moment replaced by its empirical version:
+
+        E_* R*   = -sigma-hat^2 / n,
+        Var_* R* = (n-1)^2/n^3 mu-hat_4 - (n-1)(n-3)/n^3 sigma-hat^4.
+
+    The first says the bootstrap detects, unprompted, the downward bias of the
+    1/n convention defended in var_mean_formula.  Both are derived in
+    DERIVATIONS.md and checked against enumeration in __main__.
+    """
+    x = np.asarray(x, dtype=float)
+    n = x.shape[0]
+    d = x - x.mean()
+    s2 = float(np.mean(d ** 2))
+    m4 = float(np.mean(d ** 4))
+    bias = -s2 / n
+    var = (n - 1) ** 2 / n ** 3 * m4 - (n - 1) * (n - 3) / n ** 3 * s2 ** 2
+    return bias, var
+
+
 if __name__ == "__main__":
     rng = np.random.default_rng(0)
 
@@ -205,6 +233,28 @@ if __name__ == "__main__":
         v_formula = var_mean_formula(x)
         print(f"{n:3d}  {n_distinct_resamples(n):10d}  {weights.sum():15.12f}"
               f"  {v_exact:13.9f}  {v_formula:12.9f}  {abs(v_exact - v_formula):9.2e}")
+
+    # --- The same, one step up: the sample variance -------------------------
+    #
+    # R* is now quadratic in P* rather than affine, and two things change at
+    # once: a bias appears, and the answer starts depending on a fourth
+    # moment.  Both formulas must again be exact given the data.
+
+    print("\nThe same, for the sample variance (R* is quadratic in P*):\n")
+    print(f"{'n':>3}  {'E_* R* (enum)':>15}  {'-sigma^2/n':>13}"
+          f"  {'Var_* R* (enum)':>16}  {'formula':>13}  {'|diff|':>9}")
+    for n in [4, 6, 8, 10]:
+        x = rng.normal(size=n)
+        values, weights = bootstrap_exact(x, lambda s: np.mean((s - s.mean()) ** 2))
+        centre = float(np.mean((x - x.mean()) ** 2))
+        e1 = weighted_mean(values - centre, weights)
+        e2 = weighted_var(values, weights)
+        b_f, v_f = variance_moments_formula(x)
+        print(f"{n:3d}  {e1:15.10f}  {b_f:13.10f}  {e2:16.10f}  {v_f:13.10f}"
+              f"  {max(abs(e1 - b_f), abs(e2 - v_f)):9.1e}")
+    print("  the bias is exactly -sigma-hat^2/n, which is the truth with sigma^2")
+    print("  replaced by sigma-hat^2: the bootstrap has found the bias of the")
+    print("  1/n convention on its own, without being shown the formula")
 
     # --- Eq. (2.8), the 0/1 case -------------------------------------------
 

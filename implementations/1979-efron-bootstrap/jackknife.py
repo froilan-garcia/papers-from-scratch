@@ -445,6 +445,30 @@ if __name__ == "__main__":
         print(f"{n:5d}  {v_boot:12.9f}  {v_ij:14.9f}  {abs(v_ij - v_boot):9.1e}"
               f"  {v_j:11.8f}  {v_j / v_boot:14.6f}  {n / (n - 1):9.6f}")
 
+    # --- The variance: the expansion is exact there too, and says so -------
+    #
+    # R* is quadratic in P* for the sample variance, so Eq. (5.4) terminates
+    # with no remainder and the SECOND-order term must reproduce the bias
+    # computed by hand in bootstrap.py: V-bar/2n = -sigma-hat^2/n, that is
+    # V-bar = -2 sigma-hat^2.  The first-order term must likewise reproduce
+    # the leading part of Var_* R*, which is (mu-hat_4 - sigma-hat^4)/n.
+    # Nothing here is fitted: both are consequences of Eqs. (5.8) and (5.10)
+    # meeting a case already solved.
+
+    print("\nThe variance, where the expansion is exact for a different reason:\n")
+    print(f"{'n':>5}  {'V-bar':>12}  {'-2 sigma^2':>12}  {'sum U^2/n^2':>13}"
+          f"  {'(mu_4 - s^4)/n':>15}")
+    for n in [5, 8, 12]:
+        x = rng.normal(size=n)
+        d = x - x.mean()
+        s2, m4 = float(np.mean(d ** 2)), float(np.mean(d ** 4))
+        R = lambda p: float((p @ (x ** 2)) / p.sum() - ((p @ x) / p.sum()) ** 2) - s2
+        U, V = simplex_derivatives(R, n)
+        print(f"{n:5d}  {np.trace(V) / n:12.8f}  {-2 * s2:12.8f}"
+              f"  {infinitesimal_var(U, n):13.9f}  {(m4 - s2 ** 2) / n:15.9f}")
+    print("  the bias of Sec. 5 and the second-order term of Eq. (5.8) are the")
+    print("  same number reached from two directions")
+
     # --- Eq. (5.13): the two jackknives differ by O(1/n) --------------------
     #
     # U-tilde_i = (n-2)/(n-1) U_i - (V_ii - V-bar)/[2(n-1)] + smaller, so the
