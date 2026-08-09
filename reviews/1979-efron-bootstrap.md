@@ -19,14 +19,20 @@ The Quenouille–Tukey jackknife estimates the bias and variance of a statistic 
 
 1. Build the empirical distribution $\hat{F}$: mass $1/n$ at each $x_i$.
 2. Draw a **bootstrap sample** by resampling with replacement (Eq. 2.4):
-$$X_i^* \sim_{\text{iid}} \hat{F}, \qquad \mathbf{X}^* = (X_1^*,\dots,X_n^*).$$
+$$
+X_i^* \sim_{\text{iid}} \hat{F}, \qquad \mathbf{X}^* = (X_1^*,\dots,X_n^*).
+$$
 3. Approximate the distribution of $R(\mathbf{X}, F)$ by the **bootstrap distribution** of (Eq. 2.5):
-$$R^* = R(\mathbf{X}^*, \hat{F}).$$
+$$
+R^* = R(\mathbf{X}^*, \hat{F}).
+$$
 
 The justification is **Fisher consistency**: any reasonable estimator of the distribution of $R$ must be right when $F = \hat{F}$, and $\hat{F}$ is the centre of the class of plausible $F$ given that we have observed $\mathbf{X} = \mathbf{x}$.
 
 **Minimal example — the mean (Eqs. 2.6–2.8).** With $R = \bar{X} - \theta(F)$, the bootstrap variance reproduces the classical formula:
-$$\mathrm{Var}_*(\bar{X}^* - \bar{x}) = \frac{\bar{x}(1-\bar{x})}{n}.$$
+$$
+\mathrm{Var}_*(\bar{X}^* - \bar{x}) = \frac{\bar{x}(1-\bar{x})}{n}.
+$$
 
 **Three ways of computing the bootstrap distribution (Sec. 2, the key of the paper):**
 
@@ -43,9 +49,13 @@ In a Monte Carlo experiment with the median ($n=13$, $\mathcal{N}(0,1)$), the co
 > **Later note.** Two numbers in that experiment do not reproduce. Eq. (3.12) as printed lacks a factor $\sqrt n$ — without it the tabulated quantity drifts to 0 with $n$ and Table 1 cannot be reproduced at all — and the true value comes out at $E_F R = 0.9822 \pm 0.0012$ rather than $0.95$, a gap of $0.03$ that is within the sampling error of a Monte Carlo of the size used elsewhere in the section. Neither affects the conclusion, since every column of Table 1 moves together. See the [implementation](../implementations/1979-efron-bootstrap/).
 
 **Relation to the jackknife (Sec. 5).** Writing $P_i^* = N_i^*/n$ (the proportion of times $x_i$ appears in the bootstrap sample) and expanding $R(\mathbf{P}^*)$ in a Taylor series about $\mathbf{P}^* = \mathbf{e}/n$:
-$$R(\mathbf{P}^*) \doteq R(\mathbf{e}/n) + (\mathbf{P}^* - \mathbf{e}/n)\mathbf{U} + \tfrac{1}{2}(\mathbf{P}^* - \mathbf{e}/n)\mathbf{V}(\mathbf{P}^* - \mathbf{e}/n)'$$
+$$
+R(\mathbf{P}^*) \doteq R(\mathbf{e}/n) + (\mathbf{P}^* - \mathbf{e}/n)\mathbf{U} + \tfrac{1}{2}(\mathbf{P}^* - \mathbf{e}/n)\mathbf{V}(\mathbf{P}^* - \mathbf{e}/n)'
+$$
 one obtains (Eqs. 5.8–5.11) the expressions for bias and variance:
-$$\mathrm{Bias}_F\,\theta(\hat{F}) \approx \frac{1}{2n}\bar{V}, \qquad \mathrm{Var}_F\,\theta(\hat{F}) \approx \sum_{i=1}^n U_i^2 / n^2.$$
+$$
+\mathrm{Bias}_F\,\theta(\hat{F}) \approx \frac{1}{2n}\bar{V}, \qquad \mathrm{Var}_F\,\theta(\hat{F}) \approx \sum_{i=1}^n U_i^2 / n^2.
+$$
 These coincide with Jaeckel's **infinitesimal jackknife**; the ordinary jackknife replaces the derivatives $U_i = \partial R/\partial P_i$ by finite differences (Eq. 5.12): $\tilde{U}_i = (n-1)(\bar{R}^* - R^*_{(i)})$. **Moral: jackknife = linearised bootstrap.** That is why the jackknife fails for the median (it is not smooth: the quadratic extrapolation formulas do not hold, Remark J).
 
 **Parametric bootstrap (Remark K).** If the family of $F$ is known (e.g. normal), use the **parametric MLE** as $\hat{F}$ instead of the empirical distribution. For the normal, the parametric bootstrap of a probability $\mathrm{Prob}\{\bar{X} \in [a,b]\}$ coincides with the Edgeworth approximation when $n \gtrsim 20$.

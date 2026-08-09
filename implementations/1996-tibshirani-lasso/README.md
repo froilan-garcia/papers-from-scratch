@@ -47,8 +47,10 @@ through the code.
 
 **1. The objective is the paper's, with no modern rescalings.** Eq. 1:
 
-$$\min_\beta \ \sum_{i=1}^N\Big(y_i - \alpha - \sum_j \beta_j x_{ij}\Big)^2
-\qquad \text{subject to} \quad \sum_j |\beta_j| \le t$$
+$$
+\min_\beta \ \sum_{i=1}^N\Big(y_i - \alpha - \sum_j \beta_j x_{ij}\Big)^2
+\qquad \text{subject to} \quad \sum_j |\beta_j| \le t
+$$
 
 Without the $\frac{1}{2N}$ of `glmnet`/`sklearn`, which is not in the paper: the
 $\frac12$ is there to make the derivative come out clean and the $\frac1N$ to keep
@@ -118,7 +120,9 @@ constant.
 **3. The orthonormal case, and from it Eq. 3** ✅ — If $X^\top X = I$ then
 $\hat\beta^{o}=X^\top y$ and
 
-$$\|y-X\beta\|^2 = \|y\|^2 - 2\beta^\top\hat\beta^o + \|\beta\|^2 = \|\beta-\hat\beta^o\|^2 + \text{const}$$
+$$
+\|y-X\beta\|^2 = \|y\|^2 - 2\beta^\top\hat\beta^o + \|\beta\|^2 = \|\beta-\hat\beta^o\|^2 + \text{const}
+$$
 
 which **separates** the problem into $p$ one-dimensional problems tied by a single
 $\gamma\ge0$. Stationarity gives

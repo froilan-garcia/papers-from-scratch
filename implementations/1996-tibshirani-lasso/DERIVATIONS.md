@@ -59,16 +59,20 @@ own figures.
 
 The object is
 
-$$\min_{\alpha,\beta}\ \sum_{i=1}^N\Big(y_i-\alpha-\sum_j\beta_jx_{ij}\Big)^2
-\qquad\text{subject to}\qquad \sum_j|\beta_j|\le t .$$
+$$
+\min_{\alpha,\beta}\ \sum_{i=1}^N\Big(y_i-\alpha-\sum_j\beta_jx_{ij}\Big)^2
+\qquad\text{subject to}\qquad \sum_j|\beta_j|\le t .
+$$
 
 Before anything else it is worth getting $\alpha$ out of the way, and we can:
 **the constraint does not touch it**. For fixed $\beta$ we minimise over $\alpha$
 without any constraint at all,
 
-$$\frac{\partial}{\partial\alpha}\sum_i\Big(y_i-\alpha-\sum_j\beta_jx_{ij}\Big)^2=0
+$$
+\frac{\partial}{\partial\alpha}\sum_i\Big(y_i-\alpha-\sum_j\beta_jx_{ij}\Big)^2=0
 \quad\Longrightarrow\quad
-\alpha=\bar y-\sum_j\beta_j\bar x_j,$$
+\alpha=\bar y-\sum_j\beta_j\bar x_j,
+$$
 
 and since the predictors are centred, $\bar x_j=0$, so $\hat\alpha=\bar y$
 **whatever $\beta$ is**, and therefore whatever $t$ is.
@@ -76,7 +80,9 @@ and since the predictors are centred, $\bar x_j=0$, so $\hat\alpha=\bar y$
 So centring $y$ makes the intercept disappear and leaves a clean problem in
 $\beta$:
 
-$$\min_\beta\ \|y-X\beta\|^2\qquad\text{subject to}\qquad \sum_j|\beta_j|\le t .$$
+$$
+\min_\beta\ \|y-X\beta\|^2\qquad\text{subject to}\qquad \sum_j|\beta_j|\le t .
+$$
 
 Everything that follows works with this form. Two objects to look at separately:
 the **objective function** and the **feasible region**.
@@ -92,14 +98,18 @@ squares fit that we shall need.
 **The least squares residual is orthogonal to every column.** Differentiating the
 squared error with respect to one coefficient,
 
-$$f(\beta)=\sum_i\Big(y_i-\sum_j x_{ij}\beta_j\Big)^2,
+$$
+f(\beta)=\sum_i\Big(y_i-\sum_j x_{ij}\beta_j\Big)^2,
 \qquad
 \frac{\partial f}{\partial\beta_k}=-2\sum_i x_{ik}\Big(y_i-\sum_j x_{ij}\beta_j\Big)
-=-2\,(X^\top r)_k ,$$
+=-2\,(X^\top r)_k ,
+$$
 
 so that setting the $p$ derivatives to zero at the minimum is exactly
 
-$$X^\top r^o=0,\qquad r^o:=y-X\hat\beta^o,$$
+$$
+X^\top r^o=0,\qquad r^o:=y-X\hat\beta^o,
+$$
 
 or, rearranging, $X^\top X\hat\beta^o=X^\top y$. These are the **normal equations**,
 and they are not an independent fact: they are the optimality condition of least
@@ -115,7 +125,9 @@ There is a third argument, with neither calculus nor geometry, that explains why
 has to be so. If correlation were left over, $x_k^\top r=c\ne0$, then moving
 $\beta_k$ by $\varepsilon$ turns the residual into $r-\varepsilon x_k$ and
 
-$$\|r-\varepsilon x_k\|^2=\|r\|^2-2\varepsilon c+\varepsilon^2\|x_k\|^2,$$
+$$
+\|r-\varepsilon x_k\|^2=\|r\|^2-2\varepsilon c+\varepsilon^2\|x_k\|^2,
+$$
 
 which at $\varepsilon=c/\|x_k\|^2$ equals $\|r\|^2-c^2/\|x_k\|^2<\|r\|^2$: we could
 have done better. That is, **correlation left in the residual is error that could
@@ -126,16 +138,22 @@ unextracted**, on purpose, and exactly how much.
 **Now the objective.** Splitting off from the residual the part least squares
 explains,
 
-$$y - X\beta = r^o + X(\hat\beta^o-\beta),$$
+$$
+y - X\beta = r^o + X(\hat\beta^o-\beta),
+$$
 
 the cross term vanishes by the above, and moreover **identically in $\beta$**, which
 is what makes this a global identity and not a local approximation:
 
-$$2\,r^{o\top}X(\hat\beta^o-\beta)=2\big[X^\top r^o\big]^\top(\hat\beta^o-\beta)=0 .$$
+$$
+2\,r^{o\top}X(\hat\beta^o-\beta)=2\big[X^\top r^o\big]^\top(\hat\beta^o-\beta)=0 .
+$$
 
 What remains is
 
-$$\boxed{\ \|y-X\beta\|^2=\underbrace{\|y-X\hat\beta^o\|^2}_{\text{constant}}+(\beta-\hat\beta^o)^\top S\,(\beta-\hat\beta^o).\ }$$
+$$
+\boxed{\ \|y-X\beta\|^2=\underbrace{\|y-X\hat\beta^o\|^2}_{\text{constant}}+(\beta-\hat\beta^o)^\top S\,(\beta-\hat\beta^o).\ }
+$$
 
 This **completely changes what the problem is**. The objective is not "a sum of
 squares over the data": it is the **distance to the least squares estimate measured
@@ -164,7 +182,9 @@ regression"* — and then leaves to the simulations of Sec. 7, when it can be pr
 right here. The word "projection" above is not a manner of speaking: it is a
 projection in the literal sense, with respect to the inner product
 
-$$\langle u,v\rangle_S=u^\top S v,\qquad \|u\|_S=\sqrt{u^\top S u},$$
+$$
+\langle u,v\rangle_S=u^\top S v,\qquad \|u\|_S=\sqrt{u^\top S u},
+$$
 
 which is a genuine inner product whenever $S\succ0$. And projections onto convex
 sets have a property that depends on nothing else.
@@ -173,16 +193,22 @@ sets have a property that depends on nothing else.
 closest to $x$. For any $w\in C$ and any $\theta\in(0,1]$, the point $z+\theta(w-z)$
 also lies in $C$ by convexity, and so cannot be closer:
 
-$$\|x-z-\theta(w-z)\|^2\ \ge\ \|x-z\|^2 .$$
+$$
+\|x-z-\theta(w-z)\|^2\ \ge\ \|x-z\|^2 .
+$$
 
 Expanding, $-2\theta\langle x-z,\,w-z\rangle+\theta^2\|w-z\|^2\ge0$, and dividing by
 $\theta>0$,
 
-$$\langle x-z,\,w-z\rangle\ \le\ \tfrac{\theta}{2}\|w-z\|^2 .$$
+$$
+\langle x-z,\,w-z\rangle\ \le\ \tfrac{\theta}{2}\|w-z\|^2 .
+$$
 
 Since this holds for arbitrarily small $\theta$, letting $\theta\to0^+$ gives
 
-$$\boxed{\ \langle x-z,\ w-z\rangle\le0\qquad\text{for every }w\in C.\ }$$
+$$
+\boxed{\ \langle x-z,\ w-z\rangle\le0\qquad\text{for every }w\in C.\ }
+$$
 
 In words: seen from the projection, the vector pointing back to the original point
 makes an obtuse angle with any direction that enters $C$. It is what the picture of
@@ -192,22 +218,28 @@ projecting says, written down.
 estimates $x_1,x_2$ and their lassos $z_1,z_2$. Applying the above twice, once at
 each point, taking as $w$ the projection of the other:
 
-$$\langle x_1-z_1,\ z_2-z_1\rangle\le0,
+$$
+\langle x_1-z_1,\ z_2-z_1\rangle\le0,
 \qquad
-\langle x_2-z_2,\ z_1-z_2\rangle\le0 .$$
+\langle x_2-z_2,\ z_1-z_2\rangle\le0 .
+$$
 
 Adding them, and writing $u=x_1-x_2$ and $v=z_1-z_2$, the two terms combine into
 $\langle u-v,\,-v\rangle\le0$, that is $\|v\|^2\le\langle u,v\rangle$. And by
 Cauchy–Schwarz $\langle u,v\rangle\le\|u\|\,\|v\|$, so $\|v\|\le\|u\|$:
 
-$$\big\|\hat\beta(y_1)-\hat\beta(y_2)\big\|_S\ \le\ \big\|\hat\beta^o(y_1)-\hat\beta^o(y_2)\big\|_S .$$
+$$
+\big\|\hat\beta(y_1)-\hat\beta(y_2)\big\|_S\ \le\ \big\|\hat\beta^o(y_1)-\hat\beta^o(y_2)\big\|_S .
+$$
 
 **The lasso is at least as stable as least squares itself.** And this can be carried
 all the way back to the data, because $\hat\beta^o=S^{-1}X^\top y$ is linear: with
 $\delta=y_1-y_2$,
 
-$$\|S^{-1}X^\top\delta\|_S^2=\delta^\top XS^{-1}SS^{-1}X^\top\delta
-=\delta^\top\underbrace{XS^{-1}X^\top}_{H}\delta=\|H\delta\|^2\le\|\delta\|^2,$$
+$$
+\|S^{-1}X^\top\delta\|_S^2=\delta^\top XS^{-1}SS^{-1}X^\top\delta
+=\delta^\top\underbrace{XS^{-1}X^\top}_{H}\delta=\|H\delta\|^2\le\|\delta\|^2,
+$$
 
 since $H$ is the projection matrix onto the column space, which does not lengthen.
 Chaining the two, the lasso is **1-Lipschitz from $y$ to $\beta$**.
@@ -248,8 +280,10 @@ Since $X^\top(x_1-x_2)=S(1,-1)^\top$, perturbing in that direction gives
 $\Delta\hat\beta^o=\varepsilon(1,-1)^\top$, which already lives in the subspace where
 the constraint does not bind, and so passes through untouched:
 
-$$\|\Delta\hat\beta\|_S^2=\varepsilon^2(1,-1)S(1,-1)^\top=\varepsilon^2(2a-2b)
-=\varepsilon^2\|x_1-x_2\|^2=\|\Delta y\|^2 .$$
+$$
+\|\Delta\hat\beta\|_S^2=\varepsilon^2(1,-1)S(1,-1)^\top=\varepsilon^2(2a-2b)
+=\varepsilon^2\|x_1-x_2\|^2=\|\Delta y\|^2 .
+$$
 
 The perturbation is **tangent** to the active face, so there is nothing to absorb and
 the projection behaves as an isometry. The non-expansiveness bound is tight, and this
@@ -264,14 +298,18 @@ Now the other object. What is $\{\beta:\sum_j|\beta_j|\le t\}$?
 
 The key is a one-line identity. For any sign vector $\delta\in\{-1,1\}^p$,
 
-$$\delta^\top\beta=\sum_j\delta_j\beta_j\ \le\ \sum_j|\beta_j|,$$
+$$
+\delta^\top\beta=\sum_j\delta_j\beta_j\ \le\ \sum_j|\beta_j|,
+$$
 
 with equality if and only if $\delta_j=\mathrm{sign}(\beta_j)$ in every non-zero
 coordinate. Since such a $\delta$ always exists, the maximum is attained:
 
-$$\max_{\delta\in\{-1,1\}^p}\delta^\top\beta=\sum_j|\beta_j|
+$$
+\max_{\delta\in\{-1,1\}^p}\delta^\top\beta=\sum_j|\beta_j|
 \qquad\Longrightarrow\qquad
-\Big(\sum_j|\beta_j|\le t\ \Longleftrightarrow\ \delta^\top\beta\le t\ \ \forall\delta\Big).$$
+\Big(\sum_j|\beta_j|\le t\ \Longleftrightarrow\ \delta^\top\beta\le t\ \ \forall\delta\Big).
+$$
 
 That is: the region is the **intersection of $2^p$ half-spaces**, a polytope with
 $2^p$ faces (one per sign vector) and $2p$ vertices, which are $\pm t\,e_j$.
@@ -312,7 +350,9 @@ Before computing anything, let us bound the problem. Let $t_0=\sum_j|\hat\beta_j
 
 So all the variation happens on $t\in[0,t_0]$, and it is convenient to reparametrise
 
-$$s=\frac{t}{t_0}=\frac{t}{\sum_j|\hat\beta_j^{o}|}\in[0,1],$$
+$$
+s=\frac{t}{t_0}=\frac{t}{\sum_j|\hat\beta_j^{o}|}\in[0,1],
+$$
 
 with $s=1$ the least squares fit and $s=0$ the zero vector. This is the indexing the
 paper uses and the one we use throughout the code.
@@ -333,7 +373,9 @@ is a parabola centred at $\hat b=x^\top y/x^\top x$, and the feasible region is 
 segment $[-t,t]$. A parabola is symmetric and decreasing towards its vertex, so the
 minimum over a segment is at the point of the segment **closest to the vertex**:
 
-$$b^\star=\mathrm{sign}(\hat b)\,\min(|\hat b|,t).$$
+$$
+b^\star=\mathrm{sign}(\hat b)\,\min(|\hat b|,t).
+$$
 
 This is **clipping**: if the least squares value fits in the budget, it is left
 alone; if it does not, it is placed on the boundary. Nothing more.
@@ -357,7 +399,9 @@ $X^\top X=I$. It is the hypothesis that makes the metric disappear.
 With $X^\top X=I$ we have $\hat\beta^o=X^\top y$, and the identity of section 2
 becomes
 
-$$\|y-X\beta\|^2=\|\beta-\hat\beta^o\|^2+\text{const},$$
+$$
+\|y-X\beta\|^2=\|\beta-\hat\beta^o\|^2+\text{const},
+$$
 
 that is, **Euclidean** distance. The objective turns into
 $\sum_j(\beta_j-\hat\beta_j^o)^2$: a sum of terms that **do not mix**. The problem
@@ -368,13 +412,17 @@ formula.
 Now the non-differentiability does have to be faced. The tool is the
 **subdifferential**:
 
-$$\partial|\beta_j|=\begin{cases}\{\mathrm{sign}(\beta_j)\}&\beta_j\ne0\\[2pt] [-1,1]&\beta_j=0\end{cases}$$
+$$
+\partial|\beta_j|=\begin{cases}\{\mathrm{sign}(\beta_j)\}&\beta_j\ne0\\[2pt] [-1,1]&\beta_j=0\end{cases}
+$$
 
 The problem is convex and $\beta=0$ is strictly feasible for $t>0$ (Slater's
 condition), so KKT is **necessary and sufficient**. With multiplier $\gamma\ge0$ for
 the constraint, stationarity reads
 
-$$0\in 2(\beta_j-\hat\beta_j^o)+2\gamma\,\partial|\beta_j| .$$
+$$
+0\in 2(\beta_j-\hat\beta_j^o)+2\gamma\,\partial|\beta_j| .
+$$
 
 Three cases, according to the sign of the solution:
 
@@ -387,7 +435,9 @@ Three cases, according to the sign of the solution:
 They are mutually exclusive and cover all of $\mathbb{R}$, and they collapse into one
 line:
 
-$$\boxed{\ \hat\beta_j=\mathrm{sign}(\hat\beta_j^o)\big(|\hat\beta_j^o|-\gamma\big)^{+}\ }$$
+$$
+\boxed{\ \hat\beta_j=\mathrm{sign}(\hat\beta_j^o)\big(|\hat\beta_j^o|-\gamma\big)^{+}\ }
+$$
 
 which is the paper's Eq. 3. The value of $\gamma$ is fixed by complementary slackness
 $\gamma\big(\sum_j|\beta_j|-t\big)=0$: either $\gamma=0$ and we are at the least
@@ -419,16 +469,20 @@ equation is explicit.
 Let $a_j=|\hat\beta_j^o|$ and let $a_{(1)}\ge\dots\ge a_{(p)}$ be them sorted. The
 function
 
-$$\varphi(\gamma)=\sum_j(a_j-\gamma)^+$$
+$$
+\varphi(\gamma)=\sum_j(a_j-\gamma)^+
+$$
 
 is continuous, **piecewise linear** with knots at the $a_{(k)}$, and decreasing, with
 $\varphi(0)=\sum_j a_j=t_0$ and $\varphi(a_{(1)})=0$. For $t\in[0,t_0]$ there is a
 **unique root**. On the stretch where exactly the $k$ largest survive the equation is
 linear,
 
-$$\sum_{i\le k}\big(a_{(i)}-\gamma\big)=t
+$$
+\sum_{i\le k}\big(a_{(i)}-\gamma\big)=t
 \qquad\Longrightarrow\qquad
-\gamma=\frac{\sum_{i\le k}a_{(i)}-t}{k},$$
+\gamma=\frac{\sum_{i\le k}a_{(i)}-t}{k},
+$$
 
 and the correct $k$ is the largest one whose resulting $\gamma$ satisfies
 $\gamma<a_{(k)}$.
@@ -452,9 +506,11 @@ document uses them as a term of comparison.
 $X^\top X=I$ this is $\|\beta-\hat\beta^o\|^2+\gamma\|\beta\|^2$, **differentiable
 everywhere** — no absolute value, no subdifferential:
 
-$$2(\beta_j-\hat\beta_j^o)+2\gamma\beta_j=0
+$$
+2(\beta_j-\hat\beta_j^o)+2\gamma\beta_j=0
 \quad\Longrightarrow\quad
-\hat\beta_j=\frac{\hat\beta_j^o}{1+\gamma}.$$
+\hat\beta_j=\frac{\hat\beta_j^o}{1+\gamma}.
+$$
 
 **Proportional** shrinkage. A multiplicative factor never takes a non-zero number to
 zero: that is why ridge does not select.
@@ -472,7 +528,9 @@ budget and $\mu_j\ge0$ for $c_j\ge0$ gives
 $2\hat\beta_j^{o2}(c_j-1)+\gamma-\mu_j=0$. If $c_j>0$ then $\mu_j=0$ and
 $c_j=1-\gamma/2\hat\beta_j^{o2}$; if that comes out negative, $c_j=0$. Hence
 
-$$\hat\beta_j=\Big(1-\frac{\gamma}{2\hat\beta_j^{o2}}\Big)^{\!+}\hat\beta_j^o .$$
+$$
+\hat\beta_j=\Big(1-\frac{\gamma}{2\hat\beta_j^{o2}}\Big)^{\!+}\hat\beta_j^o .
+$$
 
 It does cut — its threshold is at $|\hat\beta_j^o|=\sqrt{\gamma/2}$ — but the factor
 tends to 1 for large coefficients, that is, it **shrinks the large ones less** than
@@ -504,23 +562,29 @@ the solution has both coordinates positive and the constraint active.
 In the positive quadrant $|\beta_1|+|\beta_2|=\beta_1+\beta_2$ is **linear**: there is
 no non-differentiability and KKT is the ordinary one. With multiplier $\gamma'$,
 
-$$2S(\beta-\hat\beta^o)+\gamma'\mathbf 1=0
+$$
+2S(\beta-\hat\beta^o)+\gamma'\mathbf 1=0
 \qquad\Longrightarrow\qquad
 \beta-\hat\beta^o=-\frac{\gamma'}{2}\,S^{-1}\mathbf 1,
-\qquad \mathbf 1=(1,1)^\top .$$
+\qquad \mathbf 1=(1,1)^\top .
+$$
 
 The displacement from the least squares fit goes in the direction $S^{-1}\mathbf1$,
 which **in principle depends on the correlation**. This is where the standardization
 of section 1 comes in, which so far we had only used to remove the intercept: since
 all columns have the same norm, $S$ has **constant diagonal**,
 
-$$S=\begin{pmatrix}a&b\\ b&a\end{pmatrix},\qquad a=N,\quad b=N\rho .$$
+$$
+S=\begin{pmatrix}a&b\\ b&a\end{pmatrix},\qquad a=N,\quad b=N\rho .
+$$
 
 And such a matrix has $\mathbf 1$ as an **eigenvector**:
 $S\mathbf 1=(a+b)\mathbf 1$, so $S^{-1}\mathbf 1=\frac{1}{a+b}\mathbf 1$.
 Substituting, with $\gamma:=\gamma'/2(a+b)$,
 
-$$\boxed{\ \beta_j=\hat\beta_j^o-\gamma\quad\text{in both coordinates.}\ }$$
+$$
+\boxed{\ \beta_j=\hat\beta_j^o-\gamma\quad\text{in both coordinates.}\ }
+$$
 
 **The correlation enters only through the scalar $a+b$, and is absorbed into
 $\gamma$.** The *direction* of the displacement is fixed by the standardization, not
@@ -533,15 +597,19 @@ common constant. What orthonormality gave in addition was *separability*; the
 
 Imposing now $\beta_1+\beta_2=t$ we solve for the multiplier,
 
-$$\hat\beta_1^o+\hat\beta_2^o-2\gamma=t
+$$
+\hat\beta_1^o+\hat\beta_2^o-2\gamma=t
 \quad\Longrightarrow\quad
-\gamma=\frac{\hat\beta_1^o+\hat\beta_2^o-t}{2},$$
+\gamma=\frac{\hat\beta_1^o+\hat\beta_2^o-t}{2},
+$$
 
 and substituting gives the closed form (Eq. 6):
 
-$$\hat\beta_1=\Big(\frac t2+\frac{\hat\beta_1^o-\hat\beta_2^o}{2}\Big)^{\!+},
+$$
+\hat\beta_1=\Big(\frac t2+\frac{\hat\beta_1^o-\hat\beta_2^o}{2}\Big)^{\!+},
 \qquad
-\hat\beta_2=\Big(\frac t2-\frac{\hat\beta_1^o-\hat\beta_2^o}{2}\Big)^{\!+}.$$
+\hat\beta_2=\Big(\frac t2-\frac{\hat\beta_1^o-\hat\beta_2^o}{2}\Big)^{\!+}.
+$$
 
 ---
 
@@ -554,7 +622,9 @@ $\gamma=\hat\beta_2^o$, that is when $t=\hat\beta_1^o-\hat\beta_2^o$. Below that
 problem is one-dimensional and the solution is $(t,0)$ — not what the formula gives.
 So the closed form is valid on
 
-$$\hat\beta_1^o-\hat\beta_2^o\ \le\ t\ \le\ \hat\beta_1^o+\hat\beta_2^o,$$
+$$
+\hat\beta_1^o-\hat\beta_2^o\ \le\ t\ \le\ \hat\beta_1^o+\hat\beta_2^o,
+$$
 
 and not only with the upper bound, which is the only one the paper mentions. With its
 own example $\hat\beta^o=(6,3)$ the cut is at $t=3$, and the solver confirms it: at
@@ -567,7 +637,9 @@ and with a constant diagonal those eigenvectors are **fixed**: $v_+=(1,1)$ with
 eigenvalue $a+b$, and $v_-=(1,-1)$ with $a-b$. Each component shrinks by its own
 factor:
 
-$$\beta=\frac{a+b}{a+b+\lambda}\,P_+\hat\beta^o+\frac{a-b}{a-b+\lambda}\,P_-\hat\beta^o .$$
+$$
+\beta=\frac{a+b}{a+b+\lambda}\,P_+\hat\beta^o+\frac{a-b}{a-b+\lambda}\,P_-\hat\beta^o .
+$$
 
 If $\rho>0$ then $a-b<a+b$ and therefore
 $\frac{a-b}{a-b+\lambda}<\frac{a+b}{a+b+\lambda}$: **the antisymmetric component — what
@@ -578,8 +650,10 @@ This has a counterintuitive consequence that can be quantified. With
 $\hat\beta^o=(6,3)$ we have $P_+\hat\beta^o=(4.5,4.5)$ and $P_-\hat\beta^o=(1.5,-1.5)$,
 so
 
-$$\frac{d\beta_2}{d\lambda}\Big|_{\lambda=0}=-\frac{4.5}{a+b}+\frac{1.5}{a-b}\ >\ 0
-\iff 1.5(a+b)>4.5(a-b) \iff \boxed{\ \rho>\tfrac12\ }$$
+$$
+\frac{d\beta_2}{d\lambda}\Big|_{\lambda=0}=-\frac{4.5}{a+b}+\frac{1.5}{a-b}\ >\ 0
+\iff 1.5(a+b)>4.5(a-b) \iff \boxed{\ \rho>\tfrac12\ }
+$$
 
 that is: **the smaller coefficient rises as the constraint tightens exactly when
 $\rho>1/2$**, because the pull towards the mean beats the overall shrinkage.
@@ -661,7 +735,9 @@ constraints, $P_E$ has a larger feasible region, so $\min P_E\le\min P$. On leav
 loop, $\hat\beta$ (i) **attains** $\min P_E$ and (ii) satisfies
 $\sum_j|\hat\beta_j|\le t$, that is, it is **feasible for $P$**. Then
 
-$$\min P\ \le\ g(\hat\beta)\ =\ \min P_E\ \le\ \min P,$$
+$$
+\min P\ \le\ g(\hat\beta)\ =\ \min P_E\ \le\ \min P,
+$$
 
 and everything is an equality. A feasible point that also solves a relaxation solves
 the original; nothing further need be verified.
@@ -670,8 +746,10 @@ the original; nothing further need be verified.
 and $\delta'$ differing in **only** coordinate $j$, subtracting their equalities
 $\delta^\top\hat\beta=t$ and $\delta'^\top\hat\beta=t$:
 
-$$(\delta-\delta')^\top\hat\beta=0\ \Longrightarrow\ 2\delta_j\hat\beta_j=0
-\ \Longrightarrow\ \hat\beta_j=0 .$$
+$$
+(\delta-\delta')^\top\hat\beta=0\ \Longrightarrow\ 2\delta_j\hat\beta_j=0
+\ \Longrightarrow\ \hat\beta_j=0 .
+$$
 
 This is an **algebraic** consequence of two faces of the polytope meeting in an edge
 or a vertex — the picture of section 3, now in arithmetic — not a numerical threshold.
@@ -719,13 +797,17 @@ the hypothesis except to separate the problem, so we repeat it with the metric i
 place. In penalised form — legitimate by section 15, which for now we need only as a
 change of name —
 
-$$0\in-2X^\top(y-X\beta)+2\lambda\,\partial\|\beta\|_1 ,$$
+$$
+0\in-2X^\top(y-X\beta)+2\lambda\,\partial\|\beta\|_1 ,
+$$
 
 and since $\partial\|\beta\|_1$ decomposes coordinate by coordinate, this is
 
-$$x_j^\top(y-X\hat\beta)=\lambda\,\mathrm{sign}(\hat\beta_j)\ \ (\hat\beta_j\ne0),
+$$
+x_j^\top(y-X\hat\beta)=\lambda\,\mathrm{sign}(\hat\beta_j)\ \ (\hat\beta_j\ne0),
 \qquad
-\big|x_j^\top(y-X\hat\beta)\big|\le\lambda\ \ (\hat\beta_j=0).$$
+\big|x_j^\top(y-X\hat\beta)\big|\le\lambda\ \ (\hat\beta_j=0).
+$$
 
 Convexity and Slater's condition are the same as in section 6, so this remains
 **necessary and sufficient**. It is worth stressing that it is **exact**: we have
@@ -750,9 +832,11 @@ $t\ge t_0$ of section 4.
 Since the coordinates outside are 0, we have $X\hat\beta=X_A\hat\beta_A$ and the active
 equations form an ordinary linear system:
 
-$$X_A^\top\big(y-X_A\hat\beta_A\big)=\lambda s_A
+$$
+X_A^\top\big(y-X_A\hat\beta_A\big)=\lambda s_A
 \qquad\Longrightarrow\qquad
-\boxed{\ \hat\beta_A=\hat\beta^{\,\mathrm{ols}(A)}-\lambda\,(X_A^\top X_A)^{-1}s_A\ }$$
+\boxed{\ \hat\beta_A=\hat\beta^{\,\mathrm{ols}(A)}-\lambda\,(X_A^\top X_A)^{-1}s_A\ }
+$$
 
 That is: **least squares refitted on the active variables, displaced in the direction
 $(X_A^\top X_A)^{-1}s_A$.** The nuance of "refitted" is not cosmetic — it is not the
@@ -837,7 +921,9 @@ knowing in exactly what sense.
 
 Consider the value function
 
-$$V(t)=\min\Big\{\|y-X\beta\|^2:\ \sum_j|\beta_j|\le t\Big\}.$$
+$$
+V(t)=\min\Big\{\|y-X\beta\|^2:\ \sum_j|\beta_j|\le t\Big\}.
+$$
 
 $V$ is **convex** — the value function of a convex program with respect to the
 right-hand side of the constraint — and **non-increasing**, because more budget cannot
@@ -845,7 +931,9 @@ worsen the minimum. The multiplier satisfies $\lambda(t)\in-\partial V(t)$ (up t
 factor of 2 depending on how the Lagrangian is written); and since $V$ is convex,
 $\partial V$ is non-decreasing, so
 
-$$\lambda(t)\ \text{is non-increasing in } t .$$
+$$
+\lambda(t)\ \text{is non-increasing in } t .
+$$
 
 The correspondence is **monotone**, and that is why it makes no difference whether one
 indexes by $t$, by $\lambda$ or by $s$. What does matter is not to mix conventions
@@ -871,16 +959,20 @@ data it was built from. With $Y=\eta(X)+\epsilon$, $E[\epsilon]=0$,
 $\mathrm{var}(\epsilon)=\sigma^2$ and $\epsilon$ independent of $X$, one defines the
 **model error** and the **prediction error**
 
-$$\mathrm{ME}=E\{\hat\eta(X)-\eta(X)\}^2,
+$$
+\mathrm{ME}=E\{\hat\eta(X)-\eta(X)\}^2,
 \qquad
-\mathrm{PE}=E\{Y-\hat\eta(X)\}^2 .$$
+\mathrm{PE}=E\{Y-\hat\eta(X)\}^2 .
+$$
 
 They are related trivially. Expanding with $\hat\eta$ fixed,
 
-$$\mathrm{PE}=E\{\eta(X)+\epsilon-\hat\eta(X)\}^2
+$$
+\mathrm{PE}=E\{\eta(X)+\epsilon-\hat\eta(X)\}^2
 =\underbrace{E\{\eta-\hat\eta\}^2}_{\mathrm{ME}}
 +2\underbrace{E[\epsilon(\eta-\hat\eta)]}_{=0\ \text{by independence}}
-+\underbrace{E[\epsilon^2]}_{\sigma^2},$$
++\underbrace{E[\epsilon^2]}_{\sigma^2},
+$$
 
 that is, $\mathrm{PE}=\mathrm{ME}+\sigma^2$. **They differ by a constant that does not
 depend on $t$**, so they are minimised at the same place: we can choose $t$ by
@@ -889,8 +981,10 @@ about is the model error, which cannot.
 
 In the linear case $\eta(x)=x^\top\beta$ the model error has a closed form:
 
-$$\mathrm{ME}=E_X\big[(\hat\beta-\beta)^\top xx^\top(\hat\beta-\beta)\big]
-=(\hat\beta-\beta)^\top V(\hat\beta-\beta),$$
+$$
+\mathrm{ME}=E_X\big[(\hat\beta-\beta)^\top xx^\top(\hat\beta-\beta)\big]
+=(\hat\beta-\beta)^\top V(\hat\beta-\beta),
+$$
 
 with $V=E[xx^\top]$ the population covariance. In a simulation $\beta$ and $V$ are
 known, so **the model error is computed exactly**, with no test set and without the
@@ -916,16 +1010,20 @@ per grid point.
 The cheap alternative requires treating the lasso as if it were linear, and there is a
 way of doing that. It starts from a silly identity:
 
-$$\sum_j|\beta_j|=\sum_j\frac{\beta_j^2}{|\beta_j|}.$$
+$$
+\sum_j|\beta_j|=\sum_j\frac{\beta_j^2}{|\beta_j|}.
+$$
 
 In itself it says nothing. But if we **freeze** $W=\mathrm{diag}(|\hat\beta_j|)$ at the
 solution already computed, the right-hand side becomes a **quadratic** form
 $\beta^\top W^-\beta$, and the penalised problem turns into a ridge problem, which is
 differentiable and is linear:
 
-$$-2X^\top(y-X\beta)+2\lambda W^-\beta=0
+$$
+-2X^\top(y-X\beta)+2\lambda W^-\beta=0
 \quad\Longrightarrow\quad
-\tilde\beta=(X^\top X+\lambda W^-)^{-1}X^\top y .$$
+\tilde\beta=(X^\top X+\lambda W^-)^{-1}X^\top y .
+$$
 
 It is worth saying what this costs and what it does not. The $\lambda$ is **not** paid
 for: it already came out exactly from KKT in section 14. What this approximation is
@@ -936,8 +1034,10 @@ genuine linear fit; and since $W$ has been frozen, neither of them is exact.
 $M=(X^\top X+\lambda W^-)^{-1}X^\top$ is **linear in $y$**, so its covariance is
 immediate with $\mathrm{Cov}(y)=\sigma^2I$:
 
-$$\mathrm{Cov}(\tilde\beta)=\sigma^2MM^\top
-=\sigma^2(X^\top X+\lambda W^-)^{-1}X^\top X(X^\top X+\lambda W^-)^{-1},$$
+$$
+\mathrm{Cov}(\tilde\beta)=\sigma^2MM^\top
+=\sigma^2(X^\top X+\lambda W^-)^{-1}X^\top X(X^\top X+\lambda W^-)^{-1},
+$$
 
 which is the paper's Eq. 7. It has a defect the paper itself points out: if
 $\hat\beta_j=0$ then $1/|\hat\beta_j|\to\infty$, row $j$ of $M$ vanishes and the
@@ -957,7 +1057,9 @@ fit on $q$ regressors $H$ is a projection and $\mathrm{tr}(H)=q$ = the number of
 parameters; the trace generalises that count to smoothers that are not projections. One
 then defines
 
-$$p(t)=\mathrm{tr}\{X(X^\top X+\lambda W^-)^{-1}X^\top\},$$
+$$
+p(t)=\mathrm{tr}\{X(X^\top X+\lambda W^-)^{-1}X^\top\},
+$$
 
 which equals $p$ at $\lambda=0$ and tends to 0 as everything vanishes.
 
@@ -974,18 +1076,24 @@ observation $i$. Let $\tilde y$ equal $y$ but with entry $i$ replaced by
 $\hat y_i^{(-i)}$. If the smoother is self-consistent — fitting to $\tilde y$ reproduces
 the same fit at $i$ — then $(H\tilde y)_i=\hat y_i^{(-i)}$, and by linearity
 
-$$\hat y_i-\hat y_i^{(-i)}=(Hy)_i-(H\tilde y)_i=h_{ii}\big(y_i-\tilde y_i\big)
-=h_{ii}\big(y_i-\hat y_i^{(-i)}\big).$$
+$$
+\hat y_i-\hat y_i^{(-i)}=(Hy)_i-(H\tilde y)_i=h_{ii}\big(y_i-\tilde y_i\big)
+=h_{ii}\big(y_i-\hat y_i^{(-i)}\big).
+$$
 
 Adding and subtracting $\hat y_i$ and solving:
 
-$$\boxed{\ y_i-\hat y_i^{(-i)}=\frac{y_i-\hat y_i}{1-h_{ii}}\ }$$
+$$
+\boxed{\ y_i-\hat y_i^{(-i)}=\frac{y_i-\hat y_i}{1-h_{ii}}\ }
+$$
 
 **The $N$ fits come out of a single one**, by dividing each residual by $1-h_{ii}$. GCV
 goes one step further and replaces each $h_{ii}$ by its mean $\mathrm{tr}(H)/N$, which
 avoids computing the diagonal of $H$ and makes the criterion rotation-invariant:
 
-$$\mathrm{GCV}(t)=\frac1N\,\frac{\mathrm{rss}(t)}{\{1-p(t)/N\}^2}.$$
+$$
+\mathrm{GCV}(t)=\frac1N\,\frac{\mathrm{rss}(t)}{\{1-p(t)/N\}^2}.
+$$
 
 The denominator is the price of complexity: the more effective parameters, the more the
 RSS is inflated before being compared.
@@ -1010,7 +1118,9 @@ folds and no traces. It is only possible because Part II gave us the closed form
 Stein's lemma says that if $z\sim N_p(\mu,I)$ and $\hat\mu=z+g(z)$ with $g$ almost
 differentiable, then
 
-$$E\|\hat\mu-\mu\|^2=p+E\Big(\|g(z)\|^2+2\sum_{i}\frac{\partial g_i}{\partial z_i}\Big),$$
+$$
+E\|\hat\mu-\mu\|^2=p+E\Big(\|g(z)\|^2+2\sum_{i}\frac{\partial g_i}{\partial z_i}\Big),
+$$
 
 and the remarkable part is that the right-hand side **can be evaluated from the data**,
 without knowing $\mu$: it is an unbiased estimate of the risk. Applying it to the *soft
@@ -1024,12 +1134,16 @@ thresholding* of section 6, with $g_i=\hat\mu_i-z_i$:
 In the first region $z_i^2>\gamma^2$ and $\gamma^2$ is kept; in the second
 $z_i^2<\gamma^2$ and $z_i^2$ is kept. In both cases, **the smaller of the two**:
 
-$$\|g\|^2=\sum_i\min(|z_i|,\gamma)^2,
-\qquad 2\sum_i\frac{\partial g_i}{\partial z_i}=-2\,\#\{i:|z_i|<\gamma\},$$
+$$
+\|g\|^2=\sum_i\min(|z_i|,\gamma)^2,
+\qquad 2\sum_i\frac{\partial g_i}{\partial z_i}=-2\,\#\{i:|z_i|<\gamma\},
+$$
 
 and therefore
 
-$$\boxed{\ E\|\hat\mu-\mu\|^2=p-2\,\#\{i:|z_i|<\gamma\}+\sum_{i}\min(|z_i|,\gamma)^2 .\ }$$
+$$
+\boxed{\ E\|\hat\mu-\mu\|^2=p-2\,\#\{i:|z_i|<\gamma\}+\sum_{i}\min(|z_i|,\gamma)^2 .\ }
+$$
 
 Minimising over $\gamma$ gives $\hat\gamma$, and from it the corresponding budget,
 $\hat t=\sum_j(|\hat\beta_j^o|-\hat\gamma)^+$, which is no more than evaluating the
@@ -1070,11 +1184,15 @@ zeros.
 With likelihood $y\mid\beta\sim N(X\beta,\sigma^2I)$ and independent Laplace priors
 $f(\beta_j)=\frac{1}{2\tau}e^{-|\beta_j|/\tau}$, the posterior is
 
-$$f(\beta\mid y)\ \propto\ \exp\Big\{-\frac{1}{2\sigma^2}\|y-X\beta\|^2\Big\}\prod_j\exp\Big(-\frac{|\beta_j|}{\tau}\Big),$$
+$$
+f(\beta\mid y)\ \propto\ \exp\Big\{-\frac{1}{2\sigma^2}\|y-X\beta\|^2\Big\}\prod_j\exp\Big(-\frac{|\beta_j|}{\tau}\Big),
+$$
 
 and taking $-\log$ and multiplying by $2\sigma^2$ — which does not move the minimum —
 
-$$-2\sigma^2\log f(\beta\mid y)=\|y-X\beta\|^2+\frac{2\sigma^2}{\tau}\sum_j|\beta_j|+\text{const}.$$
+$$
+-2\sigma^2\log f(\beta\mid y)=\|y-X\beta\|^2+\frac{2\sigma^2}{\tau}\sum_j|\beta_j|+\text{const}.
+$$
 
 The **posterior mode** is exactly the penalised lasso with $\lambda=2\sigma^2/\tau$.
 Ridge is the same thing with a normal prior.

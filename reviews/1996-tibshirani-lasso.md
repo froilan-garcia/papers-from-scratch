@@ -15,13 +15,17 @@ Least squares estimates have low bias but high variance, and with many predictor
 
 **Definition (Eq. 1).** With standardized predictors ($\sum_i x_{ij}/N = 0$, $\sum_i x_{ij}^2/N = 1$):
 
-$$\hat{\beta}^{lasso} = \arg\min_\beta \sum_{i=1}^N \Big(y_i - \alpha - \sum_j \beta_j x_{ij}\Big)^2 \quad \text{subject to} \quad \sum_j |\beta_j| \le t$$
+$$
+\hat{\beta}^{lasso} = \arg\min_\beta \sum_{i=1}^N \Big(y_i - \alpha - \sum_j \beta_j x_{ij}\Big)^2 \quad \text{subject to} \quad \sum_j |\beta_j| \le t
+$$
 
 Equivalent in Lagrangian form to penalising with $\lambda \sum_j |\beta_j|$. The parameter is usually normalised as $s = t / \sum_j |\hat{\beta}_j^{OLS}| \in [0, 1]$.
 
 **Orthonormal case (Eq. 3).** If $X^T X = I$, the solution is *soft thresholding*:
 
-$$\hat{\beta}_j = \mathrm{sign}(\hat{\beta}_j^{OLS})\,\big(|\hat{\beta}_j^{OLS}| - \gamma\big)^+$$
+$$
+\hat{\beta}_j = \mathrm{sign}(\hat{\beta}_j^{OLS})\,\big(|\hat{\beta}_j^{OLS}| - \gamma\big)^+
+$$
 
 against ridge (which shrinks proportionally, $\hat{\beta}_j^{OLS}/(1+\gamma)$) and subset selection (*hard thresholding*). There is a direct connection with the wavelet soft shrinkage of Donoho & Johnstone (1994): the lasso asymptotically attains the risk of the ideal subset selector up to a factor $2\log p + 1$ (Section 10).
 

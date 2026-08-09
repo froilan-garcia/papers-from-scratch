@@ -192,8 +192,10 @@ the edge of the simplex, where the median has moved, so $\tilde U_i \ne 0$. But
 deleting one observation from an odd sample $n = 2m-1$ leaves the median at one of
 only three values, so with $a = x_{(m)} - x_{(m-1)}$ and $b = x_{(m+1)} - x_{(m)}$
 
-$$v_{\text{jack}} = \frac{(m-1)^2}{2(2m-1)}\left[a^2 + b^2 - \frac{(m-1)(a-b)^2}{2m-1}\right]
-\;\sim\; \frac{n\,(a+b)^2}{16},$$
+$$
+v_{\text{jack}} = \frac{(m-1)^2}{2(2m-1)}\left[a^2 + b^2 - \frac{(m-1)(a-b)^2}{2m-1}\right]
+\;\sim\; \frac{n\,(a+b)^2}{16},
+$$
 
 a function of three order statistics however large $n$ is (two, if $n$ is even — the
 parity matters, and the next section is about that). Since $n(a+b)$ converges in
@@ -215,11 +217,13 @@ the jackknife column walks to $1.5 \times \pi/2$ with a spread that does not.
 The jackknife estimate of the variance of a sample median does not converge, and *what
 it converges to instead* turns out to depend on whether the sample size is odd or even:
 
-$$n\,\hat v_{\text{jack}} \;\xrightarrow{\;d\;}\; \frac{1}{4f^2(\theta)} \times
+$$
+n\,\hat v_{\text{jack}} \;\xrightarrow{\;d\;}\; \frac{1}{4f^2(\theta)} \times
 \begin{cases}
 \left[\chi^2_2/2\right]^2, & n \text{ even} \quad (\text{mean } 2,\;\text{variance } 20)\\[4pt]
 \left[\chi^2_4/4\right]^2, & n \text{ odd} \quad\;\; (\text{mean } 1.5,\;\text{variance } 5.25)
-\end{cases}$$
+\end{cases}
+$$
 
 The mechanism is one observation:
 
@@ -346,8 +350,10 @@ destroys every moment the distribution had.
 
 Sec. 7 contains the paper's only exclamation mark. Deleting one row at a time gives
 
-$$\mathrm{Cov}\,\hat\beta \;\approx\; G^{-1}\Big[\textstyle\sum_i c_i'c_i\hat\epsilon_i^2\Big]G^{-1},
-\qquad \text{Eq. (7.8),}$$
+$$
+\mathrm{Cov}\,\hat\beta \;\approx\; G^{-1}\Big[\textstyle\sum_i c_i'c_i\hat\epsilon_i^2\Big]G^{-1},
+\qquad \text{Eq. (7.8),}
+$$
 
 which, Efron says, "doesn't look at all like (7.7)" — the classical $\hat\sigma^2G^{-1}$
 that resampling the residuals reproduces exactly. On the data here, 0.160 against 0.186
@@ -427,7 +433,9 @@ express at all.
 The paper does not develop confidence intervals, and Remark D is why. Two statements
 about the median of $n = 13$:
 
-$$\mathrm{Prob}_F\{x_{(4)} < \theta < x_{(10)}\} = \mathrm{Prob}\{4\le\mathrm{Bi}(13,\tfrac12)\le 9\} = 0.908,$$
+$$
+\mathrm{Prob}_F\{x_{(4)} < \theta < x_{(10)}\} = \mathrm{Prob}\{4\le\mathrm{Bi}(13,\tfrac12)\le 9\} = 0.908,
+$$
 
 which is **exact and distribution-free** — the only random thing in it is how many
 observations fall below $\theta$, and that is $\mathrm{Bi}(n,\frac12)$ whatever $F$ is —
@@ -436,7 +444,9 @@ read off Eq. (3.6). Six thousandths apart, which Efron calls striking. Then, sin
 $\hat\theta = x_{(7)}$, treating $\hat\theta^* - \hat\theta$ as a **pivot** turns that
 into a statement about $\hat\theta - \theta$, and inverting it gives Eq. (8.6),
 
-$$\mathrm{Prob}_F\{2x_{(7)} - x_{(10)} < \theta < 2x_{(7)} - x_{(4)}\} \approx 0.914,$$
+$$
+\mathrm{Prob}_F\{2x_{(7)} - x_{(10)} < \theta < 2x_{(7)} - x_{(4)}\} \approx 0.914,
+$$
 
 the reflection of the correct interval about the sample median. The paper stops at the
 exclamation mark; the numbers are worth having:

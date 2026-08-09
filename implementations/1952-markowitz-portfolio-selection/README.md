@@ -28,8 +28,10 @@ definite), $\boldsymbol\mu$ the vector of expected returns and $\mathbf 1$ the v
 of ones, we look for the weights $\mathbf w$ minimising the variance for a target
 return $E$:
 
-$$\min_{\mathbf w} \ \tfrac{1}{2}\mathbf w^\top \Sigma \mathbf w
-\quad \text{s.t.} \quad \boldsymbol\mu^\top \mathbf w = E, \quad \mathbf 1^\top \mathbf w = 1.$$
+$$
+\min_{\mathbf w} \ \tfrac{1}{2}\mathbf w^\top \Sigma \mathbf w
+\quad \text{s.t.} \quad \boldsymbol\mu^\top \mathbf w = E, \quad \mathbf 1^\top \mathbf w = 1.
+$$
 
 > **Note:** the paper's $w_i \ge 0$ constraint is **relaxed** here. That is what makes
 > the closed form possible; with the sign constraint one has to go to a QP (Piece 3)
@@ -39,14 +41,18 @@ $$\min_{\mathbf w} \ \tfrac{1}{2}\mathbf w^\top \Sigma \mathbf w
 **Lagrangian** (here the constraints are *equalities*, so this is the ordinary
 Lagrange — unlike the lasso, where $\lambda$ is set by hand):
 
-$$\mathcal L = \tfrac12 \mathbf w^\top\Sigma\mathbf w
-- \lambda(\boldsymbol\mu^\top\mathbf w - E) - \gamma(\mathbf 1^\top\mathbf w - 1).$$
+$$
+\mathcal L = \tfrac12 \mathbf w^\top\Sigma\mathbf w
+- \lambda(\boldsymbol\mu^\top\mathbf w - E) - \gamma(\mathbf 1^\top\mathbf w - 1).
+$$
 
 Differentiating in $\mathbf w$ and setting to zero:
 
-$$\Sigma\mathbf w - \lambda\boldsymbol\mu - \gamma\mathbf 1 = \mathbf 0
+$$
+\Sigma\mathbf w - \lambda\boldsymbol\mu - \gamma\mathbf 1 = \mathbf 0
 \quad\Longrightarrow\quad
-\boxed{\ \mathbf w = \Sigma^{-1}(\lambda\boldsymbol\mu + \gamma\mathbf 1)\ }$$
+\boxed{\ \mathbf w = \Sigma^{-1}(\lambda\boldsymbol\mu + \gamma\mathbf 1)\ }
+$$
 
 The optimal weights are a **linear combination of two fixed portfolios**,
 $\Sigma^{-1}\boldsymbol\mu$ and $\Sigma^{-1}\mathbf 1$. This is already, in embryo,
@@ -56,28 +62,36 @@ by mixing two.
 **The four scalars.** Substituting into the constraints, the same three quantities
 always appear:
 
-$$A = \mathbf 1^\top\Sigma^{-1}\mathbf 1, \qquad
+$$
+A = \mathbf 1^\top\Sigma^{-1}\mathbf 1, \qquad
 B = \mathbf 1^\top\Sigma^{-1}\boldsymbol\mu, \qquad
-C = \boldsymbol\mu^\top\Sigma^{-1}\boldsymbol\mu, \qquad D = AC - B^2.$$
+C = \boldsymbol\mu^\top\Sigma^{-1}\boldsymbol\mu, \qquad D = AC - B^2.
+$$
 
 The two constraints become a $2\times 2$ system in $(\lambda, \gamma)$:
 
-$$\begin{pmatrix} C & B \\ B & A \end{pmatrix}
+$$
+\begin{pmatrix} C & B \\ B & A \end{pmatrix}
 \begin{pmatrix} \lambda \\ \gamma \end{pmatrix} =
 \begin{pmatrix} E \\ 1 \end{pmatrix}
 \quad\Longrightarrow\quad
-\lambda = \frac{AE - B}{D}, \qquad \gamma = \frac{C - BE}{D}.$$
+\lambda = \frac{AE - B}{D}, \qquad \gamma = \frac{C - BE}{D}.
+$$
 
 **The frontier.** The trick for the variance is to expand nothing: using the
 first-order condition $\Sigma\mathbf w = \lambda\boldsymbol\mu + \gamma\mathbf 1$,
 
-$$V = \mathbf w^\top\Sigma\mathbf w = \mathbf w^\top(\lambda\boldsymbol\mu + \gamma\mathbf 1)
+$$
+V = \mathbf w^\top\Sigma\mathbf w = \mathbf w^\top(\lambda\boldsymbol\mu + \gamma\mathbf 1)
 = \lambda\underbrace{\boldsymbol\mu^\top\mathbf w}_{=\,E} + \gamma\underbrace{\mathbf 1^\top\mathbf w}_{=\,1}
-= \lambda E + \gamma.$$
+= \lambda E + \gamma.
+$$
 
 Substituting:
 
-$$\boxed{\ V(E) = \frac{AE^2 - 2BE + C}{D}\ }$$
+$$
+\boxed{\ V(E) = \frac{AE^2 - 2BE + C}{D}\ }
+$$
 
 **A parabola in $(E,V)$** — and therefore a **hyperbola** in $(\sigma, E)$, which is
 how it is drawn today. Consistent with Fig. 6 of the paper: there it comes out
@@ -85,8 +99,10 @@ piecewise *because* Markowitz does impose $w_i \ge 0$.
 
 **Minimum-variance portfolio.** Differentiating: $V'(E) = (2AE - 2B)/D = 0$, hence
 
-$$E_{\min} = \frac{B}{A}, \qquad V_{\min} = \frac{1}{A}, \qquad
-\mathbf w_{\min} = \frac{\Sigma^{-1}\mathbf 1}{A}.$$
+$$
+E_{\min} = \frac{B}{A}, \qquad V_{\min} = \frac{1}{A}, \qquad
+\mathbf w_{\min} = \frac{\Sigma^{-1}\mathbf 1}{A}.
+$$
 
 Note that $\mathbf w_{\min}$ **does not depend on $\boldsymbol\mu$**: only on $\Sigma$.
 That is the practical reason why the minimum-variance portfolio is far more robust
@@ -105,9 +121,11 @@ be defined). The parabola therefore **opens upwards** and the minimum is genuine
 The paper's conceptual thesis (p. 89), in one line of algebra. For the equally
 weighted portfolio $w_i = 1/N$:
 
-$$V = \frac{1}{N^2}\sum_{i}\sigma_{ii} + \frac{1}{N^2}\sum_{i\neq j}\sigma_{ij}
+$$
+V = \frac{1}{N^2}\sum_{i}\sigma_{ii} + \frac{1}{N^2}\sum_{i\neq j}\sigma_{ij}
 = \frac{1}{N}\overline{\sigma^2} + \frac{N-1}{N}\overline{\sigma_{ij}}
-\ \xrightarrow[N\to\infty]{}\ \overline{\sigma_{ij}}.$$
+\ \xrightarrow[N\to\infty]{}\ \overline{\sigma_{ij}}.
+$$
 
 The first term (own variances) is **diluted** as $1/N$; the second (average
 covariance) is **not**. That limit $\overline{\sigma_{ij}}$ is the floor Markowitz

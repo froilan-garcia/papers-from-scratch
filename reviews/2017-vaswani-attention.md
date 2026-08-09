@@ -21,7 +21,9 @@ The key observation: in those models attention was already doing the heavy lifti
 
 Attention maps a **query** and a set of **key-value** pairs to an output, which is a weighted sum of the values; the weight of each value is given by a compatibility function between the query and its key. Packing the queries into $Q$, the keys into $K$ and the values into $V$:
 
-$$\mathrm{Attention}(Q,K,V) = \mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V$$
+$$
+\mathrm{Attention}(Q,K,V) = \mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V
+$$
 
 **Why $\sqrt{d_k}$?** It is the most-cited detail and the paper justifies it in footnote 4: if the components of $q$ and $k$ are independent with mean 0 and variance 1, then $q\cdot k = \sum_{i=1}^{d_k} q_ik_i$ has mean 0 and **variance $d_k$**. With large $d_k$ the dot products blow up in magnitude, pushing the softmax into regions of **tiny gradient** (saturation). Dividing by $\sqrt{d_k}$ renormalises the variance to 1 and avoids this.
 
@@ -79,7 +81,9 @@ Three criteria: cost per layer, parallelisability (sequential ops.) and **path l
 - **Data:** WMT 2014 EN-DE (4.5M pairs, BPE with a shared vocabulary of ~37000 tokens) and EN-FR (36M sentences, word-piece of 32000). Batches of ~25000 source and 25000 target tokens.
 - **Hardware:** 8 NVIDIA P100 GPUs. Base: 100K steps ≈ **12 hours**. Big: 300K steps ≈ **3.5 days**.
 - **Optimiser (Eq. 3):** Adam with $\beta_1=0.9$, $\beta_2=0.98$, $\epsilon=10^{-9}$, and the celebrated **warmup schedule**:
-$$lrate = d_{\text{model}}^{-0.5}\cdot\min\!\left(step\_num^{-0.5},\ step\_num\cdot warmup\_steps^{-1.5}\right)$$
+$$
+lrate = d_{\text{model}}^{-0.5}\cdot\min\!\left(step\_num^{-0.5},\ step\_num\cdot warmup\_steps^{-1.5}\right)
+$$
 It rises linearly for the first $warmup\_steps = 4000$ steps and then decays as $1/\sqrt{step}$.
 - **Regularisation:** residual dropout $P_{drop}=0.1$ (on the output of each sub-layer and on the embeddings+PE sum) and **label smoothing** $\epsilon_{ls}=0.1$ — which *hurts* perplexity (the model learns to be less certain) but *improves* accuracy and BLEU.
 - **Inference:** beam search with beam 4 and length penalty $\alpha=0.6$; averaging of the last 5 checkpoints (base) or 20 (big).

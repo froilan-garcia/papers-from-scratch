@@ -33,7 +33,9 @@ according to some $F$ on the real line, and we compute from them a statistic
 $t(\mathbf{X})$ meant to estimate a quantity of interest $\theta(F)$. The estimate will
 be wrong. The whole of what follows is about the size and shape of that error,
 
-$$R(\mathbf{X}, F) \;=\; t(\mathbf{X}) - \theta(F).$$
+$$
+R(\mathbf{X}, F) \;=\; t(\mathbf{X}) - \theta(F).
+$$
 
 Note what kind of object $R$ is: a random variable, because $\mathbf{X}$ is random, but
 one whose definition also involves $F$ directly through $\theta(F)$. Both dependencies
@@ -43,8 +45,10 @@ work in Section 2.
 What we would like is the whole **sampling distribution** of $R$, because every question
 we might ask is a functional of it:
 
-$$\mathrm{bias} = E_F\,R, \qquad \mathrm{variance} = \mathrm{Var}_F\,R, \qquad
-\text{interval endpoints} = \text{quantiles of } R .$$
+$$
+\mathrm{bias} = E_F\,R, \qquad \mathrm{variance} = \mathrm{Var}_F\,R, \qquad
+\text{interval endpoints} = \text{quantiles of } R .
+$$
 
 Write $\Psi(F)$ for that distribution — the law of $R(\mathbf{X},F)$ when
 $\mathbf{X} \sim F^{\otimes n}$. It is a perfectly well-defined object, and it is what we
@@ -84,7 +88,9 @@ for it. The question is what.
 Having observed $\mathbf{X} = \mathbf{x} = (x_1, \dots, x_n)$, define $\hat F$ to be the
 distribution placing mass $1/n$ on each observed value:
 
-$$\hat F(t) \;=\; \frac{1}{n}\,\#\{\,i : x_i \le t\,\}.$$
+$$
+\hat F(t) \;=\; \frac{1}{n}\,\#\{\,i : x_i \le t\,\}.
+$$
 
 This is not an arbitrary choice, and three separate arguments point at it.
 
@@ -95,8 +101,10 @@ must put all its mass on $x_1, \dots, x_n$; say mass $p_i$ on $x_i$, with
 $\sum_i p_i = 1$ and $p_i \ge 0$. The likelihood is then $\prod_{i=1}^n p_i$ (taking the
 $x_i$ distinct for the moment), and by the arithmetic–geometric mean inequality
 
-$$\prod_{i=1}^{n} p_i \;\le\; \left(\frac{1}{n}\sum_{i=1}^{n} p_i\right)^{\!n}
-\;=\; \frac{1}{n^n},$$
+$$
+\prod_{i=1}^{n} p_i \;\le\; \left(\frac{1}{n}\sum_{i=1}^{n} p_i\right)^{\!n}
+\;=\; \frac{1}{n^n},
+$$
 
 with equality if and only if all the $p_i$ coincide, that is $p_i = 1/n$. So $\hat F$ is
 the maximiser, and uniquely so. If some observations tie, the same argument applies to
@@ -114,7 +122,9 @@ argument, and it is the one Efron leans on.
 
 Now the substitution. We wanted $\Psi(F)$; we compute instead
 
-$$\widehat{\Psi} \;=\; \Psi(\hat F).$$
+$$
+\widehat{\Psi} \;=\; \Psi(\hat F).
+$$
 
 This is worth pausing on, because it is the whole idea of the paper and it is easy to
 read past. Estimating $\theta(F)$ by $\theta(\hat F)$ is a reflex — it is what the sample
@@ -124,8 +134,10 @@ new principle involved, only a new place to apply an old one.
 
 Concretely, $\Psi(\hat F)$ is the law of
 
-$$R^* \;=\; R(\mathbf{X}^*, \hat F) \;=\; t(\mathbf{X}^*) - \theta(\hat F),
-\qquad X_1^*, \dots, X_n^* \;\overset{\text{iid}}{\sim}\; \hat F,$$
+$$
+R^* \;=\; R(\mathbf{X}^*, \hat F) \;=\; t(\mathbf{X}^*) - \theta(\hat F),
+\qquad X_1^*, \dots, X_n^* \;\overset{\text{iid}}{\sim}\; \hat F,
+$$
 
 which is Efron's Eqs. (2.4)–(2.5). Sampling from $\hat F$ is sampling with replacement
 from $\{x_1, \dots, x_n\}$, since $\hat F$ puts mass $1/n$ on each.
@@ -194,11 +206,15 @@ A resample is therefore fully described by an index vector, and — provided $t$
 symmetric in its arguments, which every statistic we care about is — the order of those
 indices is irrelevant. All that survives is how many times each observation was drawn:
 
-$$N_i^* \;=\; \#\{\,j : X_j^* = x_i\,\}, \qquad \sum_{i=1}^n N_i^* = n .$$
+$$
+N_i^* \;=\; \#\{\,j : X_j^* = x_i\,\}, \qquad \sum_{i=1}^n N_i^* = n .
+$$
 
 Since the $n$ draws are independent and each lands in cell $i$ with probability $1/n$,
 
-$$\mathbf{N}^* \;\sim\; \mathrm{Multinomial}\!\left(n; \tfrac{1}{n}, \dots, \tfrac{1}{n}\right),$$
+$$
+\mathbf{N}^* \;\sim\; \mathrm{Multinomial}\!\left(n; \tfrac{1}{n}, \dots, \tfrac{1}{n}\right),
+$$
 
 which is the paper's Eq. (3.2). It is convenient to normalise and write
 $\mathbf{P}^* = \mathbf{N}^*/n$, a point of the simplex
@@ -225,7 +241,9 @@ integer solutions of $N_1 + \dots + N_n = n$. By the standard stars-and-bars arg
 arrange $n$ indistinguishable stars and $n-1$ bars in a row, each arrangement encoding
 one solution — this is
 
-$$\binom{2n-1}{\,n-1\,} \;=\; \binom{2n-1}{n}.$$
+$$
+\binom{2n-1}{\,n-1\,} \;=\; \binom{2n-1}{n}.
+$$
 
 For $n = 10$ that is $92\,378$, against $10^{10}$ ordered draws: a reduction by five
 orders of magnitude, and the difference between an enumeration that finishes and one
@@ -236,8 +254,10 @@ because the reduction just performed is so appealing that one is tempted to work
 the distinct resamples as if they formed a uniform sample space. The probability of a
 given count vector is the multinomial one,
 
-$$\mathrm{Prob}_*\{\mathbf{N}^* = (N_1, \dots, N_n)\}
-\;=\; \frac{n!}{N_1!\,N_2!\cdots N_n!}\cdot\frac{1}{n^n},$$
+$$
+\mathrm{Prob}_*\{\mathbf{N}^* = (N_1, \dots, N_n)\}
+\;=\; \frac{n!}{N_1!\,N_2!\cdots N_n!}\cdot\frac{1}{n^n},
+$$
 
 the leading factor counting how many of the $n^n$ ordered draws collapse onto that
 resample.
@@ -278,18 +298,24 @@ Take $t(\mathbf{X}) = \bar X$ and $\theta(F) = \int x\,dF$, so that
 $R(\mathbf{X}, F) = \bar X - \theta(F)$. Since $\theta(\hat F) = \bar x$, the bootstrap
 version is
 
-$$R^* \;=\; \bar X^* - \bar x .$$
+$$
+R^* \;=\; \bar X^* - \bar x .
+$$
 
 ### 4.1 The bootstrap mean
 
 Each $X_i^*$ is drawn from $\hat F$, so its expectation under $\hat F$ is the mean of
 that distribution,
 
-$$E_*\,X_i^* \;=\; \sum_{j=1}^n \frac{1}{n}\,x_j \;=\; \bar x,$$
+$$
+E_*\,X_i^* \;=\; \sum_{j=1}^n \frac{1}{n}\,x_j \;=\; \bar x,
+$$
 
 and by linearity $E_*\bar X^* = \bar x$, giving
 
-$$E_*\,R^* \;=\; 0 .$$
+$$
+E_*\,R^* \;=\; 0 .
+$$
 
 Exactly zero, for every sample, at every $n$. The bootstrap reports no bias here, which
 is correct: $\bar X$ is unbiased for the mean. It is worth registering that this came out
@@ -300,20 +326,26 @@ is correct: $\bar X$ is unbiased for the mean. It is worth registering that this
 The $X_i^*$ are independent under $\hat F$ — this is the point of resampling with
 replacement, and it would fail without it — so variances add:
 
-$$\mathrm{Var}_*\big(\bar X^*\big) \;=\; \frac{1}{n^2}\sum_{i=1}^n \mathrm{Var}_*\big(X_i^*\big)
-\;=\; \frac{\mathrm{Var}_*\big(X_1^*\big)}{n}.$$
+$$
+\mathrm{Var}_*\big(\bar X^*\big) \;=\; \frac{1}{n^2}\sum_{i=1}^n \mathrm{Var}_*\big(X_i^*\big)
+\;=\; \frac{\mathrm{Var}_*\big(X_1^*\big)}{n}.
+$$
 
 It remains to compute the variance of a single draw from $\hat F$. That is just the
 variance **of the distribution $\hat F$**, which puts mass $1/n$ on each $x_j$ and has
 mean $\bar x$:
 
-$$\mathrm{Var}_*\big(X_1^*\big) \;=\; \sum_{j=1}^{n} \frac{1}{n}\,(x_j - \bar x)^2
-\;=\; \frac{1}{n}\sum_{j=1}^{n}(x_j - \bar x)^2 \;=:\; \hat\sigma^2 .$$
+$$
+\mathrm{Var}_*\big(X_1^*\big) \;=\; \sum_{j=1}^{n} \frac{1}{n}\,(x_j - \bar x)^2
+\;=\; \frac{1}{n}\sum_{j=1}^{n}(x_j - \bar x)^2 \;=:\; \hat\sigma^2 .
+$$
 
 Therefore
 
-$$\boxed{\;\mathrm{Var}_*\,R^* \;=\; \frac{\hat\sigma^2}{n}
-\;=\; \frac{1}{n^2}\sum_{i=1}^{n}(x_i - \bar x)^2\;}$$
+$$
+\boxed{\;\mathrm{Var}_*\,R^* \;=\; \frac{\hat\sigma^2}{n}
+\;=\; \frac{1}{n^2}\sum_{i=1}^{n}(x_i - \bar x)^2\;}
+$$
 
 which for data taking the values $0$ and $1$ collapses to $\bar x(1-\bar x)/n$, the
 paper's Eq. (2.8), since then $\sum_i (x_i - \bar x)^2 = n\bar x(1-\bar x)$.
@@ -390,12 +422,16 @@ distribution are available with no approximation anywhere.
 
 The natural test is the simplest statistic that is not affine. Take
 
-$$t(\mathbf{X}) = \hat\sigma^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar X)^2$$
+$$
+t(\mathbf{X}) = \hat\sigma^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar X)^2
+$$
 
 estimating $\theta(F) = \sigma^2(F)$ — the plug-in variance of Section 4.3, with its
 $1/n$ — so that $R^* = \hat\sigma^{2*} - \hat\sigma^2$. In terms of the resample,
 
-$$\hat\sigma^{2*} \;=\; \sum_{i=1}^n P_i^* x_i^2 \;-\; \Big(\sum_{i=1}^n P_i^* x_i\Big)^{\!2},$$
+$$
+\hat\sigma^{2*} \;=\; \sum_{i=1}^n P_i^* x_i^2 \;-\; \Big(\sum_{i=1}^n P_i^* x_i\Big)^{\!2},
+$$
 
 a **quadratic** in $\mathbf{P}^*$. One degree up, and exactly one thing goes wrong.
 
@@ -404,20 +440,26 @@ a **quadratic** in $\mathbf{P}^*$. One degree up, and exactly one thing goes wro
 Use the identity $\hat\sigma^{2*} = \frac{1}{n}\sum_i (X_i^*)^2 - (\bar X^*)^2$ and take
 expectations under $\hat F$. Each $X_i^*$ is a draw from $\hat F$, so
 
-$$E_*\,(X_i^*)^2 \;=\; \frac{1}{n}\sum_{j=1}^n x_j^2 \;=:\; \hat\mu_2',$$
+$$
+E_*\,(X_i^*)^2 \;=\; \frac{1}{n}\sum_{j=1}^n x_j^2 \;=:\; \hat\mu_2',
+$$
 
 the raw second moment of $\hat F$. The second term needs nothing new: Section 4.2 gave
 $E_*\bar X^* = \bar x$ and $\mathrm{Var}_*\bar X^* = \hat\sigma^2/n$, so
 
-$$E_*\,(\bar X^*)^2 \;=\; \mathrm{Var}_*\bar X^* + \big(E_*\bar X^*\big)^2
-\;=\; \frac{\hat\sigma^2}{n} + \bar x^2 .$$
+$$
+E_*\,(\bar X^*)^2 \;=\; \mathrm{Var}_*\bar X^* + \big(E_*\bar X^*\big)^2
+\;=\; \frac{\hat\sigma^2}{n} + \bar x^2 .
+$$
 
 Subtracting, and using $\hat\mu_2' - \bar x^2 = \hat\sigma^2$,
 
-$$E_*\,\hat\sigma^{2*} \;=\; \hat\sigma^2 - \frac{\hat\sigma^2}{n}
+$$
+E_*\,\hat\sigma^{2*} \;=\; \hat\sigma^2 - \frac{\hat\sigma^2}{n}
 \;=\; \frac{n-1}{n}\,\hat\sigma^2,
 \qquad\text{that is}\qquad
-\boxed{\;E_*\,R^* \;=\; -\frac{\hat\sigma^2}{n}\;}$$
+\boxed{\;E_*\,R^* \;=\; -\frac{\hat\sigma^2}{n}\;}
+$$
 
 Not zero. This is the first non-zero bias in the development, and it is worth being
 clear about what has just happened, because it is more than an algebraic curiosity.
@@ -437,9 +479,11 @@ order to measure it.
 $\hat\sigma^2 - E_*R^* = \frac{n+1}{n}\hat\sigma^2$, while the unbiased estimator is
 $\frac{n}{n-1}\hat\sigma^2$. Expanding,
 
-$$\frac{n+1}{n} = 1 + \frac{1}{n},
+$$
+\frac{n+1}{n} = 1 + \frac{1}{n},
 \qquad
-\frac{n}{n-1} = 1 + \frac{1}{n} + \frac{1}{n^2} + \cdots,$$
+\frac{n}{n-1} = 1 + \frac{1}{n} + \frac{1}{n^2} + \cdots,
+$$
 
 so the correction is right to first order and wrong at order $n^{-2}$ — because the
 estimate of the bias is itself biased. Bootstrap bias correction is an asymptotic
@@ -449,29 +493,39 @@ device even when, as here, the bias under $\hat F$ is computed exactly.
 
 For the second moment of $R^*$, shift the centre to $\bar x$ using the exact identity
 
-$$\hat\sigma^{2*} \;=\; \underbrace{\frac{1}{n}\sum_{i=1}^n (X_i^* - \bar x)^2}_{A}
-\;-\; \underbrace{(\bar X^* - \bar x)^2}_{B}.$$
+$$
+\hat\sigma^{2*} \;=\; \underbrace{\frac{1}{n}\sum_{i=1}^n (X_i^* - \bar x)^2}_{A}
+\;-\; \underbrace{(\bar X^* - \bar x)^2}_{B}.
+$$
 
 Under $\hat F$ the terms of $A$ are independent and identically distributed, with
 
-$$E_*\,(X_i^* - \bar x)^2 = \hat\sigma^2,
+$$
+E_*\,(X_i^* - \bar x)^2 = \hat\sigma^2,
 \qquad
-E_*\,(X_i^* - \bar x)^4 = \hat\mu_4 := \frac{1}{n}\sum_{j=1}^n (x_j - \bar x)^4,$$
+E_*\,(X_i^* - \bar x)^4 = \hat\mu_4 := \frac{1}{n}\sum_{j=1}^n (x_j - \bar x)^4,
+$$
 
 so $E_*A = \hat\sigma^2$ and
 
-$$\mathrm{Var}_*A \;=\; \frac{\hat\mu_4 - \hat\sigma^4}{n}.$$
+$$
+\mathrm{Var}_*A \;=\; \frac{\hat\mu_4 - \hat\sigma^4}{n}.
+$$
 
 The correction term $B$ is small: $E_*B = \mathrm{Var}_*\bar X^* = \hat\sigma^2/n$ by
 Section 4.2, so $B$ is of order $n^{-1}$ in mean and contributes to a variance at order
 $n^{-2}$. Hence
 
-$$\mathrm{Var}_*R^* \;=\; \frac{\hat\mu_4 - \hat\sigma^4}{n} \;+\; O(n^{-2}),$$
+$$
+\mathrm{Var}_*R^* \;=\; \frac{\hat\mu_4 - \hat\sigma^4}{n} \;+\; O(n^{-2}),
+$$
 
 and carrying the $B$ terms to the end gives the exact expression
 
-$$\mathrm{Var}_*R^* \;=\; \frac{(n-1)^2}{n^3}\,\hat\mu_4
-\;-\; \frac{(n-1)(n-3)}{n^3}\,\hat\sigma^4 .$$
+$$
+\mathrm{Var}_*R^* \;=\; \frac{(n-1)^2}{n^3}\,\hat\mu_4
+\;-\; \frac{(n-1)(n-3)}{n^3}\,\hat\sigma^4 .
+$$
 
 This is the classical finite-sample variance of a plug-in variance with every moment of
 $F$ replaced by the corresponding moment of $\hat F$. Borrowing the classical identity
@@ -527,7 +581,9 @@ observations and define the weighted median as the smallest $x_{(k)}$ whose cumu
 weight reaches one half. At $\mathbf{p} = \mathbf{e}/n$ the cumulative weight strictly
 below $x_{(m)}$ is
 
-$$\frac{m-1}{n} \;=\; \frac{n-1}{2n} \;=\; \frac{1}{2} - \frac{1}{2n},$$
+$$
+\frac{m-1}{n} \;=\; \frac{n-1}{2n} \;=\; \frac{1}{2} - \frac{1}{2n},
+$$
 
 so the answer stays at $x_{(m)}$ until some weight has moved by $\frac{1}{2n}$, and then
 jumps to a neighbour. As a function of $\mathbf{p}$ the median is **locally constant**,
@@ -546,7 +602,9 @@ forward from this section.
 Non-differentiability closes one door, and the discreteness of $\hat F$ opens another. A
 resample can only produce medians that are observed values, so
 
-$$R^* \;=\; X^*_{(m)} - x_{(m)}$$
+$$
+R^* \;=\; X^*_{(m)} - x_{(m)}
+$$
 
 is supported on the $n$ numbers $x_{(1)} - x_{(m)}, \dots, x_{(n)} - x_{(m)}$, and the
 distribution is known as soon as we have the $n$ probabilities.
@@ -557,16 +615,20 @@ $\{x_{(1)}, \dots, x_{(l)}\}$: had $m$ or more landed there, the $m$-th smallest
 resample would be one of them. Each draw lands there with probability $l/n$,
 independently of the rest, so the number that do is $\mathrm{Binomial}(n, l/n)$ and
 
-$$\mathrm{Prob}_*\{X^*_{(m)} > x_{(l)}\}
-\;=\; \mathrm{Prob}\Big\{\mathrm{Bi}\big(n, \tfrac{l}{n}\big) \le m-1\Big\}.$$
+$$
+\mathrm{Prob}_*\{X^*_{(m)} > x_{(l)}\}
+\;=\; \mathrm{Prob}\Big\{\mathrm{Bi}\big(n, \tfrac{l}{n}\big) \le m-1\Big\}.
+$$
 
 The events for consecutive $l$ are nested — the resample median exceeding $x_{(l)}$
 implies it exceeds $x_{(l-1)}$ — and the two differ precisely by the event
 $\{X^*_{(m)} = x_{(l)}\}$. Differencing,
 
-$$\mathrm{Prob}_*\{R^* = x_{(l)} - x_{(m)}\}
+$$
+\mathrm{Prob}_*\{R^* = x_{(l)} - x_{(m)}\}
 \;=\; \mathrm{Prob}\Big\{\mathrm{Bi}\big(n, \tfrac{l-1}{n}\big) \le m-1\Big\}
-\;-\; \mathrm{Prob}\Big\{\mathrm{Bi}\big(n, \tfrac{l}{n}\big) \le m-1\Big\}.$$
+\;-\; \mathrm{Prob}\Big\{\mathrm{Bi}\big(n, \tfrac{l}{n}\big) \le m-1\Big\}.
+$$
 
 These are Efron's Eqs. (3.4) and (3.5); the same result was obtained independently by
 Maritz and Jarrett.
@@ -598,10 +660,12 @@ which anything interesting happens. The count $\mathrm{Bi}(n,p)$ has mean
 $np = \frac{n}{2} + s\sqrt n$ and standard deviation $\sqrt{np(1-p)} \to \frac{\sqrt n}{2}$,
 so with $m - 1 = \frac{n-1}{2}$ the normal approximation gives
 
-$$\mathrm{Prob}\Big\{\mathrm{Bi}(n,p) \le m-1\Big\}
+$$
+\mathrm{Prob}\Big\{\mathrm{Bi}(n,p) \le m-1\Big\}
 \;\longrightarrow\;
 \Phi\!\left(\frac{\frac{n}{2} - \frac{n}{2} - s\sqrt n}{\sqrt n / 2}\right)
-\;=\; \Phi(-2s).$$
+\;=\; \Phi(-2s).
+$$
 
 Therefore $\mathrm{Prob}_*\{X^*_{(m)} \le x_{(l)}\} \to \Phi(2s)$: the **rank** of the
 resampled median is asymptotically normal about $m$ with standard deviation
@@ -612,12 +676,16 @@ by about $\frac{1}{n f(\theta)}$, because the empirical distribution function cl
 rate $f$ there, so a displacement of $l - m$ ranks is a displacement of roughly
 $\frac{l-m}{n f(\theta)}$ in value. With $l - m = s\sqrt n$ and $2s$ standard normal,
 
-$$R^* \;\approx\; \frac{s \sqrt n}{n f(\theta)} \;=\; \frac{Z}{2\sqrt n\, f(\theta)},
-\qquad Z \sim \mathcal{N}(0,1),$$
+$$
+R^* \;\approx\; \frac{s \sqrt n}{n f(\theta)} \;=\; \frac{Z}{2\sqrt n\, f(\theta)},
+\qquad Z \sim \mathcal{N}(0,1),
+$$
 
 and hence
 
-$$\boxed{\;n\,E_*(R^*)^2 \;\longrightarrow\; \frac{1}{4 f^2(\theta)}\;}$$
+$$
+\boxed{\;n\,E_*(R^*)^2 \;\longrightarrow\; \frac{1}{4 f^2(\theta)}\;}
+$$
 
 which is the right answer: the classical asymptotic variance of the sample median is
 $\frac{1}{4n f^2(\theta)}$. The bootstrap is estimating the quantity we wanted and not
@@ -668,7 +736,9 @@ spacing of a few central observations.
 The paper's Monte Carlo comparison, its Table 1, tabulates for $n = 13$ and
 $F = \mathcal{N}(0,1)$ the bootstrap expectation of
 
-$$R(\mathbf{X}, F) \;=\; \frac{|t(\mathbf{X}) - \theta(F)|}{\sigma(F)},$$
+$$
+R(\mathbf{X}, F) \;=\; \frac{|t(\mathbf{X}) - \theta(F)|}{\sigma(F)},
+$$
 
 the absolute error rather than the squared one — more stable — divided by a scale, so
 that $R^*$ is scale invariant and the variation due to $\hat\sigma$ differing from
@@ -691,14 +761,18 @@ The second number is the one the whole table is measured against. The paper stat
 $E_F R = 0.95$ (its Eq. 3.13) as the true value the columns are estimating. With the
 scaling settled this can be simulated directly, and $400\,000$ samples of size 13 give
 
-$$E_F R \;=\; 0.9822 \pm 0.0012,$$
+$$
+E_F R \;=\; 0.9822 \pm 0.0012,
+$$
 
 which is not $0.95$. Nor is $0.95$ the asymptotic value: by Section 6.4 the median is
 approximately $\mathcal{N}(0, \frac{\pi}{2n})$, so
 
-$$\sqrt n \; E_F\big|\mathrm{median}\big|
+$$
+\sqrt n \; E_F\big|\mathrm{median}\big|
 \;\longrightarrow\; \sqrt n \cdot \sqrt{\frac{2}{\pi}} \cdot \sqrt{\frac{\pi}{2n}}
-\;=\; 1,$$
+\;=\; 1,
+$$
 
 approached from below. Nor does any other natural reading produce it: scaling by
 $\sqrt{n-1}$ rather than $\sqrt n$ would give $0.943$, but then column (3.6) of Table 1
@@ -751,14 +825,18 @@ already supplied the distribution:
 $\mathbf{N}^* \sim \mathrm{Multinomial}(n; \frac1n, \dots, \frac1n)$.
 From the standard multinomial moments,
 
-$$E\,N_i^* = 1, \qquad \mathrm{Var}\,N_i^* = n\cdot\frac1n\Big(1-\frac1n\Big) = 1 - \frac1n,
-\qquad \mathrm{Cov}\,(N_i^*, N_j^*) = -n\cdot\frac{1}{n^2} = -\frac1n \;\;(i\ne j),$$
+$$
+E\,N_i^* = 1, \qquad \mathrm{Var}\,N_i^* = n\cdot\frac1n\Big(1-\frac1n\Big) = 1 - \frac1n,
+\qquad \mathrm{Cov}\,(N_i^*, N_j^*) = -n\cdot\frac{1}{n^2} = -\frac1n \;\;(i\ne j),
+$$
 
 so dividing by $n$,
 
-$$E_*\mathbf{P}^* = \frac{\mathbf{e}}{n},
+$$
+E_*\mathbf{P}^* = \frac{\mathbf{e}}{n},
 \qquad
-\mathrm{Cov}_*\,\mathbf{P}^* = \frac{\mathbf{I}}{n^2} - \frac{\mathbf{e}'\mathbf{e}}{n^3}.$$
+\mathrm{Cov}_*\,\mathbf{P}^* = \frac{\mathbf{I}}{n^2} - \frac{\mathbf{e}'\mathbf{e}}{n^3}.
+$$
 
 This is Efron's Eq. (5.2). The negative off-diagonal is the simplex constraint making
 itself felt: the proportions must sum to one, so they cannot all be large at once.
@@ -772,31 +850,41 @@ others do not — are not defined at all.
 
 The repair is to extend $R$ off the simplex in the only way that changes nothing:
 
-$$R(\mathbf{p}) \;:=\; R\!\left(\frac{\mathbf{p}}{\sum_i p_i}\right),$$
+$$
+R(\mathbf{p}) \;:=\; R\!\left(\frac{\mathbf{p}}{\sum_i p_i}\right),
+$$
 
 for all $\mathbf{p}$ with non-negative entries, at least one positive. This is Efron's
 Eq. (5.6). The extension is homogeneous of degree zero by construction, and that single
 property forces three identities which we shall use repeatedly. Write
 
-$$U_i = \frac{\partial R}{\partial p_i}\bigg|_{\mathbf{e}/n},
+$$
+U_i = \frac{\partial R}{\partial p_i}\bigg|_{\mathbf{e}/n},
 \qquad
-V_{ij} = \frac{\partial^2 R}{\partial p_i \partial p_j}\bigg|_{\mathbf{e}/n}.$$
+V_{ij} = \frac{\partial^2 R}{\partial p_i \partial p_j}\bigg|_{\mathbf{e}/n}.
+$$
 
 **First**, differentiate $R(c\,\mathbf{p}) = R(\mathbf{p})$ with respect to $c$ and set
 $c = 1$. The chain rule gives $\sum_i p_i \,\partial_i R(\mathbf{p}) = 0$, for every
 $\mathbf{p}$ — Euler's relation for a function of degree zero. Evaluating at
 $\mathbf{p} = \mathbf{e}/n$ and multiplying by $n$,
 
-$$\mathbf{e}\,\mathbf{U} \;=\; \sum_{i=1}^n U_i \;=\; 0 .$$
+$$
+\mathbf{e}\,\mathbf{U} \;=\; \sum_{i=1}^n U_i \;=\; 0 .
+$$
 
 **Second**, differentiate that identity — which holds for all $\mathbf{p}$, so it may be
 differentiated again — with respect to $p_j$:
 
-$$\partial_j R(\mathbf{p}) + \sum_i p_i\, \partial_i\partial_j R(\mathbf{p}) \;=\; 0 .$$
+$$
+\partial_j R(\mathbf{p}) + \sum_i p_i\, \partial_i\partial_j R(\mathbf{p}) \;=\; 0 .
+$$
 
 At $\mathbf{p} = \mathbf{e}/n$ this reads $U_j + \frac1n\sum_i V_{ij} = 0$, that is
 
-$$\mathbf{e}\,\mathbf{V} \;=\; -\,n\,\mathbf{U}' .$$
+$$
+\mathbf{e}\,\mathbf{V} \;=\; -\,n\,\mathbf{U}' .
+$$
 
 **Third**, summing the last identity over $j$ and using the first,
 $\mathbf{e}\mathbf{V}\mathbf{e}' = -n\sum_j U_j = 0$.
@@ -812,36 +900,44 @@ data's. In [`jackknife.py`](jackknife.py) they hold to $10^{-6}$.
 
 Now expand:
 
-$$R(\mathbf{P}^*) \;\doteq\; R\!\left(\frac{\mathbf{e}}{n}\right)
+$$
+R(\mathbf{P}^*) \;\doteq\; R\!\left(\frac{\mathbf{e}}{n}\right)
 + \Big(\mathbf{P}^* - \frac{\mathbf{e}}{n}\Big)\mathbf{U}
 + \frac{1}{2}\Big(\mathbf{P}^* - \frac{\mathbf{e}}{n}\Big)
-\mathbf{V}\Big(\mathbf{P}^* - \frac{\mathbf{e}}{n}\Big)' ,$$
+\mathbf{V}\Big(\mathbf{P}^* - \frac{\mathbf{e}}{n}\Big)' ,
+$$
 
 Efron's Eq. (5.4). Take the bootstrap expectation term by term. The linear term has mean
 zero, since $E_*\mathbf{P}^* = \mathbf{e}/n$ exactly. For the quadratic term, the
 expectation of a quadratic form is the trace of the matrix against the covariance:
 
-$$E_*\,\frac{1}{2}\Big(\mathbf{P}^*-\frac{\mathbf{e}}{n}\Big)\mathbf{V}
+$$
+E_*\,\frac{1}{2}\Big(\mathbf{P}^*-\frac{\mathbf{e}}{n}\Big)\mathbf{V}
 \Big(\mathbf{P}^*-\frac{\mathbf{e}}{n}\Big)'
 = \frac{1}{2}\,\mathrm{trace}\Big[\mathbf{V}\Big(\frac{\mathbf{I}}{n^2}
 - \frac{\mathbf{e}'\mathbf{e}}{n^3}\Big)\Big]
 = \frac{1}{2}\left[\frac{\mathrm{trace}\,\mathbf{V}}{n^2}
 - \frac{\mathbf{e}\mathbf{V}\mathbf{e}'}{n^3}\right]
-= \frac{\bar V}{2n},$$
+= \frac{\bar V}{2n},
+$$
 
 where $\bar V = \frac1n\sum_i V_{ii}$ and the second piece vanished by the third
 identity of Section 7.2. So
 
-$$\boxed{\;E_*\,R(\mathbf{P}^*) \;\doteq\; R\!\left(\frac{\mathbf{e}}{n}\right)
-+ \frac{\bar V}{2n}\;}$$
+$$
+\boxed{\;E_*\,R(\mathbf{P}^*) \;\doteq\; R\!\left(\frac{\mathbf{e}}{n}\right)
++ \frac{\bar V}{2n}\;}
+$$
 
 For the variance, keep the linear term alone — the quadratic one contributes at order
 $n^{-2}$:
 
-$$\mathrm{Var}_*\,R(\mathbf{P}^*) \;\doteq\;
+$$
+\mathrm{Var}_*\,R(\mathbf{P}^*) \;\doteq\;
 \mathbf{U}'\left[\frac{\mathbf{I}}{n^2} - \frac{\mathbf{e}'\mathbf{e}}{n^3}\right]\mathbf{U}
 \;=\; \frac{\sum_i U_i^2}{n^2} - \frac{\big(\sum_i U_i\big)^2}{n^3}
-\;=\; \boxed{\;\frac{\sum_{i=1}^n U_i^2}{n^2}\;}$$
+\;=\; \boxed{\;\frac{\sum_{i=1}^n U_i^2}{n^2}\;}
+$$
 
 the last step by the first identity of Section 7.2. These are Efron's Eqs. (5.8) and
 (5.10), and with $R = \theta(\hat F) - \theta(F)$, for which $R(\mathbf{e}/n) = 0$, they
@@ -859,7 +955,9 @@ something different.
 $U_i = x_i - \bar x$, which sums to zero as it must, and $\mathbf{V} = 0$ since $R$ is
 affine on the simplex. The variance formula returns
 
-$$\frac{\sum_i (x_i - \bar x)^2}{n^2} \;=\; \frac{\hat\sigma^2}{n},$$
+$$
+\frac{\sum_i (x_i - \bar x)^2}{n^2} \;=\; \frac{\hat\sigma^2}{n},
+$$
 
 which is Section 4.2 exactly, and the bias formula returns zero, which is Section 4.1
 exactly. Here the expansion is not an approximation at all: an affine function is its
@@ -869,8 +967,10 @@ own first-order Taylor polynomial.
 this time with a genuine second-order term. Then the bias formula must reproduce
 Section 5.1, which forces
 
-$$\frac{\bar V}{2n} = -\frac{\hat\sigma^2}{n},
-\qquad\text{that is}\qquad \bar V = -2\hat\sigma^2,$$
+$$
+\frac{\bar V}{2n} = -\frac{\hat\sigma^2}{n},
+\qquad\text{that is}\qquad \bar V = -2\hat\sigma^2,
+$$
 
 and the variance formula must reproduce the leading term of Section 5.2. Both hold. At
 $n = 5$, numerical differentiation gives $\bar V = -1.32832870$ against
@@ -882,11 +982,15 @@ differentiating a weight functional — and they meet.
 **The median.** By Section 6.1 the weighted median is constant on a neighbourhood of
 $\mathbf{e}/n$. Therefore
 
-$$U_i = 0 \quad\text{for every } i, \qquad V_{ij} = 0 \quad\text{for every } i,j,$$
+$$
+U_i = 0 \quad\text{for every } i, \qquad V_{ij} = 0 \quad\text{for every } i,j,
+$$
 
 not approximately but identically, and the variance formula returns
 
-$$\mathrm{Var}_*R^* \;\doteq\; 0 .$$
+$$
+\mathrm{Var}_*R^* \;\doteq\; 0 .
+$$
 
 The linearisation reports that the sample median has no sampling variability whatsoever
 — for every sample, at every $n$. This is not a numerical accident and no choice of step
@@ -909,9 +1013,11 @@ $\mathbf{e}_{(i)}$, a vector of ones with a zero in position $i$ — no renormal
 needed, that being what the homogeneous extension is for — and the finite-difference
 analogue of $U_i$ is
 
-$$\tilde U_i \;=\; (n-1)\big(R^*_{\cdot} - R^*_{(i)}\big),
+$$
+\tilde U_i \;=\; (n-1)\big(R^*_{\cdot} - R^*_{(i)}\big),
 \qquad R^*_{(i)} = R\Big(\frac{\mathbf{e}_{(i)}}{n-1}\Big),
-\qquad R^*_{\cdot} = \frac1n\sum_i R^*_{(i)},$$
+\qquad R^*_{\cdot} = \frac1n\sum_i R^*_{(i)},
+$$
 
 Efron's Eq. (5.12). The centring at the *average* is not optional: it is what makes
 $\sum_i \tilde U_i = 0$, mirroring $\mathbf{e}\mathbf{U} = 0$, and hence what makes
@@ -922,7 +1028,9 @@ that reading the pseudo-values would not sum to zero.
 
 Substituting the expansion into the definition gives
 
-$$\tilde U_i \;\doteq\; \frac{n-2}{n-1}\,U_i - \frac{V_{ii} - \bar V}{2(n-1)},$$
+$$
+\tilde U_i \;\doteq\; \frac{n-2}{n-1}\,U_i - \frac{V_{ii} - \bar V}{2(n-1)},
+$$
 
 Efron's Eq. (5.13), so $\tilde U_i / U_i = 1 + O(1/n)$ and the two jackknives agree to
 that order. For the mean the discrepancy can be computed exactly: the ordinary jackknife
@@ -946,26 +1054,34 @@ Delete one observation from an odd sample $n = 2m-1$: the remainder has even siz
 its median is the average of its two middle values. Which two depends only on where the
 deleted point sat relative to $x_{(m)}$, so with
 
-$$a = x_{(m)} - x_{(m-1)}, \qquad b = x_{(m+1)} - x_{(m)},$$
+$$
+a = x_{(m)} - x_{(m-1)}, \qquad b = x_{(m+1)} - x_{(m)},
+$$
 
 the $n$ leave-one-out medians take, relative to $x_{(m)}$, only three values:
 
-$$\frac{b}{2}\;\;(m-1 \text{ times}), \qquad -\frac{a}{2}\;\;(m-1 \text{ times}),
-\qquad \frac{b-a}{2}\;\;(\text{once}),$$
+$$
+\frac{b}{2}\;\;(m-1 \text{ times}), \qquad -\frac{a}{2}\;\;(m-1 \text{ times}),
+\qquad \frac{b-a}{2}\;\;(\text{once}),
+$$
 
 the last being what happens when the median itself is deleted. Their sum and sum of
 squares are $S_1 = \frac{m(b-a)}{2}$ and
 $S_2 = \frac{(m-1)(a^2+b^2)}{4} + \frac{(b-a)^2}{4}$, and since
 $1 - \frac{m^2}{2m-1} = -\frac{(m-1)^2}{2m-1}$, the centred sum of squares is
 
-$$S_2 - \frac{S_1^2}{n} \;=\; \frac{m-1}{4}\left[a^2 + b^2
-- \frac{(m-1)(a-b)^2}{2m-1}\right].$$
+$$
+S_2 - \frac{S_1^2}{n} \;=\; \frac{m-1}{4}\left[a^2 + b^2
+- \frac{(m-1)(a-b)^2}{2m-1}\right].
+$$
 
 Multiplying by $\frac{n-1}{n} = \frac{2(m-1)}{2m-1}$ gives the jackknife variance in
 closed form,
 
-$$\hat v_{\mathrm{jack}} \;=\; \frac{(m-1)^2}{2(2m-1)}
-\left[a^2 + b^2 - \frac{(m-1)(a-b)^2}{2m-1}\right],$$
+$$
+\hat v_{\mathrm{jack}} \;=\; \frac{(m-1)^2}{2(2m-1)}
+\left[a^2 + b^2 - \frac{(m-1)(a-b)^2}{2m-1}\right],
+$$
 
 a function of **three order statistics**, however large $n$ is. That is the disease
 stated exactly: $n - 3$ of the observations are not consulted.
@@ -974,26 +1090,34 @@ Its consequence follows from letting $m$ grow. The bracket tends to
 $a^2 + b^2 - \frac{(a-b)^2}{2} = \frac{(a+b)^2}{2}$ and the prefactor to $\frac{n}{8}$,
 so
 
-$$\hat v_{\mathrm{jack}} \;\sim\; \frac{n\,(a+b)^2}{16},
+$$
+\hat v_{\mathrm{jack}} \;\sim\; \frac{n\,(a+b)^2}{16},
 \qquad\text{that is}\qquad
-n\,\hat v_{\mathrm{jack}} \;\sim\; \frac{\big[n(a+b)\big]^2}{16}.$$
+n\,\hat v_{\mathrm{jack}} \;\sim\; \frac{\big[n(a+b)\big]^2}{16}.
+$$
 
 Now $a$ and $b$ are the two spacings flanking the median. For a continuous $F$ with
 $f(\theta) > 0$ the spacings near a fixed quantile, scaled by $n$, converge to
 independent exponentials of mean $1/f(\theta)$, so
 
-$$n(a+b) \;\xrightarrow{\;d\;}\; \frac{E_1 + E_2}{f(\theta)} = \frac{\Gamma(2,1)}{f(\theta)}
-= \frac{\chi^2_4}{2 f(\theta)},$$
+$$
+n(a+b) \;\xrightarrow{\;d\;}\; \frac{E_1 + E_2}{f(\theta)} = \frac{\Gamma(2,1)}{f(\theta)}
+= \frac{\chi^2_4}{2 f(\theta)},
+$$
 
 and therefore
 
-$$\boxed{\;n\,\hat v_{\mathrm{jack}} \;\xrightarrow{\;d\;}\;
-\frac{1}{4 f^2(\theta)}\left[\frac{\chi^2_4}{4}\right]^{2}\;}$$
+$$
+\boxed{\;n\,\hat v_{\mathrm{jack}} \;\xrightarrow{\;d\;}\;
+\frac{1}{4 f^2(\theta)}\left[\frac{\chi^2_4}{4}\right]^{2}\;}
+$$
 
 The limit is a **random variable**, not a number. No amount of data makes the jackknife
 settle: it converges in distribution to something with mean
 
-$$E\left[\frac{\chi^2_4}{4}\right]^2 = \frac{E\,\Gamma(2,1)^2}{4} = \frac{6}{4} = 1.5$$
+$$
+E\left[\frac{\chi^2_4}{4}\right]^2 = \frac{E\,\Gamma(2,1)^2}{4} = \frac{6}{4} = 1.5
+$$
 
 and variance $\frac{120 - 36}{16} = 5.25$, in units of the correct answer
 $\frac{1}{4f^2}$ of Section 6.4. So the jackknife estimate of the variance of a median
@@ -1017,17 +1141,21 @@ has no analogue, because there is no single median to delete.
 With $d = x_{(m+1)} - x_{(m)}$ the $n$ replicates take two values, $\pm d/2$ about their
 own mean, $m$ times each, so
 
-$$\sum_i \big(\hat\theta_{(i)} - \hat\theta_{(\cdot)}\big)^2 = 2m\left(\frac{d}{2}\right)^2
+$$
+\sum_i \big(\hat\theta_{(i)} - \hat\theta_{(\cdot)}\big)^2 = 2m\left(\frac{d}{2}\right)^2
 = \frac{n d^2}{4},
 \qquad
-\hat v_{\mathrm{jack}} = \frac{n-1}{n}\cdot\frac{n d^2}{4} = \frac{(n-1)\,d^2}{4}.$$
+\hat v_{\mathrm{jack}} = \frac{n-1}{n}\cdot\frac{n d^2}{4} = \frac{(n-1)\,d^2}{4}.
+$$
 
 Then $n\hat v_{\mathrm{jack}} \sim \frac{[n d]^2}{4}$, and a **single** spacing is
 involved where the odd case had two, so $nd \to E/f(\theta)$ with $E$ one standard
 exponential and
 
-$$\boxed{\;n\,\hat v_{\mathrm{jack}} \;\xrightarrow{\;d\;}\;
-\frac{1}{4f^2(\theta)}\left[\frac{\chi^2_2}{2}\right]^{2}\;}$$
+$$
+\boxed{\;n\,\hat v_{\mathrm{jack}} \;\xrightarrow{\;d\;}\;
+\frac{1}{4f^2(\theta)}\left[\frac{\chi^2_2}{2}\right]^{2}\;}
+$$
 
 of mean $E[E^2] = 2$ and variance $E[E^4] - 4 = 20$.
 
@@ -1038,12 +1166,14 @@ the standard one — it is what Efron prints, and it is what the usual treatment
 the jackknife fails for quantiles derive; the odd case follows from the same argument
 with one more spacing in it. What we have not found stated anywhere is the contrast:
 
-$$\boxed{\;n\,\hat v_{\mathrm{jack}} \;\xrightarrow{\;d\;}\;
+$$
+\boxed{\;n\,\hat v_{\mathrm{jack}} \;\xrightarrow{\;d\;}\;
 \frac{1}{4f^2(\theta)} \times
 \begin{cases}
 \big[\chi^2_2/2\big]^2, & n \text{ even},\\[4pt]
 \big[\chi^2_4/4\big]^2, & n \text{ odd}.
-\end{cases}\;}$$
+\end{cases}\;}
+$$
 
 The limiting law of the jackknife variance of a median **depends on the parity of the
 sample size**, through nothing more than whether there is a middle observation to delete:
@@ -1076,9 +1206,11 @@ The two are easy to tell apart, both densities being elementary. Writing
 $W = [\chi^2_2/2]^2$ and $W' = [\chi^2_4/4]^2$ and changing variables from the
 exponential,
 
-$$f_W(w) = \frac{e^{-\sqrt{w}}}{2\sqrt{w}},
+$$
+f_W(w) = \frac{e^{-\sqrt{w}}}{2\sqrt{w}},
 \qquad
-f_{W'}(w) = 2e^{-2\sqrt{w}} .$$
+f_{W'}(w) = 2e^{-2\sqrt{w}} .
+$$
 
 Simulating $40\,000$ samples at $n = 4000$ and at $n = 4001$ from $\mathcal{N}(0,1)$ and
 computing $n\hat v_{\mathrm{jack}} / (\pi/2)$ from the closed forms separates them at
@@ -1115,18 +1247,22 @@ method evaluates $R$.**
 
 For a bootstrap resample, Section 7.1 gives the mean square displacement directly,
 
-$$E_*\Big\|\mathbf{P}^* - \frac{\mathbf{e}}{n}\Big\|^2
+$$
+E_*\Big\|\mathbf{P}^* - \frac{\mathbf{e}}{n}\Big\|^2
 = \sum_{i=1}^n \mathrm{Var}_*P_i^* = n\cdot\frac{1}{n^2}\Big(1-\frac1n\Big)
 = \frac{n-1}{n^2},
-\qquad\text{r.m.s.} = \frac{\sqrt{n-1}}{n} \sim n^{-1/2}.$$
+\qquad\text{r.m.s.} = \frac{\sqrt{n-1}}{n} \sim n^{-1/2}.
+$$
 
 For a deletion of $d$ observations the weight vector carries $\frac{1}{n-d}$ on $n-d$
 coordinates and zero on $d$, so
 
-$$\Big\|\mathbf{p} - \frac{\mathbf{e}}{n}\Big\|^2
+$$
+\Big\|\mathbf{p} - \frac{\mathbf{e}}{n}\Big\|^2
 = (n-d)\left(\frac{1}{n-d} - \frac1n\right)^2 + \frac{d}{n^2}
 = \frac{d^2}{n^2(n-d)} + \frac{d}{n^2}
-= \frac{d}{n(n-d)} .$$
+= \frac{d}{n(n-d)} .
+$$
 
 At $d = 1$ that is $\frac{1}{\sqrt{n(n-1)}} \sim n^{-1}$. The jackknife therefore
 evaluates $R$ an order of magnitude closer to the observed sample than the bootstrap
