@@ -37,9 +37,10 @@ results of the paper are in the [review](../../reviews/1979-efron-bootstrap.md).
 >
 > Confidence intervals and the block bootstrap are **not in this paper** at all — they
 > are 1981–1989. See [what came next](#what-came-next-and-is-not-in-this-paper).
-> [`DERIVATIONS.md`](DERIVATIONS.md) covers sections 1–7 of ten, with their figures: the
-> thread from the mean to the jackknife is closed there, and what remains is the choice
-> of coordinate, regression, and the inferential step.
+> [`DERIVATIONS.md`](DERIVATIONS.md) runs from the question the paper answers to the
+> jackknife, in seven sections with their figures, and stops there because that is where
+> its argument closes. The choice of coordinate, the regression and the inferential step
+> answer a different question and are derived below instead.
 
 ## Order of implementation
 

@@ -21,8 +21,11 @@ section, where it will look like an idle remark.
 6. [A statistic with no expansion: the median](#6-a-statistic-with-no-expansion-the-median)
 7. [Linearising the bootstrap, and what it costs](#7-linearising-the-bootstrap-and-what-it-costs)
 
-*(Sections 8–10 — the choice of coordinate, regression, and the inferential step the
-bootstrap does not license — are still being written.)*
+*The document ends at Section 7, where the thread announced above is closed. Three
+further parts of the paper — the choice of coordinate and its Figure 1, the regression of
+its Section 7, and the inferential step it warns against — are implemented and derived in
+the [README](README.md) instead. They answer a different question from this one, and
+putting them here would turn an argument into a survey.*
 
 ---
 
@@ -1321,6 +1324,13 @@ With that, the thread announced at the start of this document is closed. How smo
 is as a function of the distribution it is fed decided everything: it decided that the
 mean could be solved by hand, that the variance could be solved with a bias, that the
 median needed a construction of its own, and that the jackknife — which is nothing but
-the first two terms of a Taylor series — had to fail on exactly the third. What remains
-is a different question, and Section 8 begins it: not how $R$ depends on $\hat F$, but
-which $R$ we should have chosen in the first place.
+the first two terms of a Taylor series — had to fail on exactly the third.
+
+What remains is a different question, and this document deliberately stops before it:
+not how $R$ depends on $\hat F$, but which $R$ we should have chosen in the first place.
+That is where the choice of coordinate belongs — the same statistic in another scale, and
+the transformation that removes the boundary shaping its distribution — and with it the
+regression of the paper's Section 7, where the assumption hidden in the resampling turns
+out to be a single index, and Remark D, where an interval that agrees with an exact one
+to six thousandths is nevertheless wrong. All three are derived in the
+[README](README.md). They are worth reading; they are not this argument.
