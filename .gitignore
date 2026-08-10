@@ -31,8 +31,10 @@ implementations/**/outputs/
 papers/*.pdf
 !papers/INDEX.md
 
-# Personal notes: not published
+# Personal notes: not published. They are in Spanish, unlike everything that is
+# committed, precisely because they are not for anyone else.
 GUIA-LECTURA.md
+REPASO.md
 
 # Obsidian. The repo is also usable as a vault — the reviews and derivations are
 # markdown and the PDFs are right there — and opening it creates this folder:
