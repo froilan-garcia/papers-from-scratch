@@ -2,139 +2,155 @@
 
 Implementation of the E-V rule from *Portfolio Selection* (Markowitz, 1952).
 See the [review](../../reviews/1952-markowitz-portfolio-selection.md) for the
-paper's context and results.
+paper's context and results, and **[DERIVATIONS.md](DERIVATIONS.md)** for the
+mathematics developed end to end — the problem, the closed form, the geometry of
+the three-asset case, the sign constraint and the algorithm.
 
-Built incrementally, same as the [Lasso](../1996-tibshirani-lasso/). Current status:
+Built incrementally, same as the [lasso](../1996-tibshirani-lasso/). Current
+status:
 
 | # | Piece | Status |
 |---|-------|--------|
-| 0 | Fundamentals — deriving the frontier by Lagrange (below) | ✅ notes |
-| 1 | Closed-form efficient frontier (no sign constraint) | ⬜ pending |
-| 2 | Fig. 2 — simplex triangle, isomean lines, isovariance ellipses, critical line | ⬜ pending |
-| 3 | Fig. 6 — QP frontier with `w >= 0`; verify the connected parabola segments | ⬜ pending |
-| 4 | The diversification floor — refuting the law of large numbers (p. 79) | ⬜ pending |
+| 0 | Fundamentals — deriving the frontier by Lagrange | ✅ now Part II of [DERIVATIONS.md](DERIVATIONS.md) |
+| 1 | Closed-form efficient frontier (no sign constraint) | ✅ [frontier.py](frontier.py) |
+| 2 | Figs. 2 and 3 — simplex, isomeans, isovariances, critical line | ✅ [geometry.py](geometry.py) |
+| 3 | Fig. 6 — QP frontier with `w >= 0`, and the connected parabolic segments | ✅ [constrained.py](constrained.py) |
+| 4 | The diversification floor — refuting the law of large numbers (p. 79) | ⬜ the identity is derived (sec. 2), the figure is not |
 | 5 | Real data + bootstrap-resampled frontier (links to Efron 1979) | ⬜ pending |
 
-## Fundamentals — the efficient frontier by Lagrange multipliers
+## What matches and what does not
 
-The paper solves the 3- and 4-asset cases **geometrically** and says explicitly
-(p. 79) that it does not derive the $n$-asset case analytically. That derivation —
-standard today — is Piece 1. It is worth having at hand before writing any code,
-because the result (a **parabola** in $(E,V)$) is exactly what Fig. 6 of the paper
-draws piecewise.
+**The paper carries no numbers.** Figs. 1–7 are schematic and there is no table,
+no data set and no worked example anywhere in the fifteen pages — Markowitz says
+on closing (p. 91) that where the beliefs come from is another story. So there
+is nothing to reproduce numerically, and validation here is **structural**: each
+qualitative claim is turned into a statement that can fail, and then tested. The
+market used is ours, and it is documented in [markets.py](markets.py).
 
-**Statement.** With $\Sigma$ the covariance matrix ($p \times p$, symmetric positive
-definite), $\boldsymbol\mu$ the vector of expected returns and $\mathbf 1$ the vector
-of ones, we look for the weights $\mathbf w$ minimising the variance for a target
-return $E$:
+| Claim of the paper | Result |
+|---|---|
+| Isomeans are parallel straight lines (p. 84) | ✅ $E$ is affine in $(X_1,X_2)$, so the slope has no $E$ in it |
+| Isovariances are concentric ellipses centred at $\hat X$ (p. 84) | ✅ and $\hat X$ **is** the minimum-variance portfolio, to $2\times10^{-16}$ |
+| The tangency points trace a straight line, the *critical line* (p. 85) | ✅ collinear to $1.5\times10^{-16}$; the paper asserts this without algebra, [DERIVATIONS.md](DERIVATIONS.md#s10) derives it |
+| That line is the same object as the $n$-asset solution | ✅ directions parallel to $6\times10^{-17}$ in cross product |
+| Fig. 2 — $\hat X$ inside: efficient set starts there, then an edge | ✅ reproduced, one corner at $E=0.0979$ |
+| Fig. 3 — $\hat X$ outside: starts on an edge, meets the line, then another edge | ✅ reproduced, two corners; three phases exactly as p. 85 describes |
+| The efficient set is a series of connected segments (p. 87) | ✅ 3 corners in the five-asset market, weights affine between them to $10^{-15}$ |
+| Fig. 6 — $V$ against $E$ is a series of connected parabolic segments | ✅ each arc equals the closed-form parabola of **its own sub-market** to $10^{-15}$ |
+| …and therefore a different parabola on each segment | ✅ curvature $17.49 \to 17.53 \to 59.03 \to 386.30$ |
+| Footnote 9 — the degenerate case $\boldsymbol\mu \propto \mathbf 1$ | ✅ detected: $D=0$ and the solver refuses rather than dividing |
+| Footnote 12 — ellipses **iff** no two distinct portfolios are perfectly correlated | ❌ **sufficient, not necessary** — see below |
+| Against `scipy.optimize` (SLSQP) over the whole sweep | ✅ to $3\times10^{-8}$, which is that solver's tolerance and not ours |
+| p. 79 — diversification has a floor at the average covariance | ⏳ derived as an identity (sec. 2); the figure is Piece 4 |
 
-```math
-\min_{\mathbf w} \ \tfrac{1}{2}\mathbf w^\top \Sigma \mathbf w
-\quad \text{s.t.} \quad \boldsymbol\mu^\top \mathbf w = E, \quad \mathbf 1^\top \mathbf w = 1.
+### The one discrepancy: footnote 12
+
+The footnote (p. 89) says that to draw the isovariance curves as ellipses it is
+necessary and sufficient that no two distinct portfolios have perfectly
+correlated returns. Sufficient, yes. Necessary, no: what the algebra needs is
+that no two distinct portfolios have returns differing by an **additive
+constant** — perfect correlation *and* equal variance. Three assets, the first
+two perfectly correlated and the third independent:
+
+| variances of the correlated pair | $\min\operatorname{eig}\Sigma$ | $\det Q$ | level sets |
+|---|---|---|---|
+| $1$ and $4$ | $0$ | $1.00$ | ellipses |
+| $1$ and $1$ | $0$ | $0.00$ | degenerate |
+
+Both markets contain two distinct portfolios with perfectly correlated returns —
+the two single-asset portfolios — and only the second loses its ellipses. The
+first is more interesting than a counterexample: it contains a **riskless**
+portfolio, $2\cdot(1)-(2)$, with variance exactly zero, so $\Sigma$ is singular
+and the closed form of Piece 1 does not exist there, while the plane geometry of
+Piece 2 is perfectly well defined. The check is `_footnote12` in
+[geometry.py](geometry.py); the derivation is
+[sec. 9](DERIVATIONS.md#s9).
+
+## Rules of this implementation
+
+- **The solver is ours.** The active set method of [constrained.py](constrained.py)
+  is written out — feasible start, saddle-point system on the free assets,
+  minimum-ratio test, multiplier test — rather than delegated to a library.
+  It is the algorithm the paper is missing (footnote 10 describes the traversal
+  but not the rules; the systematic version is Markowitz 1956), and it is the
+  same method this repository already wrote for the lasso. `scipy` appears only
+  to check the answer.
+- **No implicit inverse.** $\Sigma^{-1}$ is never formed; `np.linalg.solve`
+  does the work, and the four scalars $A,B,C,D$ keep visible that the market
+  enters through only two vectors.
+- **The paper's axes in the paper's figures** ($V$ vertical, $E$ horizontal),
+  the modern ones in the derivation figures, and a note wherever it matters.
+  The two conventions describe the same efficient set (p. 89).
+- **Our numbers, declared as ours.** The five-asset market is named after the
+  paper's sectors (p. 89) and built from annual returns, volatilities and
+  correlations, which is the form beliefs actually take.
+- Every figure is **computed with these solvers**. Nothing is drawn by hand,
+  which is what lets a figure disagree with the text.
+
+## Why this order and not the paper's
+
+The paper opens with the constrained three-asset problem and draws it. This
+implementation opens with the unconstrained $n$-asset problem and solves it,
+because the constrained case is built out of it: on each face of the polygonal
+efficient set, the answer is the closed form applied to the assets that survive.
+Doing it the other way round means writing the QP first and having nothing to
+check it against.
+
+| What moves | Where the paper puts it | Here | Why |
+|---|---|---|---|
+| The $n$-asset closed form | absent (p. 79 declines it) | Piece 1 | Everything else is a corollary of it |
+| The sign constraint | first, from Eq. (4) | Piece 3 | It is what destroys the closed form |
+| The three-asset geometry | first, Figs. 2–3 | Piece 2 | It reads better as a picture *of* the general solution |
+
+## The pieces
+
+**Piece 1 — [frontier.py](frontier.py).** The four scalars, the frontier
+$V(E)=(AE^2-2BE+C)/D$, the minimum-variance vertex $(B/A, 1/A)$, the two-fund
+decomposition $\mathbf w(E)=\mathbf g+E\mathbf h$ and the multiplier reading
+$dV/dE = 2\lambda$. Checks: the constraints along the whole frontier, the
+parabola against the variance of the weights it predicts, the finite-difference
+slope, agreement with SLSQP, and twenty thousand random portfolios none of which
+falls below the curve.
+
+**Piece 2 — [geometry.py](geometry.py).** The reduction to the plane, the
+ellipses and their centre, the critical line derived from $Q^{-1}\mathbf e$, and
+Figs. 2 and 3 with the efficient set drawn by the Piece 3 solver. Checks: the
+centre against the minimum-variance portfolio, the collinearity of the tangency
+points, the agreement of the two derivations of the critical line, and footnote
+12 above.
+
+**Piece 3 — [constrained.py](constrained.py).** The active set method, the sweep
+over $E$, and the corners located by bisection to $10^{-13}$. Checks: agreement
+with SLSQP; the identification of each segment with the closed-form frontier of
+its sub-market; and the continuity of $\lambda$ against the jump in curvature at
+every corner, which is the $C^1$-but-not-$C^2$ statement.
+
+The five-asset market resolves into four efficient segments, with rails leaving
+at $E = 0.0781$, bonds at $0.0856$ and utilities at $0.0985$. The first corner is
+worth a look: the curvature changes by two parts in a thousand, so the kink is
+real and invisible. Nothing guarantees that a corner can be seen.
+
+## How to run
+
+```bash
+python frontier.py            # Piece 1 and its checks
+python constrained.py         # Piece 3, the active set solver and its checks
+python geometry.py            # Piece 2, its checks, and fig2/fig3
+python figures.py             # the paper's Figs. 1 and 6
+python derivation_figures.py  # the figures of DERIVATIONS.md
 ```
 
-> **Note:** the paper's $w_i \ge 0$ constraint is **relaxed** here. That is what makes
-> the closed form possible; with the sign constraint one has to go to a QP (Piece 3)
-> and the kinks of the polygonal chain appear. The $\tfrac12$ is cosmetic, so that the
-> derivative comes out clean.
-
-**Lagrangian** (here the constraints are *equalities*, so this is the ordinary
-Lagrange — unlike the lasso, where $\lambda$ is set by hand):
-
-```math
-\mathcal L = \tfrac12 \mathbf w^\top\Sigma\mathbf w
-- \lambda(\boldsymbol\mu^\top\mathbf w - E) - \gamma(\mathbf 1^\top\mathbf w - 1).
-```
-
-Differentiating in $\mathbf w$ and setting to zero:
-
-```math
-\Sigma\mathbf w - \lambda\boldsymbol\mu - \gamma\mathbf 1 = \mathbf 0
-\quad\Longrightarrow\quad
-\boxed{\ \mathbf w = \Sigma^{-1}(\lambda\boldsymbol\mu + \gamma\mathbf 1)\ }
-```
-
-The optimal weights are a **linear combination of two fixed portfolios**,
-$\Sigma^{-1}\boldsymbol\mu$ and $\Sigma^{-1}\mathbf 1$. This is already, in embryo,
-Tobin's (1958) **two-fund separation theorem**: every efficient portfolio is obtained
-by mixing two.
-
-**The four scalars.** Substituting into the constraints, the same three quantities
-always appear:
-
-```math
-A = \mathbf 1^\top\Sigma^{-1}\mathbf 1, \qquad
-B = \mathbf 1^\top\Sigma^{-1}\boldsymbol\mu, \qquad
-C = \boldsymbol\mu^\top\Sigma^{-1}\boldsymbol\mu, \qquad D = AC - B^2.
-```
-
-The two constraints become a $2\times 2$ system in $(\lambda, \gamma)$:
-
-```math
-\begin{pmatrix} C & B \\ B & A \end{pmatrix}
-\begin{pmatrix} \lambda \\ \gamma \end{pmatrix} =
-\begin{pmatrix} E \\ 1 \end{pmatrix}
-\quad\Longrightarrow\quad
-\lambda = \frac{AE - B}{D}, \qquad \gamma = \frac{C - BE}{D}.
-```
-
-**The frontier.** The trick for the variance is to expand nothing: using the
-first-order condition $\Sigma\mathbf w = \lambda\boldsymbol\mu + \gamma\mathbf 1$,
-
-```math
-V = \mathbf w^\top\Sigma\mathbf w = \mathbf w^\top(\lambda\boldsymbol\mu + \gamma\mathbf 1)
-= \lambda\underbrace{\boldsymbol\mu^\top\mathbf w}_{=\,E} + \gamma\underbrace{\mathbf 1^\top\mathbf w}_{=\,1}
-= \lambda E + \gamma.
-```
-
-Substituting:
-
-```math
-\boxed{\ V(E) = \frac{AE^2 - 2BE + C}{D}\ }
-```
-
-**A parabola in $(E,V)$** — and therefore a **hyperbola** in $(\sigma, E)$, which is
-how it is drawn today. Consistent with Fig. 6 of the paper: there it comes out
-piecewise *because* Markowitz does impose $w_i \ge 0$.
-
-**Minimum-variance portfolio.** Differentiating: $V'(E) = (2AE - 2B)/D = 0$, hence
-
-```math
-E_{\min} = \frac{B}{A}, \qquad V_{\min} = \frac{1}{A}, \qquad
-\mathbf w_{\min} = \frac{\Sigma^{-1}\mathbf 1}{A}.
-```
-
-Note that $\mathbf w_{\min}$ **does not depend on $\boldsymbol\mu$**: only on $\Sigma$.
-That is the practical reason why the minimum-variance portfolio is far more robust
-than the tangency one — expected returns are precisely the worst-estimated input
-(see Michaud's criticism in the ROADMAP, block Q2).
-
-**Signs.** With $\Sigma$ positive definite, so is $\Sigma^{-1}$, hence $A > 0$ and
-$C > 0$. And $D = AC - B^2 > 0$ by Cauchy–Schwarz in the inner product
-$\langle \mathbf x, \mathbf y\rangle = \mathbf x^\top\Sigma^{-1}\mathbf y$, with
-equality only if $\boldsymbol\mu \propto \mathbf 1$ (all assets with the same expected
-return — the degenerate case of footnote 9 of the paper, where the isomeans cease to
-be defined). The parabola therefore **opens upwards** and the minimum is genuine.
-
-### Why covariance and not variance
-
-The paper's conceptual thesis (p. 89), in one line of algebra. For the equally
-weighted portfolio $w_i = 1/N$:
-
-```math
-V = \frac{1}{N^2}\sum_{i}\sigma_{ii} + \frac{1}{N^2}\sum_{i\neq j}\sigma_{ij}
-= \frac{1}{N}\overline{\sigma^2} + \frac{N-1}{N}\overline{\sigma_{ij}}
-\ \xrightarrow[N\to\infty]{}\ \overline{\sigma_{ij}}.
-```
-
-The first term (own variances) is **diluted** as $1/N$; the second (average
-covariance) is **not**. That limit $\overline{\sigma_{ij}}$ is the floor Markowitz
-speaks of when rejecting the law of large numbers, and it is the risk that would
-later be called *systematic*. With uncorrelated assets $\overline{\sigma_{ij}} = 0$
-and zero is indeed reached; with assets from the same sector, it is not. **It is
-Piece 4 in one formula.**
+| File | Piece | What it does |
+|---|---|---|
+| [DERIVATIONS.md](DERIVATIONS.md) | — | The full mathematical development, with its figures |
+| [markets.py](markets.py) | — | The example markets, and why each one is shaped as it is |
+| [frontier.py](frontier.py) | 1 | Closed form, two funds, multipliers, minimum variance |
+| [constrained.py](constrained.py) | 3 | Active set QP, the sweep, the corners |
+| [geometry.py](geometry.py) | 2 | The plane reduction, the critical line, Figs. 2 and 3 |
+| [figures.py](figures.py) | 1, 3 | The paper's Figs. 1 and 6 |
+| [derivation_figures.py](derivation_figures.py) | — | The figures for the derivation (prefix `ded_`) |
 
 ## Stack
 
-`numpy`, `scipy` (the QP in Piece 3), `matplotlib`. `pandas` for the real data of
-Piece 5. Nothing outside the repo's base stack.
+`numpy`, `scipy` (only to check Piece 3), `matplotlib`. `pandas` for the real
+data of Piece 5, when it exists. Nothing outside the repository's base stack.
