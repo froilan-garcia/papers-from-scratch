@@ -176,7 +176,67 @@ Three immediate consequences that we shall use without proving them again:
 - All the information in the data enters through only two objects, $\hat\beta^o$
   and $S$.
 
-**And a fourth, which deserves its own derivation**, because it is the property the
+**The metric is not decorative, and it is worth spending a paragraph on why.** The
+boxed identity invites a shortcut: if the lasso is the nearest feasible point to
+$\hat\beta^o$, why not compute $\hat\beta^o$ once and take the nearest point of the
+region in the ordinary sense? That projection is not even expensive — sort the
+coordinates and subtract the threshold that saturates the budget, $O(p\log p)$ and no
+iteration at all.
+
+The shortcut is exact when $S=I$, and that is no accident: it is the orthonormal case
+of section 6, where the lasso will turn out to *be* that thresholding rule. So the
+temptation is not wrong, it is the case already solved. Everywhere else it replaces
+the ellipsoid by a sphere and therefore discards the only thing the third consequence
+above says matters besides $\hat\beta^o$ — namely $S$. Since those two objects
+determine the problem, a four-predictor design with
+
+```math
+S/N=\begin{pmatrix}
+1 & 0.707 & -0.197 & -0.553\\
+0.707 & 1 & -0.214 & -0.169\\
+-0.197 & -0.214 & 1 & 0.567\\
+-0.553 & -0.169 & 0.567 & 1
+\end{pmatrix},
+\qquad
+\hat\beta^{o}=(-0.244,\ 0.598,\ -1.203,\ 0.228)
+```
+
+is enough to settle it. Taking $t=0.6\sum_j|\hat\beta_j^o|=1.3638$ and writing the
+excess over least squares as the quadratic form of the identity,
+$(\beta-\hat\beta^o)^\top S(\beta-\hat\beta^o)$:
+
+| | $\beta_1$ | $\beta_2$ | $\beta_3$ | $\beta_4$ | $L_1$ | excess |
+|---|---|---|---|---|---|---|
+| lasso | $0$ | $0.311$ | $-0.990$ | $0.063$ | $1.3638$ | $13.191$ |
+| Euclidean projection | $-0.017$ | $0.370$ | $-0.975$ | $0.001$ | $1.3638$ | $13.982$ |
+
+Both spend the budget down to the last displayed digit, and the Euclidean point fits
+**worse** — $0.791$ more, some 6 per cent. That settles it without any appeal to
+optimality theory: there exists a feasible point with the same $L_1$ norm and a
+smaller error, so the Euclidean projection does not solve Eq. (1). It solves a
+different problem that happens to share its feasible region.
+
+And the two do not even keep the same variables. The lasso annihilates $x_1$ and
+keeps $x_4$; the Euclidean projection does the reverse. The reason is legible in $S$:
+$x_1$ correlates $0.707$ with $x_2$, which already represents most of it, so the lasso
+prefers to spend the budget elsewhere — an argument about *pairs* of columns that a
+sphere cannot make, because Euclidean distance weighs each coordinate of
+$\hat\beta^o$ in isolation. This is the first appearance of something that will not go
+away: what the lasso drops depends on the whole correlation structure and not on the
+size of the individual coefficients.
+
+**Where this reading stops holding.** All of the above needs $S\succ0$ for
+$`\langle\cdot,\cdot\rangle_S`$ to be an inner product. If $p>N$ the matrix is singular,
+$`\|\cdot\|_S`$ is only a semi-norm, and the level sets are not ellipsoids but
+cylinders, unbounded in the null directions. A minimum still exists, because the
+polytope is compact and the objective continuous, but it need not be unique: the
+argmin can be a whole face. The word *projection* then loses its literal sense while
+the problem remains perfectly well posed — which is worth flagging because $p>N$ is
+the regime the lasso would later be used for most, and one the paper does not treat.
+(Its exact characterisation is much later: R. J. Tibshirani, *The lasso problem and
+uniqueness*, 2013.)
+
+**And a fourth consequence, which deserves its own derivation**, because it is the property the
 paper announces in the abstract — that the lasso has *"the stability of ridge
 regression"* — and then leaves to the simulations of Sec. 7, when it can be proved
 right here. The word "projection" above is not a manner of speaking: it is a
@@ -717,6 +777,29 @@ And note that this enumeration of sign vectors is, once again, **the
 non-differentiability of section 5**: the absolute value is not a smooth function but
 the maximum of $2^p$ linear ones, and the price of handling it with linear tools is
 having to discover which of those pieces is in charge.
+
+**What the algorithm is actually deciding.** It is worth reading this back through
+section 2, where the lasso was left as a projection of $\hat\beta^o$ onto the
+polytope, because the comparison says exactly where the difficulty sits. Projecting
+in the Euclidean metric has a closed form: the threshold that saturates the budget
+determines everything, and one never has to ask which face is touched. In the metric
+$S$ there is no such formula, and the obstruction is precisely that the ellipsoid is
+tilted, so **which face it touches is no longer readable off $\hat\beta^o$**.
+
+The problem therefore splits into two of very different natures:
+
+- a **combinatorial** part — *which* face, that is, which coordinates survive and
+  with what signs;
+- a **continuous** part — *where* on that face, which section 14 will show to be an
+  ordinary linear solve.
+
+Everything exponential lives in the first, and the whole of the active set method is
+a search over it: propose a face, check whether the solution leaves the polytope,
+correct. The second part is what section 11 promised as a closed form *conditional*
+on knowing the surviving signs — and it is the algorithm that supplies the condition
+the formula needs. Seen this way, the $2^p$ is not a defect of this particular method
+but the cost of the geometry: a polytope has faces, and a tilted ellipsoid does not
+tell you in advance which one it will land on.
 
 ---
 
