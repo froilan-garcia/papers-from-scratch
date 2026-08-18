@@ -38,7 +38,7 @@ import urllib.request
 # A backslash before anything that is not a letter, or an asterisk.
 VULNERABLE = re.compile(r"\\[^A-Za-z]|\*")
 INLINE = re.compile(r"\$([^$\n]+?)\$")
-PROTECTED = re.compile(r"\$`[^`]+`\$")
+PROTECTED = re.compile(r"\$`([^`]+)`\$")
 # A backtick run opens a code span and only a run of the same length closes it,
 # which is what lets ` ```math ` appear inside single backticks.
 CODE_SPAN = re.compile(r"(`+)(.+?)\1")
@@ -120,7 +120,10 @@ def check_github(paths):
             raise
         exposed = bare_maths(source)
         spans = [m.group(1) for m in INLINE.finditer(exposed)]
+        # The group, not the whole match: what comes back from GitHub is the
+        # mathematics, without the $` `$ that protected it on the way in.
         spans += PROTECTED.findall(strip_fences(source))
+
         for span in spans:
             if span not in rendered:
                 print(f"  {path}: ${span}$")
